@@ -16,6 +16,30 @@ async function getJSON(name) {
 const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 
+/* ---------- Supabase (auth + per-user portfolio/watchlist) ---------- */
+let sb = null;
+let currentUser = null;
+function supa() {
+  if (sb) return sb;
+  if (window.supabase && window.SUPABASE_URL && window.SUPABASE_KEY) {
+    sb = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+  }
+  return sb;
+}
+// Enrichment map ticker -> {layer, phase, score, mf} from the public valuation feed.
+let _enrich = null;
+async function enrichMap() {
+  if (_enrich) return _enrich;
+  _enrich = {};
+  try {
+    const v = await getJSON("valuation-latest.json");
+    for (const r of v.tickers || []) {
+      _enrich[r.ticker] = { layer: r.ai_layer_code, phase: r.phase_code, score: r.score, mf: r.money_flow_state };
+    }
+  } catch (_) {}
+  return _enrich;
+}
+
 const PHASE = {
   STRONG_UPTREND: "var(--green)", UPTREND: "var(--green)", ACCUMULATION: "var(--teal)",
   NEUTRAL: "var(--mut)", DISTRIBUTION: "var(--amber)", STRONG_DOWNTREND: "var(--red)", DOWNTREND: "var(--red)",
@@ -241,21 +265,124 @@ async function renderValuation() {
   <div class="disclaimer">P/E so với median layer (median ưu tiên hơn trung bình) · ${d.valid_pe_count}/${d.ticker_count} mã có P/E · display-only, KHÔNG phải khuyến nghị.</div>`;
 }
 
-function renderLocked(title) {
-  return `<div class="locked"><div class="lk-card">
-    <h2>${esc(title)}</h2>
-    <p class="subtle">Phần này riêng tư, cần đăng nhập. Sẽ kết nối <strong>Supabase</strong> (auth + lưu danh mục theo tài khoản) — đang phát triển.</p>
-    <p class="subtle" style="margin-top:10px">Phần phân tích thị trường (Cockpit, Valuation) xem được không cần đăng nhập.</p>
+function renderLogin(msg) {
+  if (currentUser) {
+    return `<div class="locked"><div class="lk-card">
+      <h2>Signed in</h2>
+      <p class="subtle">${esc(currentUser.email || "")}</p>
+      <button class="acct-btn" style="margin-top:14px" onclick="window.__logout()">Log out</button>
+    </div></div>`;
+  }
+  return `<div class="locked"><div class="lk-card" style="text-align:left">
+    <h2 style="text-align:center">US AI STOCK AGENT</h2>
+    <div class="auth-tabs" style="display:flex;gap:2px;margin:8px 0 14px;justify-content:center">
+      <button class="auth-tab active" data-mode="signin" onclick="window.__authMode('signin')">Sign in</button>
+      <button class="auth-tab" data-mode="signup" onclick="window.__authMode('signup')">Sign up</button>
+    </div>
+    <form id="auth-form" onsubmit="return window.__authSubmit(event)">
+      <input id="auth-email" type="email" placeholder="Email" autocomplete="email" required class="auth-input" />
+      <input id="auth-pass" type="password" placeholder="Password" autocomplete="current-password" required minlength="6" class="auth-input" />
+      <button type="submit" class="acct-btn" style="width:100%;margin-top:6px" id="auth-submit">Sign in</button>
+    </form>
+    <div id="auth-msg" class="subtle" style="margin-top:10px;min-height:16px;${msg ? "color:var(--red)" : ""}">${esc(msg || "")}</div>
+    <p class="subtle" style="margin-top:10px;font-size:11px">Đăng nhập để quản lý Portfolio &amp; Watchlist riêng tư. Cockpit / Valuation xem được không cần đăng nhập.</p>
   </div></div>`;
+}
+
+async function renderManager(kind) {
+  if (!currentUser) return renderLogin("Đăng nhập để xem " + kind + ".");
+  const client = supa();
+  const [items, em] = await Promise.all([
+    client.from("tracked_items").select("*").eq("kind", kind).order("sort_order").order("created_at"),
+    enrichMap(),
+  ]);
+  if (items.error) return `<div class="status-line" style="color:var(--red)">Lỗi: ${esc(items.error.message)}</div>`;
+  const rows = (items.data || []).map((it) => {
+    const e = em[it.ticker] || {};
+    return `<tr>
+      <td class="tk">${esc(it.ticker)}</td>
+      <td class="subtle" style="font-size:11px">${esc(e.layer || "—")}</td>
+      <td>${phaseBadge(e.phase)}</td>
+      <td class="r">${e.score != null ? e.score.toFixed(1) : "—"}</td>
+      <td style="color:${mfColor(e.mf)};font-size:11px">${esc(e.mf || "—")}</td>
+      <td class="r"><button class="row-del" title="Delete" onclick="window.__delItem('${it.id}')">✕</button></td>
+    </tr>`;
+  }).join("") || `<tr><td colspan="6" class="subtle" style="padding:14px">Chưa có mã — thêm mã đầu tiên.</td></tr>`;
+
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <h1 class="h1big">${kind === "PORTFOLIO" ? "PORTFOLIO" : "WATCHLIST"} MANAGER</h1>
+  </div>
+  <form class="add-form" onsubmit="return window.__addItem(event,'${kind}')" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <input class="auth-input grow" id="add-ticker" placeholder="Ticker" required style="text-transform:uppercase;max-width:140px" />
+    <button class="acct-btn" type="submit">Add</button>
+  </form>
+  <div id="mgr-msg" class="subtle" style="min-height:14px"></div>
+  <div class="table-wrap"><table class="dc"><thead><tr>
+    <th>Ticker</th><th>Layer</th><th>Phase</th><th class="r">Score</th><th>MF</th><th class="r"></th>
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /* ---------- router ---------- */
 const ROUTES = {
   cockpit: { label: "Cockpit", render: renderCockpit },
   valuation: { label: "Valuation", render: renderValuation },
-  portfolio: { label: "Portfolio", render: () => renderLocked("Portfolio Manager") },
-  watchlist: { label: "Watchlist", render: () => renderLocked("Watchlist Manager") },
-  login: { label: "Đăng nhập", render: () => renderLocked("Đăng nhập") },
+  portfolio: { label: "Portfolio", render: () => renderManager("PORTFOLIO") },
+  watchlist: { label: "Watchlist", render: () => renderManager("WATCHLIST") },
+  login: { label: "Log in", render: () => renderLogin() },
+};
+
+/* ---------- auth + CRUD handlers (global, called from inline onclick) ---------- */
+let _authMode = "signin";
+window.__authMode = function (m) {
+  _authMode = m;
+  document.querySelectorAll(".auth-tab").forEach((b) => b.classList.toggle("active", b.dataset.mode === m));
+  const btn = document.getElementById("auth-submit");
+  if (btn) btn.textContent = m === "signup" ? "Sign up" : "Sign in";
+};
+window.__authSubmit = function (e) {
+  e.preventDefault();
+  (async () => {
+    const client = supa();
+    const msg = document.getElementById("auth-msg");
+    if (!client) { if (msg) msg.textContent = "Supabase chưa sẵn sàng."; return; }
+    const email = document.getElementById("auth-email").value.trim();
+    const pass = document.getElementById("auth-pass").value;
+    if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "…"; }
+    const fn = _authMode === "signup" ? "signUp" : "signInWithPassword";
+    const { data, error } = await client.auth[fn]({ email, password: pass });
+    if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
+    if (_authMode === "signup" && !data.session) {
+      if (msg) { msg.style.color = "var(--green)"; msg.textContent = "Đã tạo tài khoản — kiểm tra email xác nhận rồi đăng nhập."; }
+      return;
+    }
+    // onAuthStateChange will refresh header + view
+  })();
+  return false;
+};
+window.__logout = async function () {
+  const client = supa();
+  if (client) await client.auth.signOut();
+};
+window.__addItem = function (e, kind) {
+  e.preventDefault();
+  (async () => {
+    const client = supa();
+    const msg = document.getElementById("mgr-msg");
+    const ticker = document.getElementById("add-ticker").value.trim().toUpperCase();
+    if (!ticker) return;
+    const { error } = await client.from("tracked_items").insert({ kind, ticker });
+    if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
+    navigate(kind === "PORTFOLIO" ? "portfolio" : "watchlist");
+  })();
+  return false;
+};
+window.__delItem = function (id) {
+  (async () => {
+    const client = supa();
+    await client.from("tracked_items").delete().eq("id", id);
+    navigate(location.hash.slice(1) || "portfolio");
+  })();
 };
 
 function setActiveTab(route) {
@@ -285,11 +412,33 @@ async function initHeader() {
   }
 }
 
-function wire() {
+function updateAuthUI() {
+  const btn = document.getElementById("acct-btn");
+  if (!btn) return;
+  btn.textContent = currentUser ? (currentUser.email || "Account") : "LOG IN";
+}
+
+async function initAuth() {
+  const client = supa();
+  if (!client) return;
+  try {
+    const { data } = await client.auth.getSession();
+    currentUser = data.session ? data.session.user : null;
+  } catch (_) { currentUser = null; }
+  updateAuthUI();
+  client.auth.onAuthStateChange((_evt, session) => {
+    currentUser = session ? session.user : null;
+    updateAuthUI();
+    navigate(location.hash.slice(1) || "cockpit");
+  });
+}
+
+async function wire() {
   document.querySelectorAll("[data-route]").forEach((b) =>
     b.addEventListener("click", () => { location.hash = b.dataset.route; }));
   window.addEventListener("hashchange", () => navigate(location.hash.slice(1)));
   initHeader();
+  await initAuth();
   navigate(location.hash.slice(1) || "cockpit");
 }
 document.addEventListener("DOMContentLoaded", wire);
