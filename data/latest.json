@@ -1,0 +1,28 @@
+{
+  "schema_version": "web-bundle.v1",
+  "as_of_date": "2026-06-24",
+  "generated_at": "2026-06-25T07:06:04Z",
+  "status": "PARTIAL",
+  "source": {
+    "app": "ai-stock-agent-service",
+    "report_bundle_version": "web-bundle.v1",
+    "source_rule_run_id": "c6a5ffac-61f0-4b76-9958-d51bd5b92d0c"
+  },
+  "screens": {
+    "cockpit": {
+      "path": "cockpit.html",
+      "as_of_date": "2026-06-24",
+      "coverage_status": "WARN"
+    },
+    "valuation": {
+      "data_path": "data/valuation-latest.json",
+      "as_of_date": "2026-06-25",
+      "coverage_status": "FRESH",
+      "freshness_age_days": 0,
+      "ticker_count": 250
+    }
+  },
+  "warnings": [
+    "PARTIAL ingest with latest EOD missing for 1 tickers"
+  ]
+}
