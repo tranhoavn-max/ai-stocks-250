@@ -1,0 +1,380 @@
+{
+  "schema_version": "cockpit-public/v1",
+  "generated_at": "2026-06-25T07:46:53Z",
+  "meta": {
+    "as_of_date": "2026-06-24",
+    "coverage_status": "WARN",
+    "source_rule_run_id": "c6a5ffac-61f0-4b76-9958-d51bd5b92d0c",
+    "source_ingest_run_id": "813446ee-d871-4aeb-8a2d-78fb9a500116",
+    "snapshot_generated_at": "2026-06-25T00:20:09Z",
+    "warnings": [
+      "PARTIAL ingest with latest EOD missing for 1 tickers"
+    ]
+  },
+  "market_gate_on": false,
+  "market_caution": {
+    "schema_version": "market-caution/v3",
+    "as_of_date": "2026-06-24",
+    "score": 79.7,
+    "tier": "elevated",
+    "fires": false,
+    "fire_threshold": 80,
+    "elevated_threshold": 60,
+    "components": {
+      "c1z": 1.054,
+      "qqq_close_location": -0.203,
+      "supz": 0.471,
+      "flow_z": -0.73,
+      "flow_mom": 0.0534,
+      "c1_warn_pct": 82.19
+    },
+    "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
+    "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
+    "evidence": "AUC det20 test=0.65 vs dd8 test=0.52; at score>=80 precision~0.65 recall~0.22 (base 0.40)",
+    "model_fit_as_of": "2026-06-09"
+  },
+  "caution_history": [
+    85.0,
+    84.8,
+    83.7,
+    87.4,
+    69.9,
+    68.8,
+    82.5,
+    83.2,
+    80.2,
+    82.0,
+    85.6,
+    79.7
+  ],
+  "caution_sessions": 12,
+  "counts": {
+    "entry": 1,
+    "continuation": 2
+  },
+  "entry": [
+    {
+      "ticker": "STX",
+      "company_name": "Seagate Technology",
+      "verdict": "ENTRY",
+      "verdict_sub": "EML Tốt",
+      "phase": "ACCUMULATION",
+      "layer": "memory_storage_networking",
+      "setup_text": "Phase: STRONG_UPTREND → ACCUMULATION",
+      "setup_tokens": [
+        "UP+→ACC",
+        "PB10 -4.37%·v0.99x",
+        "BEP·GOOD"
+      ],
+      "rank": 4,
+      "score": 95.6,
+      "score_trend": "FADING",
+      "score_short": 90.0,
+      "c1": {
+        "c15_prob": 0.398374,
+        "c15_prob_raw": 0.405094,
+        "confidence": "high",
+        "n_features": 27
+      },
+      "ddr": {
+        "ddr_5d_5pct": 0.3333333333333333,
+        "ddr_confidence": "high",
+        "ddr_n_bucket": 39,
+        "ddr_overheat": 0.8379174852652259,
+        "dd_profile_as_of_date": "2026-06-24",
+        "dd_current_pct": 0.09212646289332203,
+        "dd_to_median_pct": -0.015109873761707915,
+        "dd_median_pct": 0.10723633665502995,
+        "dd_p25_pct": 0.06977992451576454,
+        "dd_p75_pct": 0.1101560406903953,
+        "dd_worst_pct": 0.16828368556548295,
+        "dd_best_pct": 0.060624136592258716,
+        "dd_sample_size": 9,
+        "dd_confidence": "high",
+        "dd_coverage_status": "FULL_10Y",
+        "dd_p_break_median": 0.3157894736842105,
+        "dd_n_pullbacks_median": 19,
+        "dd_n_breaks_median": 6,
+        "dd_current_cycle_peak_date": "2026-06-22",
+        "dd_current_cycle_peak_price": 1094.0400390625,
+        "dd_day_streak": 279,
+        "dd_current_gain_pct": 8.564137118770875
+      },
+      "stop_ref": "MA10-1.5% 977.85 (+1.6%)",
+      "zone_low": null,
+      "zone_high": null,
+      "zone_label": null,
+      "target_zone": null,
+      "exit_action": "No exit signal",
+      "exit_signal": "EXIT_0_HOLD",
+      "supply": "NONE",
+      "supply_action": "ALLOW/HOLD",
+      "flow": "NEUTRAL",
+      "money_flow_score": -0.045857,
+      "age_bars": null,
+      "why_waiting": "ENTRY criteria met",
+      "buy_quality": "WAIT",
+      "buy_signal": "MARKET_OFF",
+      "buy_source": "ma10",
+      "price": 993.25,
+      "price_date": "2026-06-24"
+    }
+  ],
+  "continuation": [
+    {
+      "ticker": "AFRM",
+      "company_name": "Affirm Holdings",
+      "verdict": "WATCH",
+      "verdict_sub": "weak",
+      "phase": "STRONG_UPTREND",
+      "layer": "control_growth_internet",
+      "setup_text": "vol20=1.21|tr20=1.92|cloc=0.70|zone=pivot_high|confirmed_above_zone",
+      "setup_tokens": [
+        "HOLD"
+      ],
+      "rank": null,
+      "score": null,
+      "score_trend": null,
+      "score_short": null,
+      "c1": {
+        "c15_prob": 0.398374,
+        "c15_prob_raw": 0.342405,
+        "confidence": "high",
+        "n_features": 27
+      },
+      "ddr": {
+        "ddr_5d_5pct": 0.4,
+        "ddr_confidence": "medium",
+        "ddr_n_bucket": 20,
+        "ddr_overheat": 0.4780439121756487,
+        "dd_profile_as_of_date": "2026-06-24",
+        "dd_current_pct": 0.0,
+        "dd_to_median_pct": -0.1947571002269551,
+        "dd_median_pct": 0.1947571002269551,
+        "dd_p25_pct": 0.19202468425073344,
+        "dd_p75_pct": 0.2265032015546803,
+        "dd_worst_pct": 0.38436482613974715,
+        "dd_best_pct": 0.15448034081824552,
+        "dd_sample_size": 5,
+        "dd_confidence": "high",
+        "dd_coverage_status": "PARTIAL_LISTING_HISTORY",
+        "dd_p_break_median": 0.8571428571428571,
+        "dd_n_pullbacks_median": 7,
+        "dd_n_breaks_median": 6,
+        "dd_current_cycle_peak_date": "2026-06-24",
+        "dd_current_cycle_peak_price": 77.66000366210938,
+        "dd_day_streak": 46,
+        "dd_current_gain_pct": 0.15806749909666873
+      },
+      "stop_ref": "MA20 69.93 (+11.1%)",
+      "zone_low": 73.47910622188023,
+      "zone_high": 77.0999984741211,
+      "zone_label": "pivot_high",
+      "target_zone": null,
+      "exit_action": "No exit signal",
+      "exit_signal": "EXIT_0_HOLD",
+      "supply": "CONFIRM",
+      "supply_action": "ALLOW/HOLD",
+      "flow": "INFLOW",
+      "money_flow_score": null,
+      "age_bars": 4,
+      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
+      "buy_quality": "",
+      "buy_signal": "",
+      "buy_source": null,
+      "price": null,
+      "price_date": null
+    },
+    {
+      "ticker": "VRNS",
+      "company_name": "Varonis Systems",
+      "verdict": "WATCH",
+      "verdict_sub": "weak",
+      "phase": "STRONG_UPTREND",
+      "layer": "security_observability_data_devtools",
+      "setup_text": "vol20=1.92|tr20=1.22|cloc=0.93|zone=pivot_high|confirmed_above_zone",
+      "setup_tokens": [
+        "HOLD"
+      ],
+      "rank": null,
+      "score": null,
+      "score_trend": null,
+      "score_short": null,
+      "c1": {
+        "c15_prob": 0.398374,
+        "c15_prob_raw": 0.380941,
+        "confidence": "high",
+        "n_features": 27
+      },
+      "ddr": {
+        "ddr_5d_5pct": 0.15942028985507245,
+        "ddr_confidence": "high",
+        "ddr_n_bucket": 69,
+        "ddr_overheat": 0.8114635904830569,
+        "dd_profile_as_of_date": "2026-06-24",
+        "dd_current_pct": 0.0,
+        "dd_to_median_pct": -0.12642955351627122,
+        "dd_median_pct": 0.12642955351627122,
+        "dd_p25_pct": 0.0870383561486093,
+        "dd_p75_pct": 0.1445124540435232,
+        "dd_worst_pct": 0.48918023296345453,
+        "dd_best_pct": 0.06109332656745878,
+        "dd_sample_size": 12,
+        "dd_confidence": "high",
+        "dd_coverage_status": "FULL_10Y",
+        "dd_p_break_median": 0.7272727272727273,
+        "dd_n_pullbacks_median": 11,
+        "dd_n_breaks_median": 8,
+        "dd_current_cycle_peak_date": "2026-06-24",
+        "dd_current_cycle_peak_price": 37.290000915527344,
+        "dd_day_streak": 38,
+        "dd_current_gain_pct": 0.41787079837554814
+      },
+      "stop_ref": "MA20 33.61 (+11.0%)",
+      "zone_low": 33.088304144995554,
+      "zone_high": 34.61000061035156,
+      "zone_label": "pivot_high",
+      "target_zone": null,
+      "exit_action": "No exit signal",
+      "exit_signal": "EXIT_0_HOLD",
+      "supply": "CONFIRM",
+      "supply_action": "ALLOW/HOLD",
+      "flow": "INFLOW",
+      "money_flow_score": null,
+      "age_bars": 5,
+      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
+      "buy_quality": "",
+      "buy_signal": "",
+      "buy_source": null,
+      "price": null,
+      "price_date": null
+    }
+  ],
+  "momentum": {
+    "leaders": [
+      {
+        "ticker": "WDC",
+        "rs_pctl": 100,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "LITE",
+        "rs_pctl": 100,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "MU",
+        "rs_pctl": 99,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "AEHR",
+        "rs_pctl": 99,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "STX",
+        "rs_pctl": 98,
+        "top_decile": true,
+        "is_entry": true,
+        "risk_flags": [
+          {
+            "label": "C1·40",
+            "kind": "risk"
+          }
+        ],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "LWLG",
+        "rs_pctl": 98,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "INTC",
+        "rs_pctl": 98,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "CIEN",
+        "rs_pctl": 97,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "UCTT",
+        "rs_pctl": 97,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "DOCN",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "ICHR",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "VIAV",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "TER",
+        "rs_pctl": 95,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "COHR",
+        "rs_pctl": 95,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      }
+    ],
+    "coverage": [
+      248,
+      250
+    ],
+    "limit": 14,
+    "decile_n": 25
+  }
+}

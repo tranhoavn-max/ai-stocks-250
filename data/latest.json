@@ -1,18 +1,21 @@
 {
-  "schema_version": "web-bundle.v1",
+  "schema_version": "web-bundle.v2",
   "as_of_date": "2026-06-24",
-  "generated_at": "2026-06-25T07:06:04Z",
+  "generated_at": "2026-06-25T07:57:54Z",
   "status": "PARTIAL",
   "source": {
     "app": "ai-stock-agent-service",
-    "report_bundle_version": "web-bundle.v1",
     "source_rule_run_id": "c6a5ffac-61f0-4b76-9958-d51bd5b92d0c"
   },
   "screens": {
     "cockpit": {
-      "path": "cockpit.html",
+      "data_path": "data/cockpit-public.json",
       "as_of_date": "2026-06-24",
-      "coverage_status": "WARN"
+      "coverage_status": "WARN",
+      "counts": {
+        "entry": 1,
+        "continuation": 2
+      }
     },
     "valuation": {
       "data_path": "data/valuation-latest.json",
