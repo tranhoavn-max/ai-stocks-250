@@ -45,7 +45,10 @@ const phaseBadge = (code) => {
   return `<span class="pill" style="color:${c};border-color:${c};background:transparent">${esc(code)}</span>`;
 };
 const c1Cell = (c1) => {
-  const p = c1 && (c1.c15_prob ?? c1.c15_prob_raw);
+  // Prefer the per-ticker raw model probability; the calibrated c15_prob collapses
+  // to ~9 quantile bins, so it's coarse. Keeps the Cockpit C1 == enrich.c1_prob
+  // shown by the Portfolio table and the ticker-detail panel.
+  const p = c1 && (c1.c15_prob_raw ?? c1.c15_prob);
   if (p == null) return `<span class="subtle">—</span>`;
   const pct = Math.round(p * 100);
   const c = pct >= 40 ? "var(--red)" : pct >= 30 ? "var(--amber)" : "var(--txt)";
@@ -419,7 +422,7 @@ async function renderTickerDetail(tk) {
     row("Exit risk", `${fnum(d.exit_risk_score, 0)} / 100`, vColor, "detail.exit_risk_score"),
   ].join("");
 
-  // gauges: C1 (ML, == tables), DDR (empirical, distinct), EML (layer-level, PROVISIONAL)
+  // gauges: C1 (ML, == tables), DDR (empirical, distinct), EML (per-ticker model, PROVISIONAL)
   const c1c = (c1 ?? 0) >= 0.4 ? "var(--red)" : (c1 ?? 0) >= 0.3 ? "var(--amber)" : "var(--txt)";
   const ddrc = (d.ddr_5d5pct ?? 0) >= 0.4 ? "var(--red)" : (d.ddr_5d5pct ?? 0) >= 0.25 ? "var(--amber)" : "var(--green)";
   const gauges = `
@@ -430,8 +433,8 @@ async function renderTickerDetail(tk) {
       <div class="g-d"><h4>DDR Empirical <span class="tag">5d / +5%</span></h4>
         <p>Drawdown-profile base rate.</p></div></div>
     <div class="td-gauge"><div class="g-num" style="color:var(--amber)">${fprob(eml)}</div>
-      <div class="g-d"><h4>EML Entry Quality <span class="tag prov">PROVISIONAL · layer-level</span></h4>
-        <p>Broadcast per AI-layer (~10 distinct values; many null), not a native per-ticker probability.
+      <div class="g-d"><h4>EML Entry Quality <span class="tag prov">PROVISIONAL</span></h4>
+        <p>Per-ticker entry-quality model probability; null when the model didn't score this ticker.
         <span class="src">enrich.eml_prob</span></p></div></div>`;
 
   // slider range + markers from real levels
