@@ -1,7 +1,7 @@
 {
   "schema_version": "ticker-enrich/v1",
   "as_of_date": "2026-06-24",
-  "generated_at": "2026-06-25T08:38:31Z",
+  "generated_at": "2026-06-25T09:04:50Z",
   "coverage_status": "WARN",
   "count": 250,
   "tickers": {

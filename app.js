@@ -163,7 +163,7 @@ async function renderCockpit() {
     let rk = m.risk_flags && m.risk_flags.length
       ? m.risk_flags.map((f) => `<span class="flag">${esc(f.label)}</span>`).join("")
       : (m.snapshot_clean ? `<span class="ok">✓</span>` : `<span class="unk">?</span>`);
-    return `<span class="m">${star}<strong>${esc(m.ticker)}</strong> <span class="rs">RS${m.rs_pctl}</span>${d1}${rk}</span>`;
+    return `<span class="m" data-tk="${esc(m.ticker)}">${star}<strong>${esc(m.ticker)}</strong> <span class="rs">RS${m.rs_pctl}</span>${d1}${rk}</span>`;
   }).join("") : `<span class="subtle">Momentum RS252 unavailable.</span>`;
 
   const gateColor = gate ? "var(--green)" : "var(--amber)";
@@ -362,7 +362,199 @@ async function renderManager(kind) {
   <div class="table-wrap"><table class="dc"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
+/* ---------- ticker detail (deep-link #t/<TICKER>) ---------- */
+let _detail = null;
+async function detailMap() {
+  if (_detail) return _detail;
+  try { _detail = (await getJSON("ticker-detail.json")).tickers || {}; }
+  catch (_) { _detail = {}; }
+  return _detail;
+}
+
+// Real exit ladder (sourced from rule.exit_signal_code) -> label + accent.
+const EXIT_LADDER = {
+  EXIT_0_HOLD: ["HOLD", "var(--green)", "No exit signal. Structure intact."],
+  EXIT_1_TIGHTEN: ["TIGHTEN", "var(--teal)", "Tighten trailing stop; no new buys."],
+  EXIT_2_TRIM: ["TRIM", "var(--amber)", "Reduce risk / trim exposure."],
+  EXIT_3_EXIT: ["EXIT", "var(--red)", "Exit on close confirmation."],
+  EXIT_3_HARD_EXIT: ["HARD EXIT", "var(--red)", "Hard exit. Structure broken."],
+};
+const fnum = (v, dp = 2) => v == null ? "—"
+  : (+v).toLocaleString(undefined, { minimumFractionDigits: dp, maximumFractionDigits: dp });
+const fprob = (v) => v == null ? "—" : `${(v * 100).toFixed(1)}%`;
+const fpctv = (v, dp = 1) => v == null ? "—" : `${v >= 0 ? "+" : ""}${(+v).toFixed(dp)}%`;
+
+let _simCfg = null; // handed to wireDetail() after innerHTML assignment
+
+async function renderTickerDetail(tk) {
+  const [em, dm] = await Promise.all([enrichMap(), detailMap()]);
+  const e = em[tk] || {};
+  const d = dm[tk] || {};
+  if (!em[tk] && !dm[tk]) {
+    return `<div class="td-top"><button class="pill" onclick="window.__backDetail()">‹ Back</button></div>
+      <div class="status-line" style="color:var(--red)">No data for ${esc(tk)}.</div>`;
+  }
+
+  const close = d.close, ma20 = d.ma20, ma50 = d.ma50, ma200 = d.ma200;
+  const [vLabel, vColor, vMean] = EXIT_LADDER[d.exit_signal_code] || [d.exit_signal_code || "—", "var(--mut)", ""];
+  const c1 = e.c1_prob, eml = e.eml_prob;
+  const mf = e.flow || "—", mfColorV = e.flow_color || "var(--mut)";
+  const phase = e.phase;
+
+  const row = (k, v, cls, src) =>
+    `<div class="td-r"><span class="td-k">${esc(k)}${src ? ` <span class="src">${esc(src)}</span>` : ""}</span>
+      <span class="td-v" ${cls ? `style="color:${cls}"` : ""}>${v}</span></div>`;
+
+  const specRows = [
+    row("Phase", phaseBadge(phase), "", "enrich.phase"),
+    row("Score / Rank", `${fnum(e.score, 2)} / #${e.lead?.rank ?? "—"}`, "", "enrich"),
+    row("Momentum", `${esc(e.lead?.trend || "—")} (short ${fnum(d.score_short, 1)})`,
+      e.lead?.trend === "RISING" ? "var(--green)" : e.lead?.trend === "FADING" ? "var(--red)" : "", "enrich+detail"),
+    row("Money flow", `${esc(mf)} (${fnum(d.money_flow_score, 3)} · p${fnum(d.money_flow_percentile, 0)})`, mfColorV, "detail"),
+    row("MA20 / MA50", `${fnum(ma20)} / ${fnum(ma50)}`, "", "detail.pullback"),
+    row("MA200 / Prior-20H", `${fnum(ma200)} / ${fnum(d.prior_high_20)}`, "", "detail"),
+    row("Stop reference", esc(e.stop_ref || "—"), "var(--amber)", "enrich.stop_ref"),
+    row("Peak / Drawdown", `${fnum(d.peak_price)} / ${fpctv(d.drawdown_pct)}`,
+      (d.drawdown_pct ?? 0) < -15 ? "var(--red)" : "var(--amber)", "detail+derived"),
+    row("Exit risk", `${fnum(d.exit_risk_score, 0)} / 100`, vColor, "detail.exit_risk_score"),
+  ].join("");
+
+  // gauges: C1 (ML, == tables), DDR (empirical, distinct), EML (layer-level, PROVISIONAL)
+  const c1c = (c1 ?? 0) >= 0.4 ? "var(--red)" : (c1 ?? 0) >= 0.3 ? "var(--amber)" : "var(--txt)";
+  const ddrc = (d.ddr_5d5pct ?? 0) >= 0.4 ? "var(--red)" : (d.ddr_5d5pct ?? 0) >= 0.25 ? "var(--amber)" : "var(--green)";
+  const gauges = `
+    <div class="td-gauge"><div class="g-num" style="color:${c1c}">${fprob(c1)}</div>
+      <div class="g-d"><h4>Correction Risk</h4>
+        <p>Short-term drop probability (same value as the tables). <span class="src">enrich.c1_prob</span></p></div></div>
+    <div class="td-gauge"><div class="g-num" style="color:${ddrc}">${fprob(d.ddr_5d5pct)}</div>
+      <div class="g-d"><h4>DDR Empirical <span class="tag">5d / +5%</span></h4>
+        <p>Drawdown-profile base rate.</p></div></div>
+    <div class="td-gauge"><div class="g-num" style="color:var(--amber)">${fprob(eml)}</div>
+      <div class="g-d"><h4>EML Entry Quality <span class="tag prov">PROVISIONAL · layer-level</span></h4>
+        <p>Broadcast per AI-layer (~10 distinct values; many null), not a native per-ticker probability.
+        <span class="src">enrich.eml_prob</span></p></div></div>`;
+
+  // slider range + markers from real levels
+  const levels = { Close: close, MA20: ma20, MA50: ma50, MA200: ma200, "Prior20H": d.prior_high_20, Peak: d.peak_price };
+  const have = Object.values(levels).filter((v) => v != null);
+  const lo = have.length ? Math.min(...have) * 0.96 : 0;
+  const hi = have.length ? Math.max(...have) * 1.03 : 1;
+  const span = (hi - lo) || 1;
+  const pos = (v) => v == null ? null : Math.max(0, Math.min(100, (v - lo) / span * 100));
+  // Place markers in priority order, skipping any that crowd an already-kept
+  // label (<6% apart) so labels never overlap; align edge labels inward.
+  const MIN_GAP = 3;
+  const kept = [];
+  for (const [n, v] of [["Close", close], ["MA20", ma20], ["MA50", ma50], ["MA200", ma200], ["Peak", d.peak_price]]) {
+    const p = pos(v);
+    if (p == null || kept.some((k) => Math.abs(k.p - p) < MIN_GAP)) continue;
+    kept.push({ n, v, p });
+  }
+  kept.sort((a, b) => a.p - b.p);
+  const lblTf = (p) => p < 8 ? "translateX(0)" : p > 92 ? "translateX(-100%)" : "translateX(-50%)";
+  // Stagger labels onto two rows so adjacent ones never collide horizontally.
+  const mkHtml = kept.map(({ n, v, p }, i) =>
+    `<div class="td-mk" style="left:${p.toFixed(1)}%"><div class="ln"></div>` +
+    `<div class="lb" style="top:${i % 2 ? 22 : 9}px;transform:${lblTf(p)}">${n} ${fnum(v)}</div></div>`).join("");
+
+  _simCfg = { lo, hi, ma20, ma50, ma200, close };
+
+  const sc = (zone, color, title, body, ref) =>
+    `<div class="td-sc" data-zone="${zone}" style="border-left-color:${color}"><div class="t">
+      <span>${title}</span><span class="tag">${zone}</span></div>
+      <div class="b">${body}</div><div class="ref">${esc(ref)}</div></div>`;
+  const scs = [
+    sc("ABOVE_MA20", "var(--green)", "Reclaim & hold above MA20",
+      `Holds above MA20 (${fnum(ma20)}). Constructive — typical: <b>EXIT_0_HOLD / EXIT_1_TIGHTEN</b>.`,
+      `trigger: close >= MA20 ${fnum(ma20)}`),
+    sc("MA50_MA20", "var(--teal)", "Between MA50 and MA20 (watch)",
+      `Below MA20 (${fnum(ma20)}), above MA50 (${fnum(ma50)}). Tighten; no new buys. Typical: <b>EXIT_1_TIGHTEN</b>.`,
+      `band: MA50 ${fnum(ma50)} .. MA20 ${fnum(ma20)}`),
+    sc("MA200_MA50", "var(--amber)", "Between MA200 and MA50 (trim)",
+      `Below MA50 (${fnum(ma50)}), above MA200 (${fnum(ma200)}). Reduce risk. Typical: <b>EXIT_2_TRIM</b>.`,
+      `band: MA200 ${fnum(ma200)} .. MA50 ${fnum(ma50)}`),
+    sc("BELOW_MA200", "var(--red)", "Below MA200 (breakdown)",
+      `Breaks MA200 (${fnum(ma200)}). Major invalidation. Typical: <b>EXIT_3_EXIT / HARD_EXIT</b>.`,
+      `trigger: close < MA200 ${fnum(ma200)}`),
+  ].join("");
+
+  return `
+  <div class="td-top">
+    <button class="pill td-back" onclick="window.__backDetail()">‹ Back</button>
+    <h1 class="h1big" style="margin:0">${esc(tk)}</h1>
+    <span class="pill" style="color:var(--amber);border-color:var(--amber)">${esc(d.trade_date || "—")}</span>
+    <span class="subtle">entry_zone: <b>${esc(d.entry_zone || "—")}</b> · pullback <span style="color:${/MARKET_OFF|WAIT|REJECT|AVOID/.test(`${d.pullback_signal || ""} ${d.pullback_quality || ""}`) ? "var(--red)" : "var(--mut)"}">${esc(d.pullback_signal || "—")}/${esc(d.pullback_quality || "—")}</span></span>
+  </div>
+
+  <div class="td-grid">
+    <div>
+      <div class="panel">
+        <div class="td-h">Profile context <span class="src">verified</span></div>
+        <div class="td-pxr"><span class="td-pxl">Close</span><span class="td-px">${fnum(close)}</span></div>
+        <div class="td-rows">${specRows}</div>
+        <div class="td-verdict">
+          <span class="td-vl">Live model verdict</span>
+          <span class="td-vv" style="color:${vColor}">${esc(vLabel)}</span>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:14px">
+        <div class="td-h">Quality indicators</div>
+        ${gauges}
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="td-h">Price-zone simulator <span class="tag deriv">DERIVED — not the live model</span></div>
+        <div class="td-pxr"><span class="td-pxl">Simulated price</span><span class="td-px" id="simPx">${fnum(close)}</span></div>
+        <input type="range" min="${lo.toFixed(2)}" max="${hi.toFixed(2)}" step="0.01"
+          value="${(close ?? lo).toFixed(2)}" class="td-slider" id="td-sl">
+        <div class="td-marks">${mkHtml}</div>
+        <div class="td-verdict">
+          <span class="td-vl">Zone (price-level heuristic)</span>
+          <span class="td-vv" id="zoneVal" style="color:var(--amber)">—</span>
+        </div>
+        <div class="td-note"><strong>Read this right:</strong> the slider maps a hypothetical price onto real
+          MA bands — a <strong>derived heuristic</strong>, not the model re-run (the model also uses money flow,
+          candles, risk scores). The authoritative call is the <strong>Live model verdict</strong> on the left.</div>
+      </div>
+      <div class="td-scs">${scs}</div>
+    </div>
+  </div>`;
+}
+
+function wireDetail() {
+  const cfg = _simCfg;
+  const sl = document.getElementById("td-sl");
+  if (!cfg || !sl) return;
+  const simPx = document.getElementById("simPx");
+  const zoneVal = document.getElementById("zoneVal");
+  const cards = [...document.querySelectorAll(".td-sc")];
+  const COL = { ABOVE_MA20: "var(--green)", MA50_MA20: "var(--teal)", MA200_MA50: "var(--amber)", BELOW_MA200: "var(--red)" };
+  const TXT = {
+    ABOVE_MA20: "ABOVE MA20 · constructive", MA50_MA20: "MA50–MA20 · watch/tighten",
+    MA200_MA50: "MA50 broken · trim", BELOW_MA200: "below MA200 · breakdown",
+  };
+  const zoneFor = (p) =>
+    (cfg.ma20 != null && p >= cfg.ma20) ? "ABOVE_MA20"
+      : (cfg.ma50 != null && p >= cfg.ma50) ? "MA50_MA20"
+        : (cfg.ma200 != null && p >= cfg.ma200) ? "MA200_MA50" : "BELOW_MA200";
+  const upd = (p) => {
+    p = parseFloat(p);
+    if (simPx) simPx.textContent = p.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const z = zoneFor(p);
+    if (zoneVal) { zoneVal.textContent = TXT[z]; zoneVal.style.color = COL[z]; }
+    sl.style.setProperty("--zc", COL[z]);
+    cards.forEach((c) => c.classList.toggle("on", c.dataset.zone === z));
+  };
+  sl.addEventListener("input", (ev) => upd(ev.target.value));
+  upd(sl.value);
+}
+
+window.__backDetail = function () { location.hash = _lastBase || "cockpit"; };
+
 /* ---------- router ---------- */
+let _lastBase = "cockpit";
 const ROUTES = {
   cockpit: { label: "Cockpit", render: renderCockpit },
   valuation: { label: "Valuation", render: renderValuation },
@@ -430,9 +622,23 @@ function setActiveTab(route) {
 }
 
 async function navigate(route) {
-  const r = ROUTES[route] ? route : "cockpit";
-  setActiveTab(r);
   const view = document.getElementById("view");
+  if (route && route.indexOf("t/") === 0) {
+    const tk = decodeURIComponent(route.slice(2)).trim().toUpperCase();
+    setActiveTab(_lastBase);
+    view.innerHTML = `<div class="status-line">Loading ${esc(tk)}…</div>`;
+    try {
+      view.innerHTML = await renderTickerDetail(tk);
+      wireDetail();
+      window.scrollTo(0, 0);
+    } catch (e) {
+      view.innerHTML = `<div class="status-line" style="color:var(--red)">Failed to load ${esc(tk)}: ${esc(e.message)}</div>`;
+    }
+    return;
+  }
+  const r = ROUTES[route] ? route : "cockpit";
+  _lastBase = r;
+  setActiveTab(r);
   view.innerHTML = `<div class="status-line">Loading ${esc(ROUTES[r].label)}…</div>`;
   try {
     view.innerHTML = await ROUTES[r].render();
@@ -475,6 +681,13 @@ async function initAuth() {
 async function wire() {
   document.querySelectorAll("[data-route]").forEach((b) =>
     b.addEventListener("click", () => { location.hash = b.dataset.route; }));
+  // Click any ticker cell/chip -> open its detail (deep-link #t/<TICKER>).
+  document.getElementById("view").addEventListener("click", (e) => {
+    const el = e.target.closest(".tk,[data-tk]");
+    if (!el) return;
+    const tk = (el.dataset.tk || el.textContent || "").trim().toUpperCase();
+    if (tk) location.hash = "t/" + encodeURIComponent(tk);
+  });
   window.addEventListener("hashchange", () => navigate(location.hash.slice(1)));
   initHeader();
   await initAuth();
