@@ -26,17 +26,12 @@ function supa() {
   }
   return sb;
 }
-// Enrichment map ticker -> {layer, phase, score, mf} from the public valuation feed.
+// Full-universe per-ticker enrichment (cockpit-grade) from the public feed.
 let _enrich = null;
 async function enrichMap() {
   if (_enrich) return _enrich;
-  _enrich = {};
-  try {
-    const v = await getJSON("valuation-latest.json");
-    for (const r of v.tickers || []) {
-      _enrich[r.ticker] = { layer: r.ai_layer_code, phase: r.phase_code, score: r.score, mf: r.money_flow_state };
-    }
-  } catch (_) {}
+  try { _enrich = (await getJSON("ticker-enrich.json")).tickers || {}; }
+  catch (_) { _enrich = {}; }
   return _enrich;
 }
 
@@ -289,6 +284,29 @@ function renderLogin(msg) {
   </div></div>`;
 }
 
+function badgeHtml(label, color) {
+  if (!label || label === "—") return `<span class="subtle">—</span>`;
+  return `<span class="pill" style="color:${color};border-color:${color};background:transparent">${esc(label)}</span>`;
+}
+function c1Pct(prob) {
+  if (prob == null) return `<span class="subtle">—</span>`;
+  const pct = Math.round(prob * 100);
+  const c = pct >= 40 ? "var(--red)" : pct >= 30 ? "var(--amber)" : "var(--txt)";
+  return `<span style="color:${c}">${pct}%</span>`;
+}
+function leadHtml(lead) {
+  if (!lead || lead.rank == null) return `<span class="subtle">—</span>`;
+  const sc = lead.score != null ? `·${lead.score}` : "";
+  const tr = lead.trend ? ` ${esc(lead.trend)}` : "";
+  return `<span>#${lead.rank}${sc}${tr}</span>`;
+}
+function emlHtml(prob, conflict) {
+  if (prob == null) return `<span class="subtle">—</span>`;
+  const c = prob >= 0.5 ? "var(--green)" : "var(--txt)";
+  const warn = conflict ? ` <span style="color:var(--red)" title="EML cao nhưng verdict EXIT/RISK">⚠</span>` : "";
+  return `<span style="color:${c}">${Math.round(prob * 100)}%</span>${warn}`;
+}
+
 async function renderManager(kind) {
   if (!currentUser) return renderLogin("Đăng nhập để xem " + kind + ".");
   const client = supa();
@@ -297,30 +315,51 @@ async function renderManager(kind) {
     enrichMap(),
   ]);
   if (items.error) return `<div class="status-line" style="color:var(--red)">Lỗi: ${esc(items.error.message)}</div>`;
+  const isPort = kind === "PORTFOLIO";
+  const del = (id) => `<td class="r"><button class="row-del" title="Delete" onclick="window.__delItem('${id}')">✕</button></td>`;
+
   const rows = (items.data || []).map((it) => {
     const e = em[it.ticker] || {};
+    const sc = e.score != null ? (+e.score).toFixed(1) : "—";
+    const mf = `<td style="color:${e.flow_color || "var(--mut)"};font-size:11px">${esc(e.flow || "—")}</td>`;
+    if (isPort) {
+      return `<tr>
+        <td class="tk">${esc(it.ticker)}</td>
+        <td>${badgeHtml(e.action, e.action_color)}</td>
+        <td>${badgeHtml(e.health, e.health_color)}</td>
+        <td>${c1Pct(e.c1_prob)}</td>
+        ${mf}
+        <td>${phaseBadge(e.phase)}</td>
+        <td class="r">${sc}</td>
+        <td class="subtle">${esc(e.stop_ref || "—")}</td>
+        ${del(it.id)}</tr>`;
+    }
     return `<tr>
       <td class="tk">${esc(it.ticker)}</td>
-      <td class="subtle" style="font-size:11px">${esc(e.layer || "—")}</td>
+      <td>${badgeHtml(e.status, e.status_color)}</td>
+      ${mf}
       <td>${phaseBadge(e.phase)}</td>
-      <td class="r">${e.score != null ? e.score.toFixed(1) : "—"}</td>
-      <td style="color:${mfColor(e.mf)};font-size:11px">${esc(e.mf || "—")}</td>
-      <td class="r"><button class="row-del" title="Delete" onclick="window.__delItem('${it.id}')">✕</button></td>
-    </tr>`;
-  }).join("") || `<tr><td colspan="6" class="subtle" style="padding:14px">Chưa có mã — thêm mã đầu tiên.</td></tr>`;
+      <td class="subtle">${leadHtml(e.lead)}</td>
+      <td class="r">${emlHtml(e.eml_prob, e.eml_conflict)}</td>
+      ${del(it.id)}</tr>`;
+  }).join("");
+
+  const ncol = isPort ? 9 : 7;
+  const body = rows || `<tr><td colspan="${ncol}" class="subtle" style="padding:14px">Chưa có mã — thêm mã đầu tiên.</td></tr>`;
+  const head = isPort
+    ? `<th>Ticker</th><th>Action</th><th>Health</th><th>C1</th><th>MF</th><th>Phase</th><th class="r">Score</th><th>Stop</th><th class="r"></th>`
+    : `<th>Ticker</th><th>Status</th><th>MF</th><th>Phase</th><th>Lead</th><th class="r">EML</th><th class="r"></th>`;
 
   return `
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-    <h1 class="h1big">${kind === "PORTFOLIO" ? "PORTFOLIO" : "WATCHLIST"} MANAGER</h1>
+    <h1 class="h1big">${isPort ? "PORTFOLIO" : "WATCHLIST"} MANAGER</h1>
   </div>
   <form class="add-form" onsubmit="return window.__addItem(event,'${kind}')" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
     <input class="auth-input grow" id="add-ticker" placeholder="Ticker" required style="text-transform:uppercase;max-width:140px" />
     <button class="acct-btn" type="submit">Add</button>
   </form>
   <div id="mgr-msg" class="subtle" style="min-height:14px"></div>
-  <div class="table-wrap"><table class="dc"><thead><tr>
-    <th>Ticker</th><th>Layer</th><th>Phase</th><th class="r">Score</th><th>MF</th><th class="r"></th>
-  </tr></thead><tbody>${rows}</tbody></table></div>`;
+  <div class="table-wrap"><table class="dc"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 
 /* ---------- router ---------- */
