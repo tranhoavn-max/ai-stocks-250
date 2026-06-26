@@ -224,8 +224,38 @@ async function renderCockpit() {
   </tr></thead><tbody>${ondeckRows}</tbody></table></div>`;
 }
 
+// Valuation freshness is authoritative in the bundle manifest (data/latest.json →
+// screens.valuation), built from the valuation snapshot pointer. The dated payload
+// (valuation-latest.json) does NOT carry coverage_status, so we read it here.
+// Never default to FRESH: a missing/unknown status renders neutral UNKNOWN so a stale
+// P/E can never be mislabeled green (AGENTS.md data-integrity guardrail).
+const VAL_FRESH = {
+  FRESH: { label: "FRESH", color: "var(--green)" },
+  STALE: { label: "STALE", color: "var(--amber)" },
+  UNKNOWN: { label: "FRESHNESS UNKNOWN", color: "var(--mut)" },
+};
+async function valuationFreshness() {
+  try {
+    const v = ((await getJSON("latest.json")).screens || {}).valuation || {};
+    return { status: v.coverage_status || "UNKNOWN", age: v.freshness_age_days ?? null };
+  } catch (_) {
+    return { status: "UNKNOWN", age: null };
+  }
+}
+
 async function renderValuation() {
   const d = await getJSON("valuation-latest.json");
+  const fr = await valuationFreshness();
+  const meta = VAL_FRESH[fr.status] || VAL_FRESH.UNKNOWN;
+  const ageTxt = fr.age != null ? ` · ${fr.age}d old` : "";
+  const staleNote =
+    fr.status === "STALE"
+      ? `<div class="banner-amber" style="margin-top:8px">⚠ Valuation fundamentals are ${
+          fr.age != null ? `${fr.age}d ` : ""
+        }old (as_of ${esc(d.as_of_date)}); fundamentals refresh is not part of the daily EOD flow — refresh before relying on P/E.</div>`
+      : fr.status === "UNKNOWN"
+        ? `<div class="banner-amber" style="margin-top:8px">⚠ Valuation freshness is unknown — treat P/E as possibly stale.</div>`
+        : "";
   const rows = [...(d.tickers || [])].sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
   const tableRows = rows.map((r) => {
     const vs = r.pe_vs_layer_pct;
@@ -251,7 +281,8 @@ async function renderValuation() {
 
   return `
   <div><h1 class="h1big">P/E VALUATION LENS</h1>
-    <div class="subtle" style="margin-top:4px">as_of ${esc(d.as_of_date)} · <strong style="color:var(--green)">FRESH</strong></div></div>
+    <div class="subtle" style="margin-top:4px">as_of ${esc(d.as_of_date)} · <strong style="color:${meta.color}">${meta.label}</strong>${ageTxt}</div>
+    ${staleNote}</div>
   <div class="panel">
     <div class="subtle" style="text-transform:uppercase;font-size:10.5px;letter-spacing:.05em;margin-bottom:8px">Legend</div>
     <div class="legend">${legend}</div>
