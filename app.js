@@ -90,34 +90,78 @@ function chipVal(key, v) {
   return key === "c1_warn_pct" ? (+v).toFixed(2) : `${v >= 0 ? "+" : ""}${(+v).toFixed(2)}`;
 }
 
-function sparkline(vals, w = 140, h = 34) {
+// Wide responsive caution sparkline: area fill + ELEVATED/HIGH threshold lines +
+// latest-value marker. Domain padded to keep both thresholds in view.
+function sparkline(vals, elevated = 60, fire = 80) {
   if (!vals || vals.length < 2) return "";
-  const min = Math.min(...vals), max = Math.max(...vals), rng = (max - min) || 1;
-  const pts = vals.map((v, i) => {
-    const x = (i / (vals.length - 1)) * w;
-    const y = h - ((v - min) / rng) * (h - 4) - 2;
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-  const [lx, ly] = pts[pts.length - 1].split(",");
-  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible" aria-hidden="true">
-    <polyline points="${pts.join(" ")}" fill="none" stroke="var(--amber)" stroke-width="1.4"></polyline>
-    <circle cx="${lx}" cy="${ly}" r="2.4" fill="var(--amber)"></circle></svg>`;
+  const W = 300, H = 52, PAD = 5, n = vals.length;
+  const lo = Math.min(...vals, elevated), hi = Math.max(...vals, fire);
+  const padv = ((hi - lo) || 1) * 0.08, dlo = lo - padv, drng = (hi + padv) - dlo;
+  const Y = (v) => H - PAD - ((v - dlo) / drng) * (H - 2 * PAD);
+  const X = (i) => 3 + (i / (n - 1)) * (W - 6);
+  const xy = vals.map((v, i) => [X(i), Y(v)]);
+  const line = xy.map((q) => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join(" ");
+  const last = xy[n - 1];
+  const area = `M${xy[0][0].toFixed(1)},${H - 1}`
+    + xy.map((q) => `L${q[0].toFixed(1)},${q[1].toFixed(1)}`).join("")
+    + `L${last[0].toFixed(1)},${H - 1}Z`;
+  const yE = Y(elevated).toFixed(1), yF = Y(fire).toFixed(1);
+  return `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block;overflow:visible" aria-hidden="true">
+    <defs><linearGradient id="cauSpark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff9e1b" stop-opacity=".28"/><stop offset="1" stop-color="#ff9e1b" stop-opacity="0"/></linearGradient></defs>
+    <line x1="3" x2="297" y1="${yF}" y2="${yF}" stroke="var(--red)" stroke-opacity=".34" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
+    <line x1="3" x2="297" y1="${yE}" y2="${yE}" stroke="var(--amber)" stroke-opacity=".30" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
+    <path d="${area}" fill="url(#cauSpark)" stroke="none"></path>
+    <polyline points="${line}" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline>
+    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="var(--amber)" stroke="var(--panel)" stroke-width="1.3" vector-effect="non-scaling-stroke"></circle></svg>`;
 }
 
+// Go board with depth — gradient stones, drop shadow, specular highlight, a gold
+// "decisive move" with glow + last-move marker, and a coral "sacrifice" triangle.
+// w=you · b=market · gold=decisive move · sac=sacrifice stone.
 function goBoardSVG() {
-  const lines = [];
-  for (let p = 15; p <= 135; p += 15) {
-    lines.push(`<line x1="${p}" y1="15" x2="${p}" y2="135"></line>`);
-    lines.push(`<line x1="15" y1="${p}" x2="135" y2="${p}"></line>`);
+  const N = 9, M = 38, STEP = 26, R = 12;
+  const pos = (i) => M + i * STEP;
+  const STONES = [
+    { c: 4, r: 4, t: "w" }, { c: 4, r: 5, t: "w" }, { c: 5, r: 5, t: "w" },
+    { c: 5, r: 6, t: "w" }, { c: 6, r: 6, t: "w" }, { c: 6, r: 7, t: "w" }, { c: 7, r: 6, t: "w" },
+    { c: 2, r: 6, t: "w" }, { c: 2, r: 3, t: "gold" }, { c: 6, r: 1, t: "sac" },
+    { c: 3, r: 2, t: "b" }, { c: 4, r: 2, t: "b" }, { c: 5, r: 2, t: "b" },
+    { c: 7, r: 3, t: "b" }, { c: 7, r: 4, t: "b" }, { c: 2, r: 4, t: "b" }, { c: 3, r: 5, t: "b" }, { c: 6, r: 4, t: "b" },
+  ];
+  const STARS = [[2, 2], [6, 2], [4, 4], [2, 6], [6, 6]];
+  const FILL = { w: "url(#gW)", b: "url(#gB)", gold: "url(#gG)", sac: "url(#gW)" };
+  let g = "";
+  for (let i = 0; i < N; i++) {
+    g += `<line x1="${pos(0)}" y1="${pos(i)}" x2="${pos(8)}" y2="${pos(i)}" stroke="#363F49" stroke-width=".9"/>`;
+    g += `<line x1="${pos(i)}" y1="${pos(0)}" x2="${pos(i)}" y2="${pos(8)}" stroke="#363F49" stroke-width=".9"/>`;
   }
-  const stone = (x, y, fill, stroke) =>
-    `<circle cx="${x}" cy="${y}" r="6.5" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="1.4"` : ""}></circle>`;
-  return `<svg width="150" height="150" viewBox="0 0 150 150" aria-label="Go board">
-    <rect x="6" y="6" width="138" height="138" fill="#0a0a0a" stroke="#222"></rect>
-    <g stroke="#2b2b2b" stroke-width=".8">${lines.join("")}</g>
-    ${stone(45, 60, "#e2e2e2")}${stone(60, 75, "#e2e2e2")}${stone(45, 90, "#e2e2e2")}
-    ${stone(75, 75, "#ff9e1b")}
-    ${stone(90, 60, "#0a0a0a", "#6a6a6a")}${stone(90, 90, "#0a0a0a", "#6a6a6a")}${stone(60, 105, "#e2e2e2")}</svg>`;
+  STARS.forEach(([c, r]) => { g += `<circle cx="${pos(c)}" cy="${pos(r)}" r="2.2" fill="#525D67"/>`; });
+  let st = "";
+  STONES.forEach((s) => {
+    const x = pos(s.c), y = pos(s.r);
+    if (s.t === "gold") {
+      st += `<circle cx="${x}" cy="${y}" r="${R + 6}" fill="var(--amber)" fill-opacity=".14"/>`;
+      st += `<circle cx="${x}" cy="${y}" r="${R + 3}" fill="none" stroke="var(--amber)" stroke-opacity=".35" stroke-width="1"/>`;
+    }
+    const stroke = s.t === "b" ? "#525D67" : (s.t === "gold" ? "#ffcf8c" : "#AAB0B6");
+    st += `<circle cx="${x}" cy="${y}" r="${R}" fill="${FILL[s.t]}" stroke="${stroke}" stroke-width=".6" filter="url(#goSh)"/>`;
+    st += `<ellipse cx="${x - 3.4}" cy="${y - 4}" rx="3.6" ry="2.4" fill="#fff" fill-opacity="${s.t === "b" ? 0.18 : 0.5}"/>`;
+    if (s.t === "gold") st += `<circle cx="${x}" cy="${y}" r="2.6" fill="#3B2E12"/>`;
+    if (s.t === "sac") st += `<path d="M${x} ${y - 5} L${x + 4.6} ${y + 3.6} L${x - 4.6} ${y + 3.6} Z" fill="none" stroke="#ff7a59" stroke-width="1.7" stroke-linejoin="round"/>`;
+  });
+  return `<svg width="158" height="158" viewBox="0 0 280 280" aria-label="Go board">
+    <defs>
+      <radialGradient id="gW" cx="36%" cy="30%" r="78%"><stop offset="0%" stop-color="#FFFFFF"/><stop offset="50%" stop-color="#E6E9EC"/><stop offset="100%" stop-color="#BBC0C6"/></radialGradient>
+      <radialGradient id="gB" cx="36%" cy="30%" r="82%"><stop offset="0%" stop-color="#404A55"/><stop offset="48%" stop-color="#1C242C"/><stop offset="100%" stop-color="#080C10"/></radialGradient>
+      <radialGradient id="gG" cx="36%" cy="30%" r="82%"><stop offset="0%" stop-color="#F6DEA3"/><stop offset="50%" stop-color="#D2AB55"/><stop offset="100%" stop-color="#9A7327"/></radialGradient>
+      <radialGradient id="goBd" cx="42%" cy="36%" r="78%"><stop offset="0%" stop-color="#141A22"/><stop offset="100%" stop-color="#0E131A"/></radialGradient>
+      <filter id="goSh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity="0.55"/></filter>
+    </defs>
+    <rect x="8" y="8" width="264" height="264" rx="14" fill="url(#goBd)" stroke="#2A333C" stroke-width="1"/>
+    <rect x="8.5" y="8.5" width="263" height="263" rx="13.5" fill="none" stroke="rgba(255,158,27,.10)" stroke-width="1"/>
+    <rect x="${pos(5.45)}" y="${pos(5.45)}" width="${pos(8) - pos(5.45) + 8}" height="${pos(8) - pos(5.45) + 8}" rx="7" fill="var(--amber)" fill-opacity="0.06"/>
+    ${g}${st}</svg>`;
 }
 
 window.__toggleGate = function () {
@@ -170,6 +214,9 @@ async function renderCockpit() {
   }).join("") : `<span class="subtle">Momentum RS252 unavailable.</span>`;
 
   const gateColor = gate ? "var(--green)" : "var(--amber)";
+  const tierU = (mc.tier || "").toUpperCase();
+  const tierC = tierU === "HIGH" ? "var(--red)" : tierU === "NORMAL" ? "var(--green)" : "var(--amber)";
+  const tierBg = tierU === "HIGH" ? "rgba(255,77,77,.12)" : tierU === "NORMAL" ? "rgba(38,208,124,.12)" : "rgba(255,158,27,.12)";
 
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
@@ -184,26 +231,30 @@ async function renderCockpit() {
     <div style="flex:0 0 auto">${goBoardSVG()}</div>
     <div style="flex:1 1 280px;min-width:240px">
       <h2>GO BOARD PHILOSOPHY</h2>
+      <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
       <ul>
-        <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is a deliberate decision — don't chase price, don't rush in.</li>
-        <li><span style="color:var(--green)">▸ Risk first.</span> Keep your liberties (liquidity &amp; stops) before claiming territory.</li>
-        <li><span style="color:var(--teal)">▸ Play the whole board.</span> Read the entire market, don't cling to one corner.</li>
+        <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
+        <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
+        <li><span style="color:var(--teal)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
+        <li><span style="color:#ff7a59">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
       </ul>
     </div>
   </div>
 
   <div class="cau">
-    <div class="cau-head">
-      <h2 style="margin:0;color:var(--amber);font-size:14px;text-transform:uppercase;letter-spacing:.06em">MARKET CAUTION</h2>
-      <span class="pill" style="color:var(--amber);border-color:var(--amber);background:rgba(255,158,27,.12);text-transform:uppercase">${esc(mc.tier || "—")}</span>
-      <span class="subtle">scale ELEVATED≥${mc.elevated_threshold ?? 60} · HIGH≥${mc.fire_threshold ?? 80}</span>
+    <div class="cau-left">
+      <div class="cau-label">Market Caution</div>
+      <div class="cau-num">
+        <span class="cau-score" style="color:${tierC}">${mc.score ?? "—"}</span>
+        <span class="subtle" style="font-size:15px">/100</span>
+        <span class="pill" style="color:${tierC};border-color:${tierC};background:${tierBg};text-transform:uppercase">${esc(mc.tier || "—")}</span>
+      </div>
+      <div class="cau-scale">ELEVATED ≥ ${mc.elevated_threshold ?? 60} · HIGH ≥ ${mc.fire_threshold ?? 80}${d.caution_sessions ? ` · ${d.caution_sessions} sessions` : ""}</div>
     </div>
-    <div class="cau-body">
-      <div style="line-height:1"><span class="cau-score">${mc.score ?? "—"}</span><span class="subtle" style="font-size:17px">/100</span></div>
-      ${sparkline(d.caution_history)}
-      ${d.caution_sessions ? `<span class="subtle" style="align-self:flex-end">${d.caution_sessions} sessions</span>` : ""}
+    <div class="cau-right">
+      <div class="cau-spark">${sparkline(d.caution_history, mc.elevated_threshold ?? 60, mc.fire_threshold ?? 80)}</div>
+      <div class="chips">${chips}</div>
     </div>
-    <div class="chips">${chips}</div>
   </div>
 
   <div class="section-h" style="gap:12px">
