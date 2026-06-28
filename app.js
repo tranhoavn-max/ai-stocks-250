@@ -260,7 +260,7 @@ function setupHtml(text) {
 
 /* ---------- screens ---------- */
 async function renderCockpit() {
-  const d = await getJSON("cockpit-public.json");
+  const [d, em] = await Promise.all([getJSON("cockpit-public.json"), enrichMap()]);
   const mc = d.market_caution || {};
   const comp = mc.components || {};
   const gate = d.market_gate_on;
@@ -268,15 +268,19 @@ async function renderCockpit() {
   const chips = CAUTION_KEYS.filter(([k]) => comp[k] != null).map(([k, lbl]) =>
     `<span class="chip">${esc(lbl)} <strong style="color:${chipColor(k, comp[k])}">${chipVal(k, comp[k])}</strong></span>`).join("");
 
-  const triggerRows = (d.entry || []).map((r, i) => `<tr>
+  const triggerRows = (d.entry || []).map((r, i) => {
+    const e = em[r.ticker] || {};
+    return `<tr>
     <td class="r subtle">${i + 1}</td>
     <td class="tk">${esc(r.ticker)}</td>
     <td>${setupHtml(r.setup_text)}</td>
     <td class="subtle">${esc(r.stop_ref || "—")}</td>
     <td>${c1Cell(r.c1)}</td>
+    <td style="color:${e.flow_color || "var(--mut)"};font-size:11px">${esc(e.flow || "—")}</td>
     <td class="subtle">${leadCell(r)}</td>
-    <td>${phaseBadge(r.phase)}</td></tr>`).join("") ||
-    `<tr><td colspan="7" class="subtle" style="padding:14px">No ENTRY trigger today.</td></tr>`;
+    <td>${phaseBadge(r.phase)}</td></tr>`;
+  }).join("") ||
+    `<tr><td colspan="8" class="subtle" style="padding:14px">No ENTRY trigger today.</td></tr>`;
 
   const ondeckRows = (d.continuation || []).map((r, i) => `<tr>
     <td class="r subtle">${i + 1}</td>
@@ -359,7 +363,7 @@ async function renderCockpit() {
   </div>
   <div id="gate-banner" class="banner-amber" style="${gate ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
-    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>Levels (Entry→Stop·Risk%)</th><th>C1</th><th>Lead</th><th>Phase</th>
+    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>Levels (Entry→Stop·Risk%)</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>
 
   <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
@@ -367,7 +371,7 @@ async function renderCockpit() {
 
   <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
   <div class="table-wrap"><table class="dc"><thead><tr>
-    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>C1</th><th>Blocker</th><th>Lead</th><th>Phase</th>
+    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Blocker</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${ondeckRows}</tbody></table></div>`;
 }
 
