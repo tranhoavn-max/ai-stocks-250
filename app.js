@@ -64,7 +64,7 @@ const mfColor = (mf) => /STRONG_INFLOW|INFLOW/.test(mf || "") ? "var(--green)"
   : /STRONG_OUTFLOW|OUTFLOW/.test(mf || "") ? "var(--red)" : "var(--mut)";
 
 const VAL_LABEL = {
-  CHEAP_WITH_STRENGTH: "var(--green)", CHEAP_BUT_WEAK: "var(--teal)", IN_LINE_WITH_LAYER: "var(--mut)",
+  CHEAP_WITH_STRENGTH: "var(--green)", CHEAP_BUT_WEAK: "var(--teal)", IN_LINE_WITH_LAYER: "var(--slate)",
   EXPENSIVE_LEADER: "var(--amber)", EXPENSIVE_AND_WEAKENING: "var(--red)", NO_PE_DATA: "var(--mut)",
 };
 const VAL_LEGEND = [
@@ -181,6 +181,31 @@ window.__toggleGate = function () {
   const off = b.style.display !== "none";
   b.style.display = off ? "none" : "";
   btn.textContent = `GATE: ${off ? "ON" : "OFF"}`;
+};
+
+// Valuation legend → click-to-filter the table by valuation_label (click active = clear).
+window.__valFilter = function (label) {
+  const wrap = document.getElementById("val-table");
+  if (!wrap) return;
+  const cur = wrap.getAttribute("data-filter") || "";
+  const next = cur === label ? "" : label;
+  wrap.setAttribute("data-filter", next);
+  const trs = wrap.querySelectorAll("tbody tr");
+  let vis = 0;
+  trs.forEach((tr) => {
+    const show = !next || tr.getAttribute("data-vlabel") === next;
+    tr.style.display = show ? "" : "none";
+    if (show) vis++;
+  });
+  document.querySelectorAll(".vfilter").forEach((b) => {
+    b.classList.toggle("active", (b.getAttribute("data-label") || "") === next);
+  });
+  const legend = document.querySelector(".legend");
+  if (legend) legend.classList.toggle("filtering", !!next);
+  const cnt = document.getElementById("val-count");
+  if (cnt) cnt.innerHTML = `Showing <b>${vis}</b> / ${trs.length}`;
+  const clr = document.getElementById("val-clear");
+  if (clr) clr.hidden = !next;
 };
 
 /* ---------- setup_text → evidence chips + metric pairs ----------
@@ -385,7 +410,7 @@ async function renderValuation() {
       : `<span style="color:${vs < 0 ? "var(--green)" : "var(--amber)"}">${(vs * 100).toFixed(0)}%</span>`;
     const pe = r.pe_display != null ? `${r.pe_display.toFixed(2)} <span class="subtle">${(r.pe_type || "")[0] || ""}</span>` : `<span class="subtle">—</span>`;
     const lc = VAL_LABEL[r.valuation_label] || "var(--mut)";
-    return `<tr>
+    return `<tr data-vlabel="${esc(r.valuation_label || "")}">
       <td class="tk">${esc(r.ticker)}</td>
       <td class="subtle" style="font-size:11px">${esc(r.ai_layer_code || "—")}</td>
       <td>${phaseBadge(r.phase_code)}</td>
@@ -398,18 +423,27 @@ async function renderValuation() {
     </tr>`;
   }).join("");
 
-  const legend = VAL_LEGEND.map(([k, t]) =>
-    `<div class="row"><span class="pill" style="color:${VAL_LABEL[k]};border-color:${VAL_LABEL[k]};background:transparent;font-size:10px">${k}</span><span class="subtle">— ${t}</span></div>`).join("");
+  const counts = {};
+  rows.forEach((r) => { const k = r.valuation_label || ""; counts[k] = (counts[k] || 0) + 1; });
+  const legend = VAL_LEGEND.map(([k, t]) => {
+    const c = VAL_LABEL[k], n = counts[k] || 0;
+    return `<button class="vfilter" data-label="${k}" onclick="window.__valFilter('${k}')"${n ? "" : " disabled"}>`
+      + `<span class="pill vf-pill" style="color:${c};border-color:${c}">${k}</span>`
+      + `<span class="vf-desc">${esc(t)}</span><span class="vf-cnt">${n}</span></button>`;
+  }).join("");
 
   return `
   <div><h1 class="h1big">P/E VALUATION LENS</h1>
     <div class="subtle" style="margin-top:4px">as_of ${esc(d.as_of_date)} · <strong style="color:${meta.color}">${meta.label}</strong>${ageTxt}</div>
     ${staleNote}</div>
   <div class="panel">
-    <div class="subtle" style="text-transform:uppercase;font-size:10.5px;letter-spacing:.05em;margin-bottom:8px">Legend</div>
+    <div class="legend-head">
+      <div class="subtle" style="text-transform:uppercase;font-size:10.5px;letter-spacing:.05em">Legend <span style="text-transform:none;letter-spacing:0;color:var(--mut)">· click a label to filter</span></div>
+      <div class="legend-right"><span class="legend-count" id="val-count">Showing <b>${rows.length}</b> / ${rows.length}</span><button class="vf-clear" id="val-clear" onclick="window.__valFilter('')" hidden>✕ Clear</button></div>
+    </div>
     <div class="legend">${legend}</div>
   </div>
-  <div class="table-wrap"><table class="dc"><thead><tr>
+  <div class="table-wrap" id="val-table" data-filter=""><table class="dc"><thead><tr>
     <th>Ticker</th><th>Layer</th><th>Phase</th><th>MF</th><th class="r">Score</th><th class="r">P/E</th>
     <th class="r">Layer P/E</th><th class="r">vs Layer</th><th>Valuation Label</th>
   </tr></thead><tbody>${tableRows}</tbody></table></div>
