@@ -170,9 +170,9 @@ table.dc td{padding:7px 10px;border-bottom:1px solid var(--line2);font-size:12.5
 .td-pxr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .td-pxl{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
 .td-px{font-size:28px;font-weight:700;color:#fff}
-.td-rows{display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--line2);padding-top:11px;margin-top:6px}
-.td-r{display:flex;justify-content:space-between;gap:10px;font-size:12.5px}
-.td-k{color:var(--mut)}
+.td-rows{display:flex;flex-direction:column;gap:11px;border-top:1px solid var(--line2);padding-top:13px;margin-top:8px}
+.td-r{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:13px}
+.td-k{color:var(--mut);white-space:nowrap}
 .td-v{color:var(--txt);font-weight:600;text-align:right}
 .td-verdict{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line2);
   border-radius:6px;padding:10px 12px;margin-top:10px;background:var(--panel)}
@@ -199,6 +199,7 @@ table.dc td{padding:7px 10px;border-bottom:1px solid var(--line2);font-size:12.5
 .td-note{font-size:11px;color:var(--mut);border-left:2px solid var(--amber);background:#1a1404;
   padding:9px 11px;border-radius:0 6px 6px 0;margin-top:12px;line-height:1.5}
 .td-note strong{color:var(--amber)}
+.td-disc{margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,158,27,.22);color:var(--mut);font-style:italic}
 .td-scs{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .td-sc{border:1px solid var(--line2);border-left-width:3px;border-radius:6px;padding:10px 12px;
   background:var(--panel);opacity:.45;transition:opacity .2s}

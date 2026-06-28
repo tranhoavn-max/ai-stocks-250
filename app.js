@@ -596,17 +596,17 @@ async function renderTickerDetail(tk) {
       <span class="td-v" ${cls ? `style="color:${cls}"` : ""}>${v}</span></div>`;
 
   const specRows = [
-    row("Phase", phaseBadge(phase), "", "enrich.phase"),
-    row("Score / Rank", `${fnum(e.score, 2)} / #${e.lead?.rank ?? "—"}`, "", "enrich"),
+    row("Phase", phaseBadge(phase), ""),
+    row("Score / Rank", `${fnum(e.score, 2)} / #${e.lead?.rank ?? "—"}`, ""),
     row("Momentum", `${esc(e.lead?.trend || "—")} (short ${fnum(d.score_short, 1)})`,
-      e.lead?.trend === "RISING" ? "var(--green)" : e.lead?.trend === "FADING" ? "var(--red)" : "", "enrich+detail"),
-    row("Money flow", `${esc(mf)} (${fnum(d.money_flow_score, 3)} · p${fnum(d.money_flow_percentile, 0)})`, mfColorV, "detail"),
-    row("MA20 / MA50", `${fnum(ma20)} / ${fnum(ma50)}`, "", "detail.pullback"),
-    row("MA200 / Prior-20H", `${fnum(ma200)} / ${fnum(d.prior_high_20)}`, "", "detail"),
-    row("Stop reference", esc(e.stop_ref || "—"), "var(--amber)", "enrich.stop_ref"),
+      e.lead?.trend === "RISING" ? "var(--green)" : e.lead?.trend === "FADING" ? "var(--red)" : ""),
+    row("Money flow", `${esc(mf)} (${fnum(d.money_flow_score, 3)} · p${fnum(d.money_flow_percentile, 0)})`, mfColorV),
+    row("MA20 / MA50", `${fnum(ma20)} / ${fnum(ma50)}`, ""),
+    row("MA200 / Prior-20H", `${fnum(ma200)} / ${fnum(d.prior_high_20)}`, ""),
+    row("Stop reference", esc(e.stop_ref || "—"), "var(--amber)"),
     row("Peak / Drawdown", `${fnum(d.peak_price)} / ${fpctv(d.drawdown_pct)}`,
-      (d.drawdown_pct ?? 0) < -15 ? "var(--red)" : "var(--amber)", "detail+derived"),
-    row("Exit risk", `${fnum(d.exit_risk_score, 0)} / 100`, vColor, "detail.exit_risk_score"),
+      (d.drawdown_pct ?? 0) < -15 ? "var(--red)" : "var(--amber)"),
+    row("Exit risk", `${fnum(d.exit_risk_score, 0)} / 100`, vColor),
   ].join("");
 
   // gauges: C1 (ML, == tables), DDR (empirical, distinct), EML (per-ticker model, PROVISIONAL)
@@ -615,14 +615,13 @@ async function renderTickerDetail(tk) {
   const gauges = `
     <div class="td-gauge"><div class="g-num" style="color:${c1c}">${fprob(c1)}</div>
       <div class="g-d"><h4>Correction Risk</h4>
-        <p>Short-term drop probability (same value as the tables). <span class="src">enrich.c1_prob</span></p></div></div>
+        <p>Short-term drop probability</p></div></div>
     <div class="td-gauge"><div class="g-num" style="color:${ddrc}">${fprob(d.ddr_5d5pct)}</div>
-      <div class="g-d"><h4>DDR Empirical <span class="tag">5d / +5%</span></h4>
+      <div class="g-d"><h4>Drawdown Risk <span class="tag">5d / -5%</span></h4>
         <p>Drawdown-profile base rate.</p></div></div>
     <div class="td-gauge"><div class="g-num" style="color:var(--amber)">${fprob(eml)}</div>
-      <div class="g-d"><h4>EML Entry Quality <span class="tag prov">PROVISIONAL</span></h4>
-        <p>Per-ticker entry-quality model probability; null when the model didn't score this ticker.
-        <span class="src">enrich.eml_prob</span></p></div></div>`;
+      <div class="g-d"><h4>Entry Quality <span class="tag prov">PROVISIONAL</span></h4>
+        <p>Entry-quality model probability</p></div></div>`;
 
   // slider range + markers from real levels
   const levels = { Close: close, MA20: ma20, MA50: ma50, MA200: ma200, "Prior20H": d.prior_high_20, Peak: d.peak_price };
@@ -706,7 +705,8 @@ async function renderTickerDetail(tk) {
         </div>
         <div class="td-note"><strong>Read this right:</strong> the slider maps a hypothetical price onto real
           MA bands — a <strong>derived heuristic</strong>, not the model re-run (the model also uses money flow,
-          candles, risk scores). The authoritative call is the <strong>Live model verdict</strong> on the left.</div>
+          candles, risk scores). The authoritative call is the <strong>Live model verdict</strong> on the left.
+          <div class="td-disc">Disclaimer: For informational purposes only. Not investment advice.</div></div>
       </div>
       <div class="td-scs">${scs}</div>
     </div>
