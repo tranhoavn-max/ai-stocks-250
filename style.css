@@ -41,7 +41,11 @@ header.shell{position:sticky;top:0;z-index:30;display:flex;justify-content:space
 .cau-num{display:flex;align-items:baseline;gap:10px;margin-top:6px}
 .cau-score{font-size:42px;color:var(--amber);font-weight:700;line-height:1;letter-spacing:-1px}
 .cau-scale{color:var(--mut);font-size:10.5px;letter-spacing:.03em;margin-top:7px}
-.cau-spark{position:relative;width:100%}
+.cau-spark{position:relative;width:100%;max-width:520px}
+.spark-dot{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--amber);transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(255,158,27,.16),0 0 8px 1px rgba(255,158,27,.55);pointer-events:none}
+.spark-lbl{position:absolute;left:1px;transform:translateY(-50%);font-size:9px;letter-spacing:.04em;padding:0 3px;border-radius:3px;background:var(--panel);pointer-events:none;opacity:.85}
+.spark-lbl.hi{color:var(--red)}
+.spark-lbl.el{color:var(--amber)}
 .gate-btn{background:transparent;font-size:10.5px;letter-spacing:.05em;padding:3px 9px;border-radius:999px}
 
 nav.tabs{display:flex;gap:2px;flex-wrap:wrap;background:var(--panel);border-bottom:1px solid var(--line);padding:0 12px}
@@ -69,6 +73,16 @@ main{max-width:1100px;margin:0 auto;padding:18px 16px 64px;display:flex;flex-dir
 .caution-score{font-size:34px;font-weight:700;color:var(--amber)}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border:1px solid var(--line);border-radius:7px;font-size:12px;color:var(--mut);background:var(--head)}
+
+/* setup_text → evidence chips + metric pairs */
+.setup{display:flex;flex-direction:column;gap:7px}
+.setup-flags{display:flex;flex-wrap:wrap;gap:6px}
+.ev{display:inline-flex;align-items:center;gap:5px;border:1px solid;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;white-space:nowrap}
+.ev i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.setup-metrics{display:flex;flex-wrap:wrap;column-gap:14px;row-gap:4px}
+.mx{font-size:12px;white-space:nowrap}
+.mx strong{color:var(--txt);font-weight:700}
+.mx .hint{color:var(--mut);font-size:10px}
 .gauge{height:10px;background:var(--line);margin-top:8px}
 .gauge > i{display:block;height:100%;background:var(--amber)}
 
@@ -81,14 +95,17 @@ table.dc td{padding:7px 10px;border-bottom:1px solid var(--line2);font-size:12.5
 .table-wrap{overflow-x:auto;border:1px solid var(--line)}
 
 /* momentum chips */
-.mom{display:flex;flex-wrap:wrap;gap:6px}
-.mom .m{display:inline-block;padding:2px 9px;border:1px solid var(--line);font-size:12px}
-.mom .m .rs{color:var(--mut)}
-.mom .m .d1{color:var(--green);font-size:10px;margin-left:3px}
-.mom .m .star{color:var(--amber)}
-.mom .m .flag{font-size:9px;margin-left:4px;color:var(--red)}
-.mom .m .ok{color:var(--green);font-size:9px;margin-left:4px}
-.mom .m .unk{color:var(--mut);font-size:9px;margin-left:4px}
+.mom{display:flex;flex-wrap:wrap;gap:7px}
+.mw{display:inline-flex;align-items:center;gap:7px;padding:5px 11px;border:1px solid var(--line);border-radius:999px;background:var(--head);cursor:pointer;text-decoration:none;color:var(--txt);font-size:13px}
+.mw:hover{border-color:var(--mut)}
+.mw.is-entry{border-color:var(--green);background:rgba(38,208,124,.08)}
+.mw.has-risk{border-color:var(--amber);background:rgba(255,158,27,.08)}
+.mw-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.mw-tk{font-weight:700;letter-spacing:.02em}
+.mw-rs{font-size:10.5px;color:var(--mut)}
+.mw-rs i{font-style:normal;margin-right:1px}
+.mw-star{color:var(--amber);font-size:11px;line-height:1}
+.mw-entry{font-size:8.5px;font-weight:700;color:var(--green);border:1px solid var(--green);border-radius:3px;padding:0 3px;letter-spacing:.04em}
 
 /* KPIs */
 .kpis{display:flex;flex-wrap:wrap;gap:14px}

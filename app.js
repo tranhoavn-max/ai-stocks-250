@@ -90,14 +90,16 @@ function chipVal(key, v) {
   return key === "c1_warn_pct" ? (+v).toFixed(2) : `${v >= 0 ? "+" : ""}${(+v).toFixed(2)}`;
 }
 
-// Wide responsive caution sparkline: area fill + ELEVATED/HIGH threshold lines +
-// latest-value marker. Domain padded to keep both thresholds in view.
+// Risk-zone caution sparkline: NORMAL/ELEVATED/HIGH bands shade the chart so the
+// line's vertical position reads as a risk zone. Stretched SVG fills the width;
+// the end-dot + threshold labels are HTML overlays (round, never distorted).
 function sparkline(vals, elevated = 60, fire = 80) {
   if (!vals || vals.length < 2) return "";
-  const W = 300, H = 52, PAD = 5, n = vals.length;
+  const W = 300, H = 56, PAD = 5, n = vals.length;
   const lo = Math.min(...vals, elevated), hi = Math.max(...vals, fire);
-  const padv = ((hi - lo) || 1) * 0.08, dlo = lo - padv, drng = (hi + padv) - dlo;
+  const padv = ((hi - lo) || 1) * 0.10, dlo = lo - padv, drng = (hi + padv) - dlo;
   const Y = (v) => H - PAD - ((v - dlo) / drng) * (H - 2 * PAD);
+  const clampY = (v) => Math.max(0, Math.min(H, Y(v)));
   const X = (i) => 3 + (i / (n - 1)) * (W - 6);
   const xy = vals.map((v, i) => [X(i), Y(v)]);
   const line = xy.map((q) => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join(" ");
@@ -105,15 +107,23 @@ function sparkline(vals, elevated = 60, fire = 80) {
   const area = `M${xy[0][0].toFixed(1)},${H - 1}`
     + xy.map((q) => `L${q[0].toFixed(1)},${q[1].toFixed(1)}`).join("")
     + `L${last[0].toFixed(1)},${H - 1}Z`;
-  const yE = Y(elevated).toFixed(1), yF = Y(fire).toFixed(1);
-  return `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block;overflow:visible" aria-hidden="true">
+  const yF = clampY(fire), yE = clampY(elevated);
+  const bands =
+    `<rect x="0" y="0" width="${W}" height="${yF.toFixed(1)}" fill="var(--red)" fill-opacity=".08"></rect>`
+    + `<rect x="0" y="${yF.toFixed(1)}" width="${W}" height="${Math.max(0, yE - yF).toFixed(1)}" fill="var(--amber)" fill-opacity=".06"></rect>`
+    + `<rect x="0" y="${yE.toFixed(1)}" width="${W}" height="${Math.max(0, H - yE).toFixed(1)}" fill="var(--green)" fill-opacity=".05"></rect>`;
+  const svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block" aria-hidden="true">
     <defs><linearGradient id="cauSpark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ff9e1b" stop-opacity=".28"/><stop offset="1" stop-color="#ff9e1b" stop-opacity="0"/></linearGradient></defs>
-    <line x1="3" x2="297" y1="${yF}" y2="${yF}" stroke="var(--red)" stroke-opacity=".34" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
-    <line x1="3" x2="297" y1="${yE}" y2="${yE}" stroke="var(--amber)" stroke-opacity=".30" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
+      <stop offset="0" stop-color="#ff9e1b" stop-opacity=".24"/><stop offset="1" stop-color="#ff9e1b" stop-opacity="0"/></linearGradient></defs>
+    ${bands}
+    <line x1="0" x2="${W}" y1="${yF.toFixed(1)}" y2="${yF.toFixed(1)}" stroke="var(--red)" stroke-opacity=".45" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
+    <line x1="0" x2="${W}" y1="${yE.toFixed(1)}" y2="${yE.toFixed(1)}" stroke="var(--amber)" stroke-opacity=".42" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
     <path d="${area}" fill="url(#cauSpark)" stroke="none"></path>
-    <polyline points="${line}" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline>
-    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="2.6" fill="var(--amber)" stroke="var(--panel)" stroke-width="1.3" vector-effect="non-scaling-stroke"></circle></svg>`;
+    <polyline points="${line}" fill="none" stroke="var(--amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline></svg>`;
+  const lx = (last[0] / W) * 100, ly = (last[1] / H) * 100;
+  const dot = `<span class="spark-dot" style="left:${lx.toFixed(1)}%;top:${ly.toFixed(1)}%"></span>`;
+  const lbl = (y, t, cls) => `<span class="spark-lbl ${cls}" style="top:${((y / H) * 100).toFixed(1)}%">${t}</span>`;
+  return svg + dot + lbl(yF, "80", "hi") + lbl(yE, "60", "el");
 }
 
 // Go board with depth — gradient stones, drop shadow, specular highlight, a gold
@@ -170,8 +180,58 @@ window.__toggleGate = function () {
   if (!b || !btn) return;
   const off = b.style.display !== "none";
   b.style.display = off ? "none" : "";
-  btn.textContent = `GATE: ${off ? "ON" : "OFF"} · toggle demo`;
+  btn.textContent = `GATE: ${off ? "ON" : "OFF"}`;
 };
+
+/* ---------- setup_text → evidence chips + metric pairs ----------
+   Mirrors @ai-stock/shared-presentation parseSetup so web matches the mobile
+   chip redesign. DISPLAY relabel only — re-presents feed values, never recomputes
+   (AGENTS.md data-integrity). Unknown keys/flags degrade gracefully. */
+const SETUP_TOKEN_COLOR = { green: "var(--green)", red: "var(--red)", amber: "var(--amber)", teal: "var(--teal)", mut: "var(--mut)", txt: "var(--txt)" };
+const ZONE_SOURCE_LABEL = { pivot_high: "Pivot high", range_high: "Range high", "52w_high": "52-week high" };
+const SETUP_FLAG = {
+  confirmed_above_zone: ["Confirmed above zone", "green"],
+  failed_back_into_zone: ["Failed back into zone", "red"],
+  extended_exhaustion_near_supply: ["Exhaustion near supply", "amber"],
+  weak_retest_near_supply: ["Weak retest near supply", "amber"],
+  no_active_zone: ["No active zone", "mut"],
+  no_native_supply_state: ["No supply state", "mut"],
+  event_gap_excluded: ["Event gap (excluded)", "mut"],
+  context_etf_excluded: ["Context ETF (excluded)", "mut"],
+  insufficient_history: ["Insufficient history", "mut"],
+};
+function humanizeToken(s) {
+  const t = String(s).replace(/_/g, " ").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1) : String(s);
+}
+function setupMetric(key, val) {
+  switch (key) {
+    case "vol20": return { label: "Volume", value: `${val}×`, hint: "vs 20d avg" };
+    case "tr20": return { label: "Range", value: `${val}×`, hint: "vs 20d avg" };
+    case "cloc": return { label: "Close", value: val, hint: "of day range" };
+    case "zone": return { label: "Zone", value: ZONE_SOURCE_LABEL[val] || humanizeToken(val), hint: "" };
+    default: return { label: humanizeToken(key), value: val, hint: "" };
+  }
+}
+function setupHtml(text) {
+  const raw = (text == null ? "" : String(text)).trim();
+  if (!raw || raw === "—") return "—";
+  const metrics = [], flags = [];
+  for (const part of raw.split("|")) {
+    const tok = part.trim();
+    if (!tok) continue;
+    const eq = tok.indexOf("=");
+    if (eq > 0) metrics.push(setupMetric(tok.slice(0, eq), tok.slice(eq + 1)));
+    else flags.push(SETUP_FLAG[tok] || [humanizeToken(tok), "mut"]);
+  }
+  const flagHtml = flags.length ? `<div class="setup-flags">${flags.map(([lbl, tk]) => {
+    const c = SETUP_TOKEN_COLOR[tk] || "var(--mut)";
+    return `<span class="ev" style="color:${c};border-color:${c}"><i style="background:${c}"></i>${esc(lbl)}</span>`;
+  }).join("")}</div>` : "";
+  const metricHtml = metrics.length ? `<div class="setup-metrics">${metrics.map((m) =>
+    `<span class="mx"><span class="subtle">${esc(m.label)}</span> <strong>${esc(m.value)}</strong>${m.hint ? ` <span class="hint">${esc(m.hint)}</span>` : ""}</span>`).join("")}</div>` : "";
+  return `<div class="setup">${flagHtml}${metricHtml}</div>`;
+}
 
 /* ---------- screens ---------- */
 async function renderCockpit() {
@@ -186,7 +246,7 @@ async function renderCockpit() {
   const triggerRows = (d.entry || []).map((r, i) => `<tr>
     <td class="r subtle">${i + 1}</td>
     <td class="tk">${esc(r.ticker)}</td>
-    <td>${esc(r.setup_text || "—")}</td>
+    <td>${setupHtml(r.setup_text)}</td>
     <td class="subtle">${esc(r.stop_ref || "—")}</td>
     <td>${c1Cell(r.c1)}</td>
     <td class="subtle">${leadCell(r)}</td>
@@ -196,7 +256,7 @@ async function renderCockpit() {
   const ondeckRows = (d.continuation || []).map((r, i) => `<tr>
     <td class="r subtle">${i + 1}</td>
     <td class="tk">${esc(r.ticker)}</td>
-    <td class="subtle">${esc(r.setup_text || "—")}</td>
+    <td>${setupHtml(r.setup_text)}</td>
     <td>${c1Cell(r.c1)}</td>
     <td style="color:var(--amber)">${esc(r.why_waiting || "—")}</td>
     <td class="subtle">${leadCell(r)}</td>
@@ -205,13 +265,24 @@ async function renderCockpit() {
 
   const mom = d.momentum;
   const momChips = mom ? mom.leaders.map((m) => {
-    const star = m.is_entry ? `<span class="star">★</span> ` : "";
-    const d1 = m.top_decile ? `<span class="d1">D1</span>` : "";
-    let rk = m.risk_flags && m.risk_flags.length
-      ? m.risk_flags.map((f) => `<span class="flag">${esc(f.label)}</span>`).join("")
-      : (m.snapshot_clean ? `<span class="ok">✓</span>` : `<span class="unk">?</span>`);
-    return `<span class="m" data-tk="${esc(m.ticker)}">${star}<strong>${esc(m.ticker)}</strong> <span class="rs">RS${m.rs_pctl}</span>${d1}${rk}</span>`;
-  }).join("") : `<span class="subtle">Momentum RS252 unavailable.</span>`;
+    const flags = (m.risk_flags && m.risk_flags.length) ? m.risk_flags : [];
+    const isEntry = !!m.is_entry, hasRisk = flags.length > 0;
+    // Baseline leaders stay neutral (all are elite ~RS95-100); only ENTRY (green) or
+    // risk-flagged (amber) names stand out, so the eye lands on what needs attention.
+    const dotColor = isEntry ? "var(--green)" : hasRisk ? "var(--amber)" : "var(--mut)";
+    const cls = isEntry ? " is-entry" : hasRisk ? " has-risk" : "";
+    const rs = Math.max(0, Math.min(100, Math.round(+m.rs_pctl || 0)));
+    const title = hasRisk ? "Risk: " + flags.map((f) => f.label).join(", ")
+      : isEntry ? "Entry trigger today"
+      : (m.snapshot_clean ? "Clean snapshot" : "Unconfirmed snapshot");
+    return `<a class="mw${cls}" data-tk="${esc(m.ticker)}" title="${esc(title)}">`
+      + `<span class="mw-dot" style="background:${dotColor}"></span>`
+      + `<strong class="mw-tk">${esc(m.ticker)}</strong>`
+      + `<span class="mw-rs"><i>RS</i>${rs}</span>`
+      + (m.top_decile ? `<span class="mw-star" title="Top 10% (1-year RS)">★</span>` : "")
+      + (isEntry ? `<span class="mw-entry">ENTRY</span>` : "")
+      + `</a>`;
+  }).join("") : `<span class="subtle">Momentum data unavailable.</span>`;
 
   const gateColor = gate ? "var(--green)" : "var(--amber)";
   const tierU = (mc.tier || "").toUpperCase();
@@ -220,7 +291,7 @@ async function renderCockpit() {
 
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
-    <h1 class="h1big">DECISION COCKPIT · US</h1>
+    <h1 class="h1big">Decision Desk</h1>
     <div style="text-align:right">
       <span class="pill" style="color:var(--teal);border-color:var(--teal);background:rgba(45,212,191,.12)">COVERAGE ${esc(d.meta.coverage_status || "—")}</span>
       <div class="subtle" style="margin-top:5px">ENTRY=${d.counts.entry} · ON-DECK=${d.counts.continuation}</div>
@@ -259,14 +330,14 @@ async function renderCockpit() {
 
   <div class="section-h" style="gap:12px">
     <h2>① New Triggers</h2>
-    <button id="gate-toggle" class="gate-btn pill" style="color:${gateColor};border-color:${gateColor}" onclick="window.__toggleGate()">GATE: ${gate ? "ON" : "OFF"} · toggle demo</button>
+    <button id="gate-toggle" class="gate-btn pill" style="color:${gateColor};border-color:${gateColor}" onclick="window.__toggleGate()">GATE: ${gate ? "ON" : "OFF"}</button>
   </div>
   <div id="gate-banner" class="banner-amber" style="${gate ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
     <th class="r">#</th><th>Ticker</th><th>Setup</th><th>Levels (Entry→Stop·Risk%)</th><th>C1</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>
 
-  <div class="section-h"><h2>🔥 Momentum Watch — RS252</h2>${mom ? `<span class="cnt">· top${mom.limit} · decile=${mom.decile_n} · cov ${mom.coverage[0]}/${mom.coverage[1]}</span>` : ""}</div>
+  <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
   <div class="mom">${momChips}</div>
 
   <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
