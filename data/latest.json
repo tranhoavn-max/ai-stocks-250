@@ -1,36 +1,34 @@
 {
   "schema_version": "web-bundle.v2",
-  "as_of_date": "2026-06-26",
-  "generated_at": "2026-06-28T10:20:00Z",
-  "status": "PARTIAL",
+  "as_of_date": "2026-06-29",
+  "generated_at": "2026-06-30T00:11:53Z",
+  "status": "SUCCESS",
   "source": {
     "app": "ai-stock-agent-service",
-    "source_rule_run_id": "2631e4cd-1d3c-4fa1-a1f7-2880edc692fe"
+    "source_rule_run_id": "d45ee665-2fe6-40d1-9ad4-33388e6729ab"
   },
   "screens": {
     "cockpit": {
       "data_path": "data/cockpit-public.json",
-      "as_of_date": "2026-06-26",
-      "coverage_status": "WARN",
+      "as_of_date": "2026-06-29",
+      "coverage_status": "PASS",
       "counts": {
         "entry": 0,
-        "continuation": 7
+        "continuation": 3
       }
     },
     "valuation": {
       "data_path": "data/valuation-latest.json",
-      "as_of_date": "2026-06-26",
+      "as_of_date": "2026-06-29",
       "coverage_status": "FRESH",
       "freshness_age_days": 1,
       "ticker_count": 250
     },
     "ticker_detail": {
       "data_path": "data/ticker-detail.json",
-      "as_of_date": "2026-06-26",
+      "as_of_date": "2026-06-29",
       "count": 250
     }
   },
-  "warnings": [
-    "PARTIAL ingest with latest EOD missing for 3 tickers"
-  ]
+  "warnings": []
 }
