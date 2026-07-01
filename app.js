@@ -796,6 +796,14 @@ window.__addItem = function (e, kind) {
     const msg = document.getElementById("mgr-msg");
     const ticker = document.getElementById("add-ticker").value.trim().toUpperCase();
     if (!ticker) return;
+    // Guard: the ticker must exist in the tracked universe (ticker-enrich feed).
+    // Fail-open only if the universe feed is unavailable (empty), so a transient
+    // feed error never silently blocks every add.
+    const em = await enrichMap();
+    if (Object.keys(em).length && !em[ticker]) {
+      if (msg) { msg.style.color = "var(--red)"; msg.textContent = `"${ticker}" is not in the universe — not added.`; }
+      return;
+    }
     const { error } = await client.from("tracked_items").insert({ kind, ticker });
     if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
     navigate(kind === "PORTFOLIO" ? "portfolio" : "watchlist");
