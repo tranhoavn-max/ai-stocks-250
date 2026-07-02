@@ -1,32 +1,32 @@
 {
   "schema_version": "web-bundle.v2",
-  "as_of_date": "2026-06-30",
-  "generated_at": "2026-07-01T23:49:53Z",
+  "as_of_date": "2026-07-01",
+  "generated_at": "2026-07-02T00:17:35Z",
   "status": "SUCCESS",
   "source": {
     "app": "ai-stock-agent-service",
-    "source_rule_run_id": "57affa91-e903-41fd-9e50-4f4834c69336"
+    "source_rule_run_id": "8355afb5-2ab8-45ee-9415-984d57e782ee"
   },
   "screens": {
     "cockpit": {
       "data_path": "data/cockpit-public.json",
-      "as_of_date": "2026-06-30",
+      "as_of_date": "2026-07-01",
       "coverage_status": "PASS",
       "counts": {
-        "entry": 0,
-        "continuation": 7
+        "entry": 1,
+        "continuation": 3
       }
     },
     "valuation": {
       "data_path": "data/valuation-latest.json",
-      "as_of_date": "2026-06-30",
+      "as_of_date": "2026-07-01",
       "coverage_status": "FRESH",
       "freshness_age_days": 1,
       "ticker_count": 250
     },
     "ticker_detail": {
       "data_path": "data/ticker-detail.json",
-      "as_of_date": "2026-06-30",
+      "as_of_date": "2026-07-01",
       "count": 250
     }
   },
