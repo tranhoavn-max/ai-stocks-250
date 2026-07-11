@@ -1,30 +1,30 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-09T23:54:22Z",
+  "generated_at": "2026-07-11T00:17:09Z",
   "meta": {
-    "as_of_date": "2026-07-09",
+    "as_of_date": "2026-07-10",
     "coverage_status": "PASS",
-    "source_rule_run_id": "1ae93e35-d311-4f9b-b701-7b9633e10a36",
-    "source_ingest_run_id": "99c8537d-8829-4c81-9a41-d753782c6d14",
-    "snapshot_generated_at": "2026-07-09T23:52:32Z",
+    "source_rule_run_id": "d2f44254-b38a-4efd-b62a-536db61f62da",
+    "source_ingest_run_id": "cfab57d0-89f6-4737-a777-9c2cf93ddfb8",
+    "snapshot_generated_at": "2026-07-11T00:15:18Z",
     "warnings": []
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-09",
-    "score": 57.4,
+    "as_of_date": "2026-07-10",
+    "score": 53.6,
     "tier": "normal",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.401,
-      "qqq_close_location": 0.791,
-      "supz": -0.548,
-      "flow_z": 0.029,
-      "flow_mom": 0.005,
-      "c1_warn_pct": 77.3
+      "c1z": 0.225,
+      "qqq_close_location": 0.813,
+      "supz": -0.436,
+      "flow_z": 0.137,
+      "flow_mom": 0.008,
+      "c1_warn_pct": 75.89
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +32,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    85.6,
     79.7,
     73.1,
     80.9,
@@ -43,7 +42,8 @@
     57.1,
     68.4,
     69.1,
-    57.4
+    57.4,
+    53.6
   ],
   "caution_sessions": 12,
   "counts": {
@@ -63,28 +63,28 @@
       "setup_tokens": [
         "HOLD"
       ],
-      "rank": 29,
-      "score": 78.54,
+      "rank": 35,
+      "score": 76.3,
       "score_trend": null,
       "score_short": null,
       "c1": {
         "c15_prob": 0.398374,
-        "c15_prob_raw": 0.393347,
+        "c15_prob_raw": 0.362821,
         "confidence": "high",
         "n_features": 27
       },
       "ddr": {
-        "ddr_5d_5pct": 0.18333333333333332,
+        "ddr_5d_5pct": 0.18032786885245902,
         "ddr_confidence": "high",
-        "ddr_n_bucket": 60,
-        "ddr_overheat": 0.7193841847445765,
-        "dd_profile_as_of_date": "2026-07-09",
-        "dd_current_pct": 0.1388581131842794,
-        "dd_to_median_pct": 0.003985604480233024,
+        "ddr_n_bucket": 61,
+        "ddr_overheat": 0.6552447552447552,
+        "dd_profile_as_of_date": "2026-07-10",
+        "dd_current_pct": 0.1523102061214986,
+        "dd_to_median_pct": 0.017437697417452214,
         "dd_median_pct": 0.13487250870404638,
         "dd_p25_pct": 0.12035650835669298,
         "dd_p75_pct": 0.14745459243546644,
-        "dd_worst_pct": 0.1970161430001234,
+        "dd_worst_pct": 0.19701604340177367,
         "dd_best_pct": 0.09094091930122328,
         "dd_sample_size": 5,
         "dd_confidence": "high",
@@ -94,10 +94,10 @@
         "dd_n_breaks_median": 6,
         "dd_current_cycle_peak_date": "2026-05-14",
         "dd_current_cycle_peak_price": 376.1517333984375,
-        "dd_day_streak": 292,
-        "dd_current_gain_pct": 2.448733759244894
+        "dd_day_streak": 293,
+        "dd_current_gain_pct": 2.394860581914375
       },
-      "stop_ref": "MA20 314.27 (+3.1%)",
+      "stop_ref": "MA20 316.17 (+0.9%)",
       "zone_low": null,
       "zone_high": null,
       "zone_label": null,
@@ -106,15 +106,15 @@
       "exit_signal": "EXIT_0_HOLD",
       "supply": "NONE",
       "supply_action": "ALLOW/HOLD",
-      "flow": "NEUTRAL",
+      "flow": "INFLOW",
       "money_flow_score": null,
       "age_bars": null,
       "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
       "buy_quality": "",
       "buy_signal": "",
       "buy_source": null,
-      "price": 323.9200134277344,
-      "price_date": "2026-07-09"
+      "price": 318.8599853515625,
+      "price_date": "2026-07-10"
     }
   ],
   "momentum": {
@@ -160,14 +160,6 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "LWLG",
-        "rs_pctl": 98,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "AEHR",
         "rs_pctl": 98,
         "top_decile": true,
@@ -176,8 +168,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "DOCN",
-        "rs_pctl": 97,
+        "ticker": "LWLG",
+        "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -192,8 +184,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "ALAB",
-        "rs_pctl": 96,
+        "ticker": "DOCN",
+        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -217,6 +209,14 @@
       },
       {
         "ticker": "VIAV",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "ALAB",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
