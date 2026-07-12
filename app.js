@@ -579,6 +579,7 @@ const fprob = (v) => v == null ? "—" : `${(v * 100).toFixed(1)}%`;
 const fpctv = (v, dp = 1) => v == null ? "—" : `${v >= 0 ? "+" : ""}${(+v).toFixed(dp)}%`;
 
 let _simCfg = null; // handed to wireDetail() after innerHTML assignment
+let _chartHandle = null; // live price-chart instance; destroyed on navigation (avoid leaks)
 
 async function renderTickerDetail(tk) {
   const [em, dm] = await Promise.all([enrichMap(), detailMap()]);
@@ -679,6 +680,11 @@ async function renderTickerDetail(tk) {
     <span class="subtle">entry_zone: <b>${esc(d.entry_zone || "—")}</b> · pullback <span style="color:${/MARKET_OFF|WAIT|REJECT|AVOID/.test(`${d.pullback_signal || ""} ${d.pullback_quality || ""}`) ? "var(--red)" : "var(--mut)"}">${esc(d.pullback_signal || "—")}/${esc(d.pullback_quality || "—")}</span></span>
   </div>
 
+  <div class="panel td-chart-panel">
+    <div class="td-h">Price · MA · Volume Profile <span class="tag deriv">display-only</span></div>
+    <div id="td-chart" class="td-chart"><div class="pc-note">Đang tải chart…</div></div>
+  </div>
+
   <div class="td-grid">
     <div>
       <div class="panel">
@@ -743,6 +749,23 @@ function wireDetail() {
   };
   sl.addEventListener("input", (ev) => upd(ev.target.value));
   upd(sl.value);
+}
+
+// Fetch bars/<TICKER>.json on demand (getJSON caches per session) and mount the price
+// chart into the detail panel. Fire-and-forget: fills #td-chart when ready, fail-soft on
+// missing history, and no-ops if the panel was torn down while the feed was loading.
+async function mountDetailChart(tk) {
+  const el = document.getElementById("td-chart");
+  if (!el || !window.mountPriceChart) return;
+  let payload;
+  try {
+    payload = await getJSON(`bars/${encodeURIComponent(tk)}.json`);
+  } catch (_) {
+    if (document.body.contains(el)) el.innerHTML = '<div class="pc-note">Chưa đủ lịch sử giá để vẽ chart.</div>';
+    return;
+  }
+  if (!document.body.contains(el)) return; // navigated away mid-fetch
+  _chartHandle = window.mountPriceChart(el, payload.bars || [], { preset: 126 });
 }
 
 window.__backDetail = function () { location.hash = _lastBase || "cockpit"; };
@@ -825,6 +848,8 @@ function setActiveTab(route) {
 
 async function navigate(route) {
   const view = document.getElementById("view");
+  // Tear down any live chart before its DOM host is replaced below (avoid leaks).
+  if (_chartHandle) { try { _chartHandle.destroy(); } catch (_) { /* noop */ } _chartHandle = null; }
   if (route && route.indexOf("t/") === 0) {
     const tk = decodeURIComponent(route.slice(2)).trim().toUpperCase();
     setActiveTab(_lastBase);
@@ -832,6 +857,7 @@ async function navigate(route) {
     try {
       view.innerHTML = await renderTickerDetail(tk);
       wireDetail();
+      mountDetailChart(tk);
       window.scrollTo(0, 0);
     } catch (e) {
       view.innerHTML = `<div class="status-line" style="color:var(--red)">Failed to load ${esc(tk)}: ${esc(e.message)}</div>`;

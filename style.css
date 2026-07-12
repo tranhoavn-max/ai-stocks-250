@@ -208,3 +208,20 @@ table.dc td{padding:7px 10px;border-bottom:1px solid var(--line2);font-size:12.5
 .td-sc .b{font-size:11.5px;color:#9a9a9a;margin-top:5px;line-height:1.45}
 .td-sc .ref{font-size:10px;color:#6a6a6a;margin-top:6px;background:#000;border:1px solid var(--line2);
   border-radius:3px;padding:2px 6px;display:inline-block}
+
+/* ---- price chart (Ticker Detail) ---- */
+.td-chart-panel{margin:6px 0 14px}
+.td-chart{position:relative;width:100%}
+.pc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:2px 0 6px}
+.pc-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pc-lg{font-size:10.5px;letter-spacing:.04em;font-weight:700}
+.pc-basis{color:var(--mut);font-size:10px;letter-spacing:.03em}
+.pc-presets{display:flex;gap:4px}
+.pc-preset{background:transparent;border:1px solid var(--line);color:var(--mut);font-family:var(--mono);
+  font-size:10.5px;padding:2px 8px;border-radius:3px;cursor:pointer}
+.pc-preset:hover{color:var(--txt);border-color:var(--line2)}
+.pc-preset.on{color:#000;background:var(--amber);border-color:var(--amber);font-weight:700}
+.pc-canvas{width:100%;height:360px}
+@media(max-width:880px){.pc-canvas{height:300px}}
+.pc-foot{color:var(--mut);font-size:10px;letter-spacing:.02em;margin-top:6px}
+.pc-note{color:var(--mut);font-size:11.5px;padding:24px 8px;text-align:center}

@@ -1,7 +1,7 @@
 {
   "schema_version": "web-bundle.v2",
   "as_of_date": "2026-07-10",
-  "generated_at": "2026-07-11T00:17:41Z",
+  "generated_at": "2026-07-12T05:16:52Z",
   "status": "SUCCESS",
   "source": {
     "app": "ai-stock-agent-service",
@@ -29,6 +29,14 @@
       "as_of_date": "2026-07-10",
       "source_rule_run_id": "d2f44254-b38a-4efd-b62a-536db61f62da",
       "count": 250
+    },
+    "ticker_bars": {
+      "data_dir": "data/bars/",
+      "manifest_path": "data/bars/latest.json",
+      "as_of_date": "2026-07-10",
+      "source_rule_run_id": "d2f44254-b38a-4efd-b62a-536db61f62da",
+      "count": 250,
+      "skipped": []
     }
   },
   "warnings": []
