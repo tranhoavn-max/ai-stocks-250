@@ -1,30 +1,30 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-11T00:17:09Z",
+  "generated_at": "2026-07-14T05:27:35Z",
   "meta": {
-    "as_of_date": "2026-07-10",
+    "as_of_date": "2026-07-13",
     "coverage_status": "PASS",
-    "source_rule_run_id": "d2f44254-b38a-4efd-b62a-536db61f62da",
-    "source_ingest_run_id": "cfab57d0-89f6-4737-a777-9c2cf93ddfb8",
-    "snapshot_generated_at": "2026-07-11T00:15:18Z",
+    "source_rule_run_id": "fbf5bea8-699a-45e6-b6ed-4f7ff1e8d7ac",
+    "source_ingest_run_id": "4fddbf1e-d41a-491b-9151-4cfc0317b84b",
+    "snapshot_generated_at": "2026-07-14T05:25:48Z",
     "warnings": []
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-10",
-    "score": 53.6,
-    "tier": "normal",
+    "as_of_date": "2026-07-13",
+    "score": 67.3,
+    "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.225,
-      "qqq_close_location": 0.813,
-      "supz": -0.436,
-      "flow_z": 0.137,
-      "flow_mom": 0.008,
-      "c1_warn_pct": 75.89
+      "c1z": 0.458,
+      "qqq_close_location": -0.617,
+      "supz": -0.864,
+      "flow_z": -0.322,
+      "flow_mom": 0.02,
+      "c1_warn_pct": 78.01
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +32,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    79.7,
     73.1,
     80.9,
     62.3,
@@ -43,80 +42,16 @@
     68.4,
     69.1,
     57.4,
-    53.6
+    53.6,
+    67.3
   ],
   "caution_sessions": 12,
   "counts": {
     "entry": 0,
-    "continuation": 1
+    "continuation": 0
   },
   "entry": [],
-  "continuation": [
-    {
-      "ticker": "VRT",
-      "company_name": "Vertiv Holdings",
-      "verdict": "WATCH",
-      "verdict_sub": "weak",
-      "phase": "ACCUMULATION",
-      "layer": "datacenter_power_cooling_grid",
-      "setup_text": "Tracked context",
-      "setup_tokens": [
-        "HOLD"
-      ],
-      "rank": 35,
-      "score": 76.3,
-      "score_trend": null,
-      "score_short": null,
-      "c1": {
-        "c15_prob": 0.398374,
-        "c15_prob_raw": 0.362821,
-        "confidence": "high",
-        "n_features": 27
-      },
-      "ddr": {
-        "ddr_5d_5pct": 0.18032786885245902,
-        "ddr_confidence": "high",
-        "ddr_n_bucket": 61,
-        "ddr_overheat": 0.6552447552447552,
-        "dd_profile_as_of_date": "2026-07-10",
-        "dd_current_pct": 0.1523102061214986,
-        "dd_to_median_pct": 0.017437697417452214,
-        "dd_median_pct": 0.13487250870404638,
-        "dd_p25_pct": 0.12035650835669298,
-        "dd_p75_pct": 0.14745459243546644,
-        "dd_worst_pct": 0.19701604340177367,
-        "dd_best_pct": 0.09094091930122328,
-        "dd_sample_size": 5,
-        "dd_confidence": "high",
-        "dd_coverage_status": "PARTIAL_LISTING_HISTORY",
-        "dd_p_break_median": 0.5454545454545454,
-        "dd_n_pullbacks_median": 11,
-        "dd_n_breaks_median": 6,
-        "dd_current_cycle_peak_date": "2026-05-14",
-        "dd_current_cycle_peak_price": 376.1517333984375,
-        "dd_day_streak": 293,
-        "dd_current_gain_pct": 2.394860581914375
-      },
-      "stop_ref": "MA20 316.17 (+0.9%)",
-      "zone_low": null,
-      "zone_high": null,
-      "zone_label": null,
-      "target_zone": null,
-      "exit_action": "No exit signal",
-      "exit_signal": "EXIT_0_HOLD",
-      "supply": "NONE",
-      "supply_action": "ALLOW/HOLD",
-      "flow": "INFLOW",
-      "money_flow_score": null,
-      "age_bars": null,
-      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
-      "buy_quality": "",
-      "buy_signal": "",
-      "buy_source": null,
-      "price": 318.8599853515625,
-      "price_date": "2026-07-10"
-    }
-  ],
+  "continuation": [],
   "momentum": {
     "leaders": [
       {
@@ -160,7 +95,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AEHR",
+        "ticker": "LWLG",
         "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
@@ -168,7 +103,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "LWLG",
+        "ticker": "AEHR",
         "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
@@ -192,6 +127,14 @@
         "snapshot_clean": false
       },
       {
+        "ticker": "VIAV",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
         "ticker": "UCTT",
         "rs_pctl": 96,
         "top_decile": true,
@@ -201,14 +144,6 @@
       },
       {
         "ticker": "ICHR",
-        "rs_pctl": 96,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
-        "ticker": "VIAV",
         "rs_pctl": 96,
         "top_decile": true,
         "is_entry": false,
