@@ -15,6 +15,10 @@ async function getJSON(name) {
 
 const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
+const tickerLink = (ticker, cls = "tk") => {
+  const tk = String(ticker || "").trim().toUpperCase();
+  return `<a class="${cls}" href="#t/${encodeURIComponent(tk)}" data-tk="${esc(tk)}" aria-label="View ${esc(tk)} ticker detail">${esc(tk)}</a>`;
+};
 
 /* ---------- Supabase (auth + per-user portfolio/watchlist) ---------- */
 let sb = null;
@@ -174,38 +178,77 @@ function goBoardSVG() {
     ${g}${st}</svg>`;
 }
 
-window.__toggleGate = function () {
-  const b = document.getElementById("gate-banner");
-  const btn = document.getElementById("gate-toggle");
-  if (!b || !btn) return;
-  const off = b.style.display !== "none";
-  b.style.display = off ? "none" : "";
-  btn.textContent = `GATE: ${off ? "ON" : "OFF"}`;
-};
-
-// Valuation legend → click-to-filter the table by valuation_label (click active = clear).
+// Valuation discovery operates only on native fields already rendered in the table.
 window.__valFilter = function (label) {
   const wrap = document.getElementById("val-table");
   if (!wrap) return;
   const cur = wrap.getAttribute("data-filter") || "";
   const next = cur === label ? "" : label;
   wrap.setAttribute("data-filter", next);
-  const trs = wrap.querySelectorAll("tbody tr");
-  let vis = 0;
-  trs.forEach((tr) => {
-    const show = !next || tr.getAttribute("data-vlabel") === next;
-    tr.style.display = show ? "" : "none";
-    if (show) vis++;
-  });
   document.querySelectorAll(".vfilter").forEach((b) => {
-    b.classList.toggle("active", (b.getAttribute("data-label") || "") === next);
+    const active = (b.getAttribute("data-label") || "") === next;
+    b.classList.toggle("active", active);
+    b.setAttribute("aria-pressed", String(active));
   });
   const legend = document.querySelector(".legend");
   if (legend) legend.classList.toggle("filtering", !!next);
-  const cnt = document.getElementById("val-count");
-  if (cnt) cnt.innerHTML = `Showing <b>${vis}</b> / ${trs.length}`;
   const clr = document.getElementById("val-clear");
-  if (clr) clr.hidden = !next;
+  if (clr) clr.hidden = !next && !(document.getElementById("val-search")?.value || "").trim();
+  window.__valApply();
+};
+
+window.__valApply = function () {
+  const wrap = document.getElementById("val-table");
+  if (!wrap) return;
+  const rows = [...wrap.querySelectorAll("tbody tr")];
+  const filter = wrap.dataset.filter || "";
+  const query = (document.getElementById("val-search")?.value || "").trim().toUpperCase();
+  const key = wrap.dataset.sort || "score";
+  const dir = wrap.dataset.dir === "asc" ? 1 : -1;
+  const textKeys = new Set(["ticker", "phase", "mf"]);
+  rows.sort((a, b) => {
+    const av = a.dataset[key] ?? "", bv = b.dataset[key] ?? "";
+    if (av === "" && bv !== "") return 1;
+    if (bv === "" && av !== "") return -1;
+    const cmp = textKeys.has(key) ? av.localeCompare(bv) : ((+av || 0) - (+bv || 0));
+    return cmp * dir;
+  }).forEach((tr) => tr.parentNode.appendChild(tr));
+  let visible = 0;
+  rows.forEach((tr) => {
+    const show = (!filter || tr.dataset.vlabel === filter) && (!query || tr.dataset.ticker.includes(query));
+    tr.hidden = !show;
+    if (show) visible++;
+  });
+  const cnt = document.getElementById("val-count");
+  if (cnt) cnt.innerHTML = `Showing <b>${visible}</b> / ${rows.length}`;
+  const clr = document.getElementById("val-clear");
+  if (clr) clr.hidden = !filter && !query;
+};
+
+window.__valSort = function (key) {
+  const wrap = document.getElementById("val-table");
+  if (!wrap) return;
+  const same = wrap.dataset.sort === key;
+  wrap.dataset.sort = key;
+  wrap.dataset.dir = same && wrap.dataset.dir === "desc" ? "asc" : "desc";
+  document.querySelectorAll(".sort-btn").forEach((b) => {
+    const active = b.dataset.sort === key;
+    b.setAttribute("aria-pressed", String(active));
+    b.querySelector(".sort-mark").textContent = active ? (wrap.dataset.dir === "asc" ? "↑" : "↓") : "↕";
+  });
+  window.__valApply();
+};
+
+window.__valClear = function () {
+  const search = document.getElementById("val-search");
+  if (search) search.value = "";
+  const wrap = document.getElementById("val-table");
+  if (wrap) wrap.dataset.filter = "";
+  document.querySelectorAll(".vfilter").forEach((b) => {
+    b.classList.remove("active"); b.setAttribute("aria-pressed", "false");
+  });
+  document.querySelector(".legend")?.classList.remove("filtering");
+  window.__valApply();
 };
 
 /* ---------- setup_text → evidence chips + metric pairs ----------
@@ -272,7 +315,7 @@ async function renderCockpit() {
     const e = em[r.ticker] || {};
     return `<tr>
     <td class="r subtle">${i + 1}</td>
-    <td class="tk">${esc(r.ticker)}</td>
+    <td>${tickerLink(r.ticker)}</td>
     <td>${setupHtml(r.setup_text)}</td>
     <td class="subtle">${esc(r.stop_ref || "—")}</td>
     <td>${c1Cell(r.c1)}</td>
@@ -284,7 +327,7 @@ async function renderCockpit() {
 
   const ondeckRows = (d.continuation || []).map((r, i) => `<tr>
     <td class="r subtle">${i + 1}</td>
-    <td class="tk">${esc(r.ticker)}</td>
+    <td>${tickerLink(r.ticker)}</td>
     <td>${setupHtml(r.setup_text)}</td>
     <td>${c1Cell(r.c1)}</td>
     <td style="color:var(--amber)">${esc(r.why_waiting || "—")}</td>
@@ -300,20 +343,25 @@ async function renderCockpit() {
     // risk-flagged (amber) names stand out, so the eye lands on what needs attention.
     const dotColor = isEntry ? "var(--green)" : hasRisk ? "var(--amber)" : "var(--mut)";
     const cls = isEntry ? " is-entry" : hasRisk ? " has-risk" : "";
-    const rs = Math.max(0, Math.min(100, Math.round(+m.rs_pctl || 0)));
+    const rs = m.rs_pctl == null ? null : Math.max(0, Math.min(100, Math.round(+m.rs_pctl)));
     const title = hasRisk ? "Risk: " + flags.map((f) => f.label).join(", ")
       : isEntry ? "Entry trigger today"
       : (m.snapshot_clean ? "Clean snapshot" : "Unconfirmed snapshot");
-    return `<a class="mw${cls}" data-tk="${esc(m.ticker)}" title="${esc(title)}">`
-      + `<span class="mw-dot" style="background:${dotColor}"></span>`
+    return `<a class="mw${cls}" href="#t/${encodeURIComponent(m.ticker)}" data-tk="${esc(m.ticker)}" title="${esc(title)}" aria-label="View ${esc(m.ticker)} ticker detail${hasRisk ? ", risk flagged" : isEntry ? ", entry trigger" : ""}">`
+      + `<span class="mw-dot" style="background:${dotColor}" aria-hidden="true"></span>`
       + `<strong class="mw-tk">${esc(m.ticker)}</strong>`
-      + `<span class="mw-rs"><i>RS</i>${rs}</span>`
+      + `<span class="mw-rs">${rs == null ? "RS unavailable" : `<i>RS</i>${rs}`}</span>`
       + (m.top_decile ? `<span class="mw-star" title="Top 10% (1-year RS)">★</span>` : "")
       + (isEntry ? `<span class="mw-entry">ENTRY</span>` : "")
+      + (hasRisk ? `<span class="mw-risk">RISK</span>` : "")
       + `</a>`;
   }).join("") : `<span class="subtle">Momentum data unavailable.</span>`;
 
   const gateColor = gate ? "var(--green)" : "var(--amber)";
+  const gateText = gate ? "ON" : "OFF";
+  const coverage = d.meta?.coverage_status || "—";
+  const warnings = Array.isArray(d.meta?.warnings) ? d.meta.warnings : [];
+  const warningDisclosure = warnings.length ? `<details class="coverage-warnings"><summary>⚠ ${warnings.length} coverage warning${warnings.length === 1 ? "" : "s"}</summary><ul>${warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul></details>` : "";
   const tierU = (mc.tier || "").toUpperCase();
   const tierC = tierU === "HIGH" ? "var(--red)" : tierU === "NORMAL" ? "var(--green)" : "var(--amber)";
   const tierBg = tierU === "HIGH" ? "rgba(255,77,77,.12)" : tierU === "NORMAL" ? "rgba(38,208,124,.12)" : "rgba(255,158,27,.12)";
@@ -321,25 +369,19 @@ async function renderCockpit() {
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
     <h1 class="h1big">Decision Desk</h1>
-    <div style="text-align:right">
-      <span class="pill" style="color:var(--teal);border-color:var(--teal);background:rgba(45,212,191,.12)">COVERAGE ${esc(d.meta.coverage_status || "—")}</span>
-      <div class="subtle" style="margin-top:5px">ENTRY=${d.counts.entry} · ON-DECK=${d.counts.continuation}</div>
+    <div class="desk-meta">
+      <span class="pill" style="color:var(--teal);border-color:var(--teal);background:rgba(45,212,191,.12)">COVERAGE ${esc(coverage)}</span>
+      <span class="subtle">ENTRY=${d.counts.entry} · ON-DECK=${d.counts.continuation}</span>
     </div>
   </div>
 
-  <div class="philo">
-    <div style="flex:0 0 auto">${goBoardSVG()}</div>
-    <div style="flex:1 1 280px;min-width:240px">
-      <h2>GO BOARD PHILOSOPHY</h2>
-      <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
-      <ul>
-        <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
-        <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
-        <li><span style="color:var(--teal)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
-        <li><span style="color:#ff7a59">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
-      </ul>
-    </div>
+  <div class="market-strip" aria-label="End-of-day market status">
+    <div><span class="market-k">Data date</span><strong>${esc(d.meta?.as_of_date || "—")} <small>EOD</small></strong></div>
+    <div><span class="market-k">Market gate</span><strong class="gate-static" style="color:${gateColor}">${gate ? "●" : "⚠"} GATE: ${gateText}</strong></div>
+    <div><span class="market-k">Coverage</span><strong>${esc(coverage)}</strong></div>
+    <div><span class="market-k">Signals</span><strong>${d.counts.entry} entry · ${d.counts.continuation} on-deck</strong></div>
   </div>
+  ${warningDisclosure}
 
   <div class="cau">
     <div class="cau-left">
@@ -359,20 +401,37 @@ async function renderCockpit() {
 
   <div class="section-h" style="gap:12px">
     <h2>① New Triggers</h2>
-    <button id="gate-toggle" class="gate-btn pill" style="color:${gateColor};border-color:${gateColor}" onclick="window.__toggleGate()">GATE: ${gate ? "ON" : "OFF"}</button>
+    <span class="gate-btn pill" role="status" style="color:${gateColor};border-color:${gateColor}">${gate ? "●" : "⚠"} GATE: ${gateText}</span>
   </div>
   <div id="gate-banner" class="banner-amber" style="${gate ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
     <th class="r">#</th><th>Ticker</th><th>Setup</th><th>Levels (Entry→Stop·Risk%)</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>
 
-  <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
-  <div class="mom">${momChips}</div>
-
   <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
   <div class="table-wrap"><table class="dc"><thead><tr>
     <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Blocker</th><th>Lead</th><th>Phase</th>
-  </tr></thead><tbody>${ondeckRows}</tbody></table></div>`;
+  </tr></thead><tbody>${ondeckRows}</tbody></table></div>
+
+  <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
+  <div class="mom">${momChips}</div>
+
+  <details class="philo-disclosure">
+    <summary>Methodology · Go Board Philosophy</summary>
+    <div class="philo">
+      <div style="flex:0 0 auto">${goBoardSVG()}</div>
+      <div style="flex:1 1 280px;min-width:240px">
+        <h2>GO BOARD PHILOSOPHY</h2>
+        <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
+        <ul>
+          <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
+          <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
+          <li><span style="color:var(--teal)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
+          <li><span style="color:#ff7a59">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
+        </ul>
+      </div>
+    </div>
+  </details>`;
 }
 
 // Valuation freshness is authoritative in the bundle manifest (data/latest.json →
@@ -414,8 +473,13 @@ async function renderValuation() {
       : `<span style="color:${vs < 0 ? "var(--green)" : "var(--amber)"}">${(vs * 100).toFixed(0)}%</span>`;
     const pe = r.pe_display != null ? `${r.pe_display.toFixed(2)} <span class="subtle">${(r.pe_type || "")[0] || ""}</span>` : `<span class="subtle">—</span>`;
     const lc = VAL_LABEL[r.valuation_label] || "var(--mut)";
-    return `<tr data-vlabel="${esc(r.valuation_label || "")}">
-      <td class="tk">${esc(r.ticker)}</td>
+    const mobileDetail = `<details class="val-mobile-detail"><summary>More</summary><div>`
+      + `<span>Layer <b>${esc(r.ai_layer_code || "—")}</b></span>`
+      + `<span>Layer P/E <b>${r.layer_pe_median != null ? r.layer_pe_median.toFixed(1) : "—"}</b></span>`
+      + `<span>vs Layer <b>${vs == null ? "—" : `${(vs * 100).toFixed(0)}%`}</b></span>`
+      + `<span>Label <b>${esc(r.valuation_label || "—")}</b></span></div></details>`;
+    return `<tr data-vlabel="${esc(r.valuation_label || "")}" data-ticker="${esc(r.ticker)}" data-score="${r.score ?? ""}" data-pe="${r.pe_display ?? ""}" data-vs="${vs ?? ""}" data-phase="${esc(r.phase_code || "")}" data-mf="${esc(r.money_flow_state || "")}">
+      <td class="val-ticker">${tickerLink(r.ticker)}${mobileDetail}</td>
       <td class="subtle" style="font-size:11px">${esc(r.ai_layer_code || "—")}</td>
       <td>${phaseBadge(r.phase_code)}</td>
       <td style="color:${mfColor(r.money_flow_state)};font-size:11px">${esc(r.money_flow_state || "—")}</td>
@@ -431,7 +495,7 @@ async function renderValuation() {
   rows.forEach((r) => { const k = r.valuation_label || ""; counts[k] = (counts[k] || 0) + 1; });
   const legend = VAL_LEGEND.map(([k, t]) => {
     const c = VAL_LABEL[k], n = counts[k] || 0;
-    return `<button class="vfilter" data-label="${k}" onclick="window.__valFilter('${k}')"${n ? "" : " disabled"}>`
+    return `<button class="vfilter" type="button" aria-pressed="false" data-label="${k}" onclick="window.__valFilter('${k}')"${n ? "" : " disabled"}>`
       + `<span class="pill vf-pill" style="color:${c};border-color:${c}">${k}</span>`
       + `<span class="vf-desc">${esc(t)}</span><span class="vf-cnt">${n}</span></button>`;
   }).join("");
@@ -443,13 +507,26 @@ async function renderValuation() {
   <div class="panel">
     <div class="legend-head">
       <div class="subtle" style="text-transform:uppercase;font-size:10.5px;letter-spacing:.05em">Legend <span style="text-transform:none;letter-spacing:0;color:var(--mut)">· click a label to filter</span></div>
-      <div class="legend-right"><span class="legend-count" id="val-count">Showing <b>${rows.length}</b> / ${rows.length}</span><button class="vf-clear" id="val-clear" onclick="window.__valFilter('')" hidden>✕ Clear</button></div>
+      <div class="legend-right"><span class="legend-count" id="val-count" aria-live="polite">Showing <b>${rows.length}</b> / ${rows.length}</span><button class="vf-clear" id="val-clear" type="button" onclick="window.__valClear()" hidden>✕ Clear</button></div>
     </div>
     <div class="legend">${legend}</div>
   </div>
-  <div class="table-wrap" id="val-table" data-filter=""><table class="dc"><thead><tr>
-    <th>Ticker</th><th>Layer</th><th>Phase</th><th>MF</th><th class="r">Score</th><th class="r">P/E</th>
-    <th class="r">Layer P/E</th><th class="r">vs Layer</th><th>Valuation Label</th>
+  <div class="val-tools">
+    <label for="val-search">Search ticker</label>
+    <input id="val-search" class="val-search" type="search" inputmode="search" autocomplete="off" placeholder="e.g. AAPL" oninput="window.__valApply()">
+    <span class="subtle">Sort any column marked ↕</span>
+  </div>
+  <div class="table-scroll-hint" aria-hidden="true">Swipe horizontally for more columns →</div>
+  <div class="table-wrap val-table-wrap" id="val-table" data-filter="" data-sort="score" data-dir="desc"><table class="dc"><thead><tr>
+    <th class="val-ticker"><button class="sort-btn" type="button" data-sort="ticker" aria-pressed="false" onclick="window.__valSort('ticker')">Ticker <span class="sort-mark">↕</span></button></th>
+    <th>Layer</th>
+    <th><button class="sort-btn" type="button" data-sort="phase" aria-pressed="false" onclick="window.__valSort('phase')">Phase <span class="sort-mark">↕</span></button></th>
+    <th><button class="sort-btn" type="button" data-sort="mf" aria-pressed="false" onclick="window.__valSort('mf')">MF <span class="sort-mark">↕</span></button></th>
+    <th class="r"><button class="sort-btn" type="button" data-sort="score" aria-pressed="true" onclick="window.__valSort('score')">Score <span class="sort-mark">↓</span></button></th>
+    <th class="r"><button class="sort-btn" type="button" data-sort="pe" aria-pressed="false" onclick="window.__valSort('pe')">P/E <span class="sort-mark">↕</span></button></th>
+    <th class="r">Layer P/E</th>
+    <th class="r"><button class="sort-btn" type="button" data-sort="vs" aria-pressed="false" onclick="window.__valSort('vs')">vs Layer <span class="sort-mark">↕</span></button></th>
+    <th>Valuation Label</th>
   </tr></thead><tbody>${tableRows}</tbody></table></div>
   <div class="disclaimer">P/E so với median layer (median ưu tiên hơn trung bình) · ${d.valid_pe_count}/${d.ticker_count} mã có P/E · display-only, KHÔNG phải khuyến nghị.</div>`;
 }
@@ -518,7 +595,7 @@ async function renderManager(kind) {
     const mf = `<td style="color:${e.flow_color || "var(--mut)"};font-size:11px">${esc(e.flow || "—")}</td>`;
     if (isPort) {
       return `<tr>
-        <td class="tk">${esc(it.ticker)}</td>
+        <td>${tickerLink(it.ticker)}</td>
         <td>${badgeHtml(e.action, e.action_color)}</td>
         <td>${badgeHtml(e.health, e.health_color)}</td>
         <td>${c1Pct(e.c1_prob)}</td>
@@ -529,7 +606,7 @@ async function renderManager(kind) {
         ${del(it.id)}</tr>`;
     }
     return `<tr>
-      <td class="tk">${esc(it.ticker)}</td>
+      <td>${tickerLink(it.ticker)}</td>
       <td>${badgeHtml(e.status, e.status_color)}</td>
       ${mf}
       <td>${phaseBadge(e.phase)}</td>
@@ -610,13 +687,14 @@ async function renderTickerDetail(tk) {
     row("MA200 / Prior-20H", `${fnum(ma200)} / ${fnum(d.prior_high_20)}`, ""),
     row("Stop reference", esc(e.stop_ref || "—"), "var(--amber)"),
     row("Peak / Drawdown", `${fnum(d.peak_price)} / ${fpctv(d.drawdown_pct)}`,
-      (d.drawdown_pct ?? 0) < -15 ? "var(--red)" : "var(--amber)"),
+      d.drawdown_pct == null ? "var(--mut)" : d.drawdown_pct < -15 ? "var(--red)" : "var(--amber)"),
     row("Exit risk", `${fnum(d.exit_risk_score, 0)} / 100`, vColor),
   ].join("");
 
   // gauges: C1 (ML, == tables), DDR (empirical, distinct), EML (per-ticker model, PROVISIONAL)
-  const c1c = (c1 ?? 0) >= 0.4 ? "var(--red)" : (c1 ?? 0) >= 0.3 ? "var(--amber)" : "var(--txt)";
-  const ddrc = (d.ddr_5d5pct ?? 0) >= 0.4 ? "var(--red)" : (d.ddr_5d5pct ?? 0) >= 0.25 ? "var(--amber)" : "var(--green)";
+  const c1c = c1 == null ? "var(--mut)" : c1 >= 0.4 ? "var(--red)" : c1 >= 0.3 ? "var(--amber)" : "var(--txt)";
+  const ddrc = d.ddr_5d5pct == null ? "var(--mut)" : d.ddr_5d5pct >= 0.4 ? "var(--red)" : d.ddr_5d5pct >= 0.25 ? "var(--amber)" : "var(--green)";
+  const emlc = eml == null ? "var(--mut)" : "var(--amber)";
   const gauges = `
     <div class="td-gauge"><div class="g-num" style="color:${c1c}">${fprob(c1)}</div>
       <div class="g-d"><h4>Correction Risk</h4>
@@ -624,17 +702,22 @@ async function renderTickerDetail(tk) {
     <div class="td-gauge"><div class="g-num" style="color:${ddrc}">${fprob(d.ddr_5d5pct)}</div>
       <div class="g-d"><h4>Drawdown Risk <span class="tag">5d / -5%</span></h4>
         <p>Drawdown-profile base rate.</p></div></div>
-    <div class="td-gauge"><div class="g-num" style="color:var(--amber)">${fprob(eml)}</div>
+    <div class="td-gauge"><div class="g-num" style="color:${emlc}">${fprob(eml)}</div>
       <div class="g-d"><h4>Entry Quality <span class="tag prov">PROVISIONAL</span></h4>
         <p>Entry-quality model probability</p></div></div>`;
 
   // slider range + markers from real levels
   const levels = { Close: close, MA20: ma20, MA50: ma50, MA200: ma200, "Prior20H": d.prior_high_20, Peak: d.peak_price };
+  const missingLevels = [["Close", close], ["MA20", ma20], ["MA50", ma50], ["MA200", ma200]]
+    .filter(([, v]) => v == null).map(([n]) => n);
   const have = Object.values(levels).filter((v) => v != null);
-  const lo = have.length ? Math.min(...have) * 0.96 : 0;
-  const hi = have.length ? Math.max(...have) * 1.03 : 1;
-  const span = (hi - lo) || 1;
-  const pos = (v) => v == null ? null : Math.max(0, Math.min(100, (v - lo) / span * 100));
+  const rawLo = missingLevels.length ? null : Math.min(...have) * 0.96;
+  const rawHi = missingLevels.length ? null : Math.max(...have) * 1.03;
+  const simReady = rawLo != null && rawHi != null && rawHi > rawLo;
+  const lo = simReady ? rawLo : null;
+  const hi = simReady ? rawHi : null;
+  const span = simReady ? hi - lo : null;
+  const pos = (v) => !simReady || v == null ? null : Math.max(0, Math.min(100, (v - lo) / span * 100));
   // Place markers in priority order, skipping any that crowd an already-kept
   // label (<6% apart) so labels never overlap; align edge labels inward.
   const MIN_GAP = 3;
@@ -651,26 +734,37 @@ async function renderTickerDetail(tk) {
     `<div class="td-mk" style="left:${p.toFixed(1)}%"><div class="ln"></div>` +
     `<div class="lb" style="top:${i % 2 ? 22 : 9}px;transform:${lblTf(p)}">${n} ${fnum(v)}</div></div>`).join("");
 
-  _simCfg = { lo, hi, ma20, ma50, ma200, close };
+  _simCfg = { ready: simReady, lo, hi, ma20, ma50, ma200, close };
 
-  const sc = (zone, color, title, body, ref) =>
-    `<div class="td-sc" data-zone="${zone}" style="border-left-color:${color}"><div class="t">
+  const sc = (zone, color, title, body, ref, required) => {
+    const missing = required.filter(([n, v]) => v == null).map(([n]) => n);
+    if (missing.length) return `<div class="td-sc unavailable" aria-disabled="true"><div class="t">
+      <span>${title}</span><span class="tag">UNAVAILABLE</span></div>
+      <div class="b">Unavailable — ${esc(missing.join(" and "))} missing.</div></div>`;
+    return `<div class="td-sc" data-zone="${zone}" style="border-left-color:${color}"><div class="t">
       <span>${title}</span><span class="tag">${zone}</span></div>
       <div class="b">${body}</div><div class="ref">${esc(ref)}</div></div>`;
+  };
   const scs = [
     sc("ABOVE_MA20", "var(--green)", "Reclaim & hold above MA20",
       `Holds above MA20 (${fnum(ma20)}). Constructive — typical: <b>EXIT_0_HOLD / EXIT_1_TIGHTEN</b>.`,
-      `trigger: close >= MA20 ${fnum(ma20)}`),
+      `trigger: close >= MA20 ${fnum(ma20)}`, [["MA20", ma20]]),
     sc("MA50_MA20", "var(--teal)", "Between MA50 and MA20 (watch)",
       `Below MA20 (${fnum(ma20)}), above MA50 (${fnum(ma50)}). Tighten; no new buys. Typical: <b>EXIT_1_TIGHTEN</b>.`,
-      `band: MA50 ${fnum(ma50)} .. MA20 ${fnum(ma20)}`),
+      `band: MA50 ${fnum(ma50)} .. MA20 ${fnum(ma20)}`, [["MA20", ma20], ["MA50", ma50]]),
     sc("MA200_MA50", "var(--amber)", "Between MA200 and MA50 (trim)",
       `Below MA50 (${fnum(ma50)}), above MA200 (${fnum(ma200)}). Reduce risk. Typical: <b>EXIT_2_TRIM</b>.`,
-      `band: MA200 ${fnum(ma200)} .. MA50 ${fnum(ma50)}`),
+      `band: MA200 ${fnum(ma200)} .. MA50 ${fnum(ma50)}`, [["MA50", ma50], ["MA200", ma200]]),
     sc("BELOW_MA200", "var(--red)", "Below MA200 (breakdown)",
       `Breaks MA200 (${fnum(ma200)}). Major invalidation. Typical: <b>EXIT_3_EXIT / HARD_EXIT</b>.`,
-      `trigger: close < MA200 ${fnum(ma200)}`),
+      `trigger: close < MA200 ${fnum(ma200)}`, [["MA200", ma200]]),
   ].join("");
+  const sliderHtml = simReady
+    ? `<label class="sr-only" for="td-sl">Simulated price for ${esc(tk)}</label>
+        <input type="range" min="${lo.toFixed(2)}" max="${hi.toFixed(2)}" step="0.01"
+          value="${close.toFixed(2)}" class="td-slider" id="td-sl" aria-describedby="sim-help">
+        <div class="td-marks">${mkHtml}</div>`
+    : `<div class="sim-unavailable" role="status">Unavailable — ${esc(missingLevels.length ? `${missingLevels.join(", ")} missing` : "price levels do not form a valid range")}.</div>`;
 
   return `
   <div class="td-top">
@@ -705,15 +799,13 @@ async function renderTickerDetail(tk) {
     <div>
       <div class="panel">
         <div class="td-h">Price-zone simulator <span class="tag deriv">DERIVED — not the live model</span></div>
-        <div class="td-pxr"><span class="td-pxl">Simulated price</span><span class="td-px" id="simPx">${fnum(close)}</span></div>
-        <input type="range" min="${lo.toFixed(2)}" max="${hi.toFixed(2)}" step="0.01"
-          value="${(close ?? lo).toFixed(2)}" class="td-slider" id="td-sl">
-        <div class="td-marks">${mkHtml}</div>
+        <div class="td-pxr"><span class="td-pxl">Simulated price</span><span class="td-px" id="simPx">${simReady ? fnum(close) : "—"}</span></div>
+        ${sliderHtml}
         <div class="td-verdict">
           <span class="td-vl">Zone (price-level heuristic)</span>
-          <span class="td-vv" id="zoneVal" style="color:var(--amber)">—</span>
+          <span class="td-vv" id="zoneVal" style="color:${simReady ? "var(--amber)" : "var(--mut)"}">${simReady ? "—" : "Unavailable"}</span>
         </div>
-        <div class="td-note"><strong>Read this right:</strong> the slider maps a hypothetical price onto real
+        <div class="td-note" id="sim-help"><strong>Read this right:</strong> the slider maps a hypothetical price onto real
           MA bands — a <strong>derived heuristic</strong>, not the model re-run (the model also uses money flow,
           candles, risk scores). The authoritative call is the <strong>Live model verdict</strong> on the left.
           <div class="td-disc">Disclaimer: For informational purposes only. Not investment advice.</div></div>
@@ -726,7 +818,7 @@ async function renderTickerDetail(tk) {
 function wireDetail() {
   const cfg = _simCfg;
   const sl = document.getElementById("td-sl");
-  if (!cfg || !sl) return;
+  if (!cfg || !cfg.ready || !sl) return;
   const simPx = document.getElementById("simPx");
   const zoneVal = document.getElementById("zoneVal");
   const cards = [...document.querySelectorAll(".td-sc")];
@@ -735,14 +827,17 @@ function wireDetail() {
     ABOVE_MA20: "ABOVE MA20 · constructive", MA50_MA20: "MA50–MA20 · watch/tighten",
     MA200_MA50: "MA50 broken · trim", BELOW_MA200: "below MA200 · breakdown",
   };
-  const zoneFor = (p) =>
-    (cfg.ma20 != null && p >= cfg.ma20) ? "ABOVE_MA20"
-      : (cfg.ma50 != null && p >= cfg.ma50) ? "MA50_MA20"
-        : (cfg.ma200 != null && p >= cfg.ma200) ? "MA200_MA50" : "BELOW_MA200";
+  const zoneFor = (p) => {
+    if ([cfg.ma20, cfg.ma50, cfg.ma200].some((v) => v == null)) return null;
+    return p >= cfg.ma20 ? "ABOVE_MA20"
+      : p >= cfg.ma50 ? "MA50_MA20"
+        : p >= cfg.ma200 ? "MA200_MA50" : "BELOW_MA200";
+  };
   const upd = (p) => {
     p = parseFloat(p);
     if (simPx) simPx.textContent = p.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const z = zoneFor(p);
+    if (!z) return;
     if (zoneVal) { zoneVal.textContent = TXT[z]; zoneVal.style.color = COL[z]; }
     sl.style.setProperty("--zc", COL[z]);
     cards.forEach((c) => c.classList.toggle("on", c.dataset.zone === z));
@@ -842,8 +937,12 @@ window.__delItem = function (id) {
 };
 
 function setActiveTab(route) {
-  document.querySelectorAll("nav.tabs button").forEach((b) =>
-    b.classList.toggle("active", b.dataset.route === route));
+  document.querySelectorAll("nav.tabs button").forEach((b) => {
+    const active = b.dataset.route === route;
+    b.classList.toggle("active", active);
+    if (active) b.setAttribute("aria-current", "page");
+    else b.removeAttribute("aria-current");
+  });
 }
 
 async function navigate(route) {
@@ -878,10 +977,13 @@ async function navigate(route) {
 async function initHeader() {
   try {
     const m = await getJSON("latest.json");
-    document.getElementById("fresh-text").textContent = `as_of ${m.as_of_date} · ${m.status}`;
-    if (m.warnings && m.warnings.length) document.getElementById("fresh").title = m.warnings.join("\n");
+    document.getElementById("fresh-text").textContent = `Data ${m.as_of_date} EOD · Build ${m.status}`;
+    const warningHost = document.getElementById("header-warnings");
+    if (warningHost && m.warnings && m.warnings.length) {
+      warningHost.innerHTML = `<details class="header-warnings"><summary>⚠ ${m.warnings.length}</summary><ul>${m.warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul></details>`;
+    }
   } catch (_) {
-    document.getElementById("fresh-text").textContent = "data not ready";
+    document.getElementById("fresh-text").textContent = "EOD data not ready";
   }
 }
 
