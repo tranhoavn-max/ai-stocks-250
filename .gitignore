@@ -1,4 +1,0 @@
-# harness-brain local knowledge (harness-brain SPEC §4.2) — memory/ là dữ liệu
-# per-machine, shared/ là snapshot tái tạo được bằng cách chạy lại init-repo.sh.
-# Tri thức chỉ thành vĩnh viễn khi được promote lên repo harness-brain.
-.agents/
