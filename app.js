@@ -376,10 +376,10 @@ async function renderCockpit() {
   </div>
 
   <div class="market-strip" aria-label="End-of-day market status">
-    <div><span class="market-k">Data date</span><strong>${esc(d.meta?.as_of_date || "—")} <small>EOD</small></strong></div>
-    <div><span class="market-k">Market gate</span><strong class="gate-static" style="color:${gateColor}">${gate ? "●" : "⚠"} GATE: ${gateText}</strong></div>
-    <div><span class="market-k">Coverage</span><strong>${esc(coverage)}</strong></div>
-    <div><span class="market-k">Signals</span><strong>${d.counts.entry} entry · ${d.counts.continuation} on-deck</strong></div>
+    <div class="ms-date"><span class="market-k">Data date</span><strong>${esc(d.meta?.as_of_date || "—")} <small>EOD</small></strong></div>
+    <div class="ms-gate"><span class="market-k">Market gate</span><strong class="gate-static" style="color:${gateColor}">${gate ? "●" : "⚠"} GATE: ${gateText}</strong></div>
+    <div class="ms-cov"><span class="market-k">Coverage</span><strong>${esc(coverage)}</strong></div>
+    <div class="ms-sig"><span class="market-k">Signals</span><strong>${d.counts.entry} entry · ${d.counts.continuation} on-deck</strong></div>
   </div>
   ${warningDisclosure}
 
