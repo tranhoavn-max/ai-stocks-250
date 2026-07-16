@@ -129,11 +129,11 @@
     // Clear + guard: fail-soft on missing / too-short history.
     container.innerHTML = "";
     if (!LC) {
-      container.innerHTML = '<div class="pc-note">Chart library chưa tải được.</div>';
+      container.innerHTML = '<div class="pc-note">Chart library failed to load.</div>';
       return { destroy() { container.innerHTML = ""; } };
     }
     if (!bars || bars.length < 20) {
-      container.innerHTML = '<div class="pc-note">Chưa đủ lịch sử giá để vẽ chart.</div>';
+      container.innerHTML = '<div class="pc-note">Not enough price history to draw a chart.</div>';
       return { destroy() { container.innerHTML = ""; } };
     }
 
@@ -156,7 +156,7 @@
 
     const foot = document.createElement("div");
     foot.className = "pc-foot";
-    foot.textContent = "display-only · Volume Profile xấp xỉ EOD (phân bổ theo range high–low) · POC/VAH/VAL";
+    foot.textContent = "display-only · Volume Profile approximated from EOD bars (allocated across each bar's high–low range) · POC/VAH/VAL";
     container.appendChild(foot);
 
     let chart = null;

@@ -528,7 +528,7 @@ async function renderValuation() {
     <th class="r"><button class="sort-btn" type="button" data-sort="vs" aria-pressed="false" onclick="window.__valSort('vs')">vs Layer <span class="sort-mark">↕</span></button></th>
     <th>Valuation Label</th>
   </tr></thead><tbody>${tableRows}</tbody></table></div>
-  <div class="disclaimer">P/E so với median layer (median ưu tiên hơn trung bình) · ${d.valid_pe_count}/${d.ticker_count} mã có P/E · display-only, KHÔNG phải khuyến nghị.</div>`;
+  <div class="disclaimer">P/E vs layer median (median preferred over mean) · ${d.valid_pe_count}/${d.ticker_count} tickers with P/E · display-only, NOT investment advice.</div>`;
 }
 
 function renderLogin(msg) {
@@ -551,7 +551,7 @@ function renderLogin(msg) {
       <button type="submit" class="acct-btn" style="width:100%;margin-top:6px" id="auth-submit">Sign in</button>
     </form>
     <div id="auth-msg" class="subtle" style="margin-top:10px;min-height:16px;${msg ? "color:var(--red)" : ""}">${esc(msg || "")}</div>
-    <p class="subtle" style="margin-top:10px;font-size:11px">Đăng nhập để quản lý Portfolio &amp; Watchlist riêng tư. Cockpit / Valuation xem được không cần đăng nhập.</p>
+    <p class="subtle" style="margin-top:10px;font-size:11px">Sign in to manage your private Portfolio &amp; Watchlist. Cockpit / Valuation are viewable without an account.</p>
   </div></div>`;
 }
 
@@ -574,18 +574,18 @@ function leadHtml(lead) {
 function emlHtml(prob, conflict) {
   if (prob == null) return `<span class="subtle">—</span>`;
   const c = prob >= 0.5 ? "var(--green)" : "var(--txt)";
-  const warn = conflict ? ` <span style="color:var(--red)" title="EML cao nhưng verdict EXIT/RISK">⚠</span>` : "";
+  const warn = conflict ? ` <span style="color:var(--red)" title="High EML but verdict is EXIT/RISK">⚠</span>` : "";
   return `<span style="color:${c}">${Math.round(prob * 100)}%</span>${warn}`;
 }
 
 async function renderManager(kind) {
-  if (!currentUser) return renderLogin("Đăng nhập để xem " + kind + ".");
+  if (!currentUser) return renderLogin("Sign in to view " + kind + ".");
   const client = supa();
   const [items, em] = await Promise.all([
     client.from("tracked_items").select("*").eq("kind", kind).order("sort_order").order("created_at"),
     enrichMap(),
   ]);
-  if (items.error) return `<div class="status-line" style="color:var(--red)">Lỗi: ${esc(items.error.message)}</div>`;
+  if (items.error) return `<div class="status-line" style="color:var(--red)">Error: ${esc(items.error.message)}</div>`;
   const isPort = kind === "PORTFOLIO";
   const del = (id) => `<td class="r"><button class="row-del" title="Delete" onclick="window.__delItem('${id}')">✕</button></td>`;
 
@@ -616,7 +616,7 @@ async function renderManager(kind) {
   }).join("");
 
   const ncol = isPort ? 9 : 7;
-  const body = rows || `<tr><td colspan="${ncol}" class="subtle" style="padding:14px">Chưa có mã — thêm mã đầu tiên.</td></tr>`;
+  const body = rows || `<tr><td colspan="${ncol}" class="subtle" style="padding:14px">No tickers yet — add your first one.</td></tr>`;
   const head = isPort
     ? `<th>Ticker</th><th>Action</th><th>Health</th><th>C1</th><th>MF</th><th>Phase</th><th class="r">Score</th><th>Stop</th><th class="r"></th>`
     : `<th>Ticker</th><th>Status</th><th>MF</th><th>Phase</th><th>Lead</th><th class="r">EML</th><th class="r"></th>`;
@@ -776,7 +776,7 @@ async function renderTickerDetail(tk) {
 
   <div class="panel td-chart-panel">
     <div class="td-h">Price · MA · Volume Profile <span class="tag deriv">display-only</span></div>
-    <div id="td-chart" class="td-chart"><div class="pc-note">Đang tải chart…</div></div>
+    <div id="td-chart" class="td-chart"><div class="pc-note">Loading chart…</div></div>
   </div>
 
   <div class="td-grid">
@@ -856,7 +856,7 @@ async function mountDetailChart(tk) {
   try {
     payload = await getJSON(`bars/${encodeURIComponent(tk)}.json`);
   } catch (_) {
-    if (document.body.contains(el)) el.innerHTML = '<div class="pc-note">Chưa đủ lịch sử giá để vẽ chart.</div>';
+    if (document.body.contains(el)) el.innerHTML = '<div class="pc-note">Not enough price history to draw a chart.</div>';
     return;
   }
   if (!document.body.contains(el)) return; // navigated away mid-fetch
@@ -888,7 +888,7 @@ window.__authSubmit = function (e) {
   (async () => {
     const client = supa();
     const msg = document.getElementById("auth-msg");
-    if (!client) { if (msg) msg.textContent = "Supabase chưa sẵn sàng."; return; }
+    if (!client) { if (msg) msg.textContent = "Supabase is not ready yet."; return; }
     const email = document.getElementById("auth-email").value.trim();
     const pass = document.getElementById("auth-pass").value;
     if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "…"; }
@@ -896,7 +896,7 @@ window.__authSubmit = function (e) {
     const { data, error } = await client.auth[fn]({ email, password: pass });
     if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
     if (_authMode === "signup" && !data.session) {
-      if (msg) { msg.style.color = "var(--green)"; msg.textContent = "Đã tạo tài khoản — kiểm tra email xác nhận rồi đăng nhập."; }
+      if (msg) { msg.style.color = "var(--green)"; msg.textContent = "Account created — check your email to confirm, then sign in."; }
       return;
     }
     // onAuthStateChange will refresh header + view
