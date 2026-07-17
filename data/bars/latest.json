@@ -1,10 +1,10 @@
 {
   "schema_version": "dashboard-snapshot-manifest/v1",
   "snapshot_type": "bars",
-  "as_of_date": "2026-07-16",
-  "generated_at": "2026-07-17T00:19:05Z",
+  "as_of_date": "2026-07-15",
+  "generated_at": "2026-07-16T00:49:46Z",
   "coverage_status": "OK",
-  "source_rule_run_id": "52203326-4092-4b44-b8e1-e95195ca346f",
+  "source_rule_run_id": "deb78c1e-fb82-469f-9e34-aee5abdd060b",
   "count": 250,
   "skipped": [],
   "display_bars": 252,
