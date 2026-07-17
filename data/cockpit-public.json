@@ -1,6 +1,6 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-17T00:19:02Z",
+  "generated_at": "2026-07-17T04:39:22Z",
   "meta": {
     "as_of_date": "2026-07-16",
     "coverage_status": "PASS",
@@ -97,11 +97,7 @@
         "dd_day_streak": null,
         "dd_current_gain_pct": null
       },
-      "stop_ref": "MA10-1.5% 154.25 (+5.8%)",
-      "zone_low": 157.33625343867712,
-      "zone_high": 162.77000427246094,
       "zone_label": "pivot_high",
-      "target_zone": null,
       "exit_action": "No exit signal",
       "exit_signal": "EXIT_0_HOLD",
       "supply": "CONFIRM",
@@ -112,9 +108,7 @@
       "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
       "buy_quality": "",
       "buy_signal": "",
-      "buy_source": null,
-      "price": null,
-      "price_date": null
+      "buy_source": null
     }
   ],
   "momentum": {

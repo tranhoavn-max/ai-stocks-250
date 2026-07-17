@@ -3,6 +3,13 @@
    Display-only · not buy/sell orders. No API key, no compute, no market calls. */
 "use strict";
 
+// ⚠️ DATA-LICENSING (decision 2026-07-17, docs/decisions/deployment/web-decisions.md).
+// The candlestick chart needs raw OHLCV bars, but the EOD source (yfinance/Yahoo) prohibits
+// redistribution — so public feeds are DERIVED-ONLY and the raw bars feed is not published
+// (freeze_ticker_bars.py PUBLISH_RAW_BARS=False). Keep this false so the client never fetches
+// the (absent) bars feed. Flip to true ONLY alongside a redistribution-licensed source.
+const CHART_ENABLED = false;
+
 const DATA = "./data";
 const cache = {};
 async function getJSON(name) {
@@ -317,13 +324,12 @@ async function renderCockpit() {
     <td class="r subtle">${i + 1}</td>
     <td>${tickerLink(r.ticker)}</td>
     <td>${setupHtml(r.setup_text)}</td>
-    <td class="subtle">${esc(r.stop_ref || "—")}</td>
     <td>${c1Cell(r.c1)}</td>
     <td style="color:${e.flow_color || "var(--mut)"};font-size:11px">${esc(e.flow || "—")}</td>
     <td class="subtle">${leadCell(r)}</td>
     <td>${phaseBadge(r.phase)}</td></tr>`;
   }).join("") ||
-    `<tr><td colspan="8" class="subtle" style="padding:14px">No ENTRY trigger today.</td></tr>`;
+    `<tr><td colspan="7" class="subtle" style="padding:14px">No ENTRY trigger today.</td></tr>`;
 
   const ondeckRows = (d.continuation || []).map((r, i) => `<tr>
     <td class="r subtle">${i + 1}</td>
@@ -405,7 +411,7 @@ async function renderCockpit() {
   </div>
   <div id="gate-banner" class="banner-amber" style="${gate ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
-    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>Levels (Entry→Stop·Risk%)</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
+    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>
 
   <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
@@ -602,7 +608,6 @@ async function renderManager(kind) {
         ${mf}
         <td>${phaseBadge(e.phase)}</td>
         <td class="r">${sc}</td>
-        <td class="subtle">${esc(e.stop_ref || "—")}</td>
         ${del(it.id)}</tr>`;
     }
     return `<tr>
@@ -615,10 +620,10 @@ async function renderManager(kind) {
       ${del(it.id)}</tr>`;
   }).join("");
 
-  const ncol = isPort ? 9 : 7;
+  const ncol = isPort ? 8 : 7;
   const body = rows || `<tr><td colspan="${ncol}" class="subtle" style="padding:14px">No tickers yet — add your first one.</td></tr>`;
   const head = isPort
-    ? `<th>Ticker</th><th>Action</th><th>Health</th><th>C1</th><th>MF</th><th>Phase</th><th class="r">Score</th><th>Stop</th><th class="r"></th>`
+    ? `<th>Ticker</th><th>Action</th><th>Health</th><th>C1</th><th>MF</th><th>Phase</th><th class="r">Score</th><th class="r"></th>`
     : `<th>Ticker</th><th>Status</th><th>MF</th><th>Phase</th><th>Lead</th><th class="r">EML</th><th class="r"></th>`;
 
   return `
@@ -667,7 +672,13 @@ async function renderTickerDetail(tk) {
       <div class="status-line" style="color:var(--red)">No data for ${esc(tk)}.</div>`;
   }
 
-  const close = d.close, ma20 = d.ma20, ma50 = d.ma50, ma200 = d.ma200;
+  const ma20 = d.ma20, ma50 = d.ma50, ma200 = d.ma200;
+  const zone = d.zone;  // derived price-state (ABOVE_MA20/…) — replaces the raw close (D3)
+  // Derived-zone display maps (state labels/colors, NOT prices).
+  const ZTXT = { ABOVE_MA20: "Above MA20 · constructive", MA50_MA20: "MA50–MA20 · watch/tighten",
+    MA200_MA50: "MA50 broken · trim", BELOW_MA200: "Below MA200 · breakdown" };
+  const ZCOL = { ABOVE_MA20: "var(--green)", MA50_MA20: "var(--teal)",
+    MA200_MA50: "var(--amber)", BELOW_MA200: "var(--red)" };
   const [vLabel, vColor, vMean] = EXIT_LADDER[d.exit_signal_code] || [d.exit_signal_code || "—", "var(--mut)", ""];
   const c1 = e.c1_prob, eml = e.eml_prob;
   const mf = e.flow || "—", mfColorV = e.flow_color || "var(--mut)";
@@ -684,9 +695,8 @@ async function renderTickerDetail(tk) {
       e.lead?.trend === "RISING" ? "var(--green)" : e.lead?.trend === "FADING" ? "var(--red)" : ""),
     row("Money flow", `${esc(mf)} (${fnum(d.money_flow_score, 3)} · p${fnum(d.money_flow_percentile, 0)})`, mfColorV),
     row("MA20 / MA50", `${fnum(ma20)} / ${fnum(ma50)}`, ""),
-    row("MA200 / Prior-20H", `${fnum(ma200)} / ${fnum(d.prior_high_20)}`, ""),
-    row("Stop reference", esc(e.stop_ref || "—"), "var(--amber)"),
-    row("Peak / Drawdown", `${fnum(d.peak_price)} / ${fpctv(d.drawdown_pct)}`,
+    row("MA200", `${fnum(ma200)}`, ""),
+    row("Drawdown from peak", `${fpctv(d.drawdown_pct)}`,
       d.drawdown_pct == null ? "var(--mut)" : d.drawdown_pct < -15 ? "var(--red)" : "var(--amber)"),
     row("Exit risk", `${fnum(d.exit_risk_score, 0)} / 100`, vColor),
   ].join("");
@@ -706,9 +716,11 @@ async function renderTickerDetail(tk) {
       <div class="g-d"><h4>Entry Quality <span class="tag prov">PROVISIONAL</span></h4>
         <p>Entry-quality model probability</p></div></div>`;
 
-  // slider range + markers from real levels
-  const levels = { Close: close, MA20: ma20, MA50: ma50, MA200: ma200, "Prior20H": d.prior_high_20, Peak: d.peak_price };
-  const missingLevels = [["Close", close], ["MA20", ma20], ["MA50", ma50], ["MA200", ma200]]
+  // Slider range + markers from DERIVED MA levels only. Raw close/peak/prior-high are no
+  // longer shipped (data-licensing D3); the simulator anchors on MA20 and takes a
+  // user-entered hypothetical price. Zone bands below are MA-defined, so nothing is lost.
+  const levels = { MA20: ma20, MA50: ma50, MA200: ma200 };
+  const missingLevels = [["MA20", ma20], ["MA50", ma50], ["MA200", ma200]]
     .filter(([, v]) => v == null).map(([n]) => n);
   const have = Object.values(levels).filter((v) => v != null);
   const rawLo = missingLevels.length ? null : Math.min(...have) * 0.96;
@@ -722,7 +734,7 @@ async function renderTickerDetail(tk) {
   // label (<6% apart) so labels never overlap; align edge labels inward.
   const MIN_GAP = 3;
   const kept = [];
-  for (const [n, v] of [["Close", close], ["MA20", ma20], ["MA50", ma50], ["MA200", ma200], ["Peak", d.peak_price]]) {
+  for (const [n, v] of [["MA20", ma20], ["MA50", ma50], ["MA200", ma200]]) {
     const p = pos(v);
     if (p == null || kept.some((k) => Math.abs(k.p - p) < MIN_GAP)) continue;
     kept.push({ n, v, p });
@@ -734,7 +746,7 @@ async function renderTickerDetail(tk) {
     `<div class="td-mk" style="left:${p.toFixed(1)}%"><div class="ln"></div>` +
     `<div class="lb" style="top:${i % 2 ? 22 : 9}px;transform:${lblTf(p)}">${n} ${fnum(v)}</div></div>`).join("");
 
-  _simCfg = { ready: simReady, lo, hi, ma20, ma50, ma200, close };
+  _simCfg = { ready: simReady, lo, hi, ma20, ma50, ma200 };
 
   const sc = (zone, color, title, body, ref, required) => {
     const missing = required.filter(([n, v]) => v == null).map(([n]) => n);
@@ -762,7 +774,7 @@ async function renderTickerDetail(tk) {
   const sliderHtml = simReady
     ? `<label class="sr-only" for="td-sl">Simulated price for ${esc(tk)}</label>
         <input type="range" min="${lo.toFixed(2)}" max="${hi.toFixed(2)}" step="0.01"
-          value="${close.toFixed(2)}" class="td-slider" id="td-sl" aria-describedby="sim-help">
+          value="${ma20.toFixed(2)}" class="td-slider" id="td-sl" aria-describedby="sim-help">
         <div class="td-marks">${mkHtml}</div>`
     : `<div class="sim-unavailable" role="status">Unavailable — ${esc(missingLevels.length ? `${missingLevels.join(", ")} missing` : "price levels do not form a valid range")}.</div>`;
 
@@ -774,16 +786,16 @@ async function renderTickerDetail(tk) {
     <span class="subtle">entry_zone: <b>${esc(d.entry_zone || "—")}</b> · pullback <span style="color:${/MARKET_OFF|WAIT|REJECT|AVOID/.test(`${d.pullback_signal || ""} ${d.pullback_quality || ""}`) ? "var(--red)" : "var(--mut)"}">${esc(d.pullback_signal || "—")}/${esc(d.pullback_quality || "—")}</span></span>
   </div>
 
-  <div class="panel td-chart-panel">
+  ${CHART_ENABLED ? `<div class="panel td-chart-panel">
     <div class="td-h">Price · MA · Volume Profile <span class="tag deriv">display-only</span></div>
     <div id="td-chart" class="td-chart"><div class="pc-note">Loading chart…</div></div>
-  </div>
+  </div>` : ""}
 
   <div class="td-grid">
     <div>
       <div class="panel">
         <div class="td-h">Profile context <span class="src">verified</span></div>
-        <div class="td-pxr"><span class="td-pxl">Close</span><span class="td-px">${fnum(close)}</span></div>
+        <div class="td-pxr"><span class="td-pxl">Current zone</span><span class="td-px" style="color:${zone ? ZCOL[zone] : "var(--mut)"};font-size:15px">${zone ? esc(ZTXT[zone]) : "—"}</span></div>
         <div class="td-rows">${specRows}</div>
         <div class="td-verdict">
           <span class="td-vl">Live model verdict</span>
@@ -799,7 +811,7 @@ async function renderTickerDetail(tk) {
     <div>
       <div class="panel">
         <div class="td-h">Price-zone simulator <span class="tag deriv">DERIVED — not the live model</span></div>
-        <div class="td-pxr"><span class="td-pxl">Simulated price</span><span class="td-px" id="simPx">${simReady ? fnum(close) : "—"}</span></div>
+        <div class="td-pxr"><span class="td-pxl">Simulated price</span><span class="td-px" id="simPx">${simReady ? fnum(ma20) : "—"}</span></div>
         ${sliderHtml}
         <div class="td-verdict">
           <span class="td-vl">Zone (price-level heuristic)</span>
@@ -850,6 +862,7 @@ function wireDetail() {
 // chart into the detail panel. Fire-and-forget: fills #td-chart when ready, fail-soft on
 // missing history, and no-ops if the panel was torn down while the feed was loading.
 async function mountDetailChart(tk) {
+  if (!CHART_ENABLED) return;  // derived-only: raw bars feed is not published (D3)
   const el = document.getElementById("td-chart");
   if (!el || !window.mountPriceChart) return;
   let payload;

@@ -1,7 +1,7 @@
 {
   "schema_version": "ticker-enrich/v1",
   "as_of_date": "2026-07-16",
-  "generated_at": "2026-07-17T00:19:04Z",
+  "generated_at": "2026-07-17T04:39:24Z",
   "coverage_status": "PASS",
   "source_rule_run_id": "52203326-4092-4b44-b8e1-e95195ca346f",
   "count": 250,
@@ -18,7 +18,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 209.68 (-1.1%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -39,7 +38,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.544389,
       "eml_conflict": false,
       "lead": {
@@ -60,7 +58,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 403.65 (-7.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -81,7 +78,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.631439,
       "eml_conflict": false,
       "lead": {
@@ -102,7 +98,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 425.09 (-3.6%)",
       "eml_prob": 0.614997,
       "eml_conflict": true,
       "lead": {
@@ -123,7 +118,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 76.21 (-23.6%)",
       "eml_prob": 0.645642,
       "eml_conflict": true,
       "lead": {
@@ -144,7 +138,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.536965,
       "eml_conflict": false,
       "lead": {
@@ -165,7 +158,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.566362,
       "eml_conflict": true,
       "lead": {
@@ -186,7 +178,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.624408,
       "eml_conflict": false,
       "lead": {
@@ -207,7 +198,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.546472,
       "eml_conflict": false,
       "lead": {
@@ -228,7 +218,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.684754,
       "eml_conflict": false,
       "lead": {
@@ -249,7 +238,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -270,7 +258,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 375.36 (-2.9%)",
       "eml_prob": 0.543665,
       "eml_conflict": true,
       "lead": {
@@ -291,7 +278,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.647213,
       "eml_conflict": true,
       "lead": {
@@ -312,7 +298,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 228.77 (-9.1%)",
       "eml_prob": 0.646993,
       "eml_conflict": true,
       "lead": {
@@ -333,7 +318,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 11.75 (-34.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -354,7 +338,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 10.69 (-41.1%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -375,7 +358,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA20 170.67 (-1.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -396,7 +378,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.634801,
       "eml_conflict": true,
       "lead": {
@@ -417,7 +398,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 207.08 (-17.6%)",
       "eml_prob": 0.652118,
       "eml_conflict": true,
       "lead": {
@@ -438,7 +418,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 138.27 (-10.0%)",
       "eml_prob": 0.624467,
       "eml_conflict": true,
       "lead": {
@@ -459,7 +438,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 297.79 (-9.1%)",
       "eml_prob": 0.675959,
       "eml_conflict": true,
       "lead": {
@@ -480,7 +458,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -501,7 +478,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.622679,
       "eml_conflict": false,
       "lead": {
@@ -522,7 +498,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.637561,
       "eml_conflict": false,
       "lead": {
@@ -543,7 +518,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 874.61 (-19.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -564,7 +538,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.635045,
       "eml_conflict": false,
       "lead": {
@@ -585,7 +558,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -606,7 +578,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 604.56 (-23.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -627,7 +598,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA20 1033.04 (-17.4%)",
       "eml_prob": 0.633859,
       "eml_conflict": false,
       "lead": {
@@ -648,7 +618,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.647213,
       "eml_conflict": true,
       "lead": {
@@ -669,7 +638,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 878.93 (-15.2%)",
       "eml_prob": 0.651197,
       "eml_conflict": true,
       "lead": {
@@ -690,7 +658,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 94.41 (-10.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -711,7 +678,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 109.47 (-9.5%)",
       "eml_prob": 0.657443,
       "eml_conflict": true,
       "lead": {
@@ -732,7 +698,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.657273,
       "eml_conflict": false,
       "lead": {
@@ -753,7 +718,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.624585,
       "eml_conflict": false,
       "lead": {
@@ -774,7 +738,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -795,7 +758,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.540155,
       "eml_conflict": false,
       "lead": {
@@ -816,7 +778,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.553759,
       "eml_conflict": true,
       "lead": {
@@ -837,7 +798,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA20 315.97 (-6.9%)",
       "eml_prob": 0.656874,
       "eml_conflict": false,
       "lead": {
@@ -858,7 +818,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.530879,
       "eml_conflict": false,
       "lead": {
@@ -879,7 +838,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.624558,
       "eml_conflict": false,
       "lead": {
@@ -900,7 +858,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 186.14 (-6.7%)",
       "eml_prob": 0.634331,
       "eml_conflict": true,
       "lead": {
@@ -921,7 +878,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -942,7 +898,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.53782,
       "eml_conflict": false,
       "lead": {
@@ -963,7 +918,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 165.88 (-8.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -984,7 +938,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 371.26 (-18.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1005,7 +958,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1026,7 +978,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 371.31 (-4.5%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1047,7 +998,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1068,7 +1018,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1089,7 +1038,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 262.18 (+3.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1110,7 +1058,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 155.87 (-13.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1131,7 +1078,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1152,7 +1098,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 257.87 (+1.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1173,7 +1118,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1194,7 +1138,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1215,7 +1158,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 54.51 (-35.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1236,7 +1178,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 23.94 (-29.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1257,7 +1198,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 194.42 (+4.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1278,7 +1218,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 336.74 (+5.1%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1299,7 +1238,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1320,7 +1258,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1341,7 +1278,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1362,7 +1298,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1383,7 +1318,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1404,7 +1338,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 50.77 (-19.1%)",
       "eml_prob": 0.655478,
       "eml_conflict": true,
       "lead": {
@@ -1425,7 +1358,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1446,7 +1378,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1467,7 +1398,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "2ATR 606.37 (+9.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1488,7 +1418,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 129.23 (-19.5%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1509,7 +1438,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1530,7 +1458,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1551,7 +1478,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.519665,
       "eml_conflict": true,
       "lead": {
@@ -1572,7 +1498,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 533.28 (-18.5%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1593,7 +1518,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1614,7 +1538,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.67776,
       "eml_conflict": false,
       "lead": {
@@ -1635,7 +1558,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.607388,
       "eml_conflict": false,
       "lead": {
@@ -1656,7 +1578,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.63899,
       "eml_conflict": false,
       "lead": {
@@ -1677,7 +1598,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 69.82 (-17.5%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1698,7 +1618,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1719,7 +1638,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.641798,
       "eml_conflict": false,
       "lead": {
@@ -1740,7 +1658,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.630662,
       "eml_conflict": false,
       "lead": {
@@ -1761,7 +1678,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.655093,
       "eml_conflict": false,
       "lead": {
@@ -1782,7 +1698,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.659815,
       "eml_conflict": false,
       "lead": {
@@ -1803,7 +1718,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.608036,
       "eml_conflict": false,
       "lead": {
@@ -1824,7 +1738,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 130.70 (-18.0%)",
       "eml_prob": 0.655923,
       "eml_conflict": true,
       "lead": {
@@ -1845,7 +1758,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.544389,
       "eml_conflict": false,
       "lead": {
@@ -1866,7 +1778,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.615786,
       "eml_conflict": false,
       "lead": {
@@ -1887,7 +1798,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.675348,
       "eml_conflict": false,
       "lead": {
@@ -1908,7 +1818,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1929,7 +1838,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 10.19 (-12.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1950,7 +1858,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA20 218.49 (-0.1%)",
       "eml_prob": 0.228336,
       "eml_conflict": false,
       "lead": {
@@ -1971,7 +1878,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 76.86 (-11.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -1992,7 +1898,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.540369,
       "eml_conflict": false,
       "lead": {
@@ -2013,7 +1918,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 48.56 (-23.9%)",
       "eml_prob": 0.659441,
       "eml_conflict": true,
       "lead": {
@@ -2034,7 +1938,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.657346,
       "eml_conflict": false,
       "lead": {
@@ -2055,7 +1958,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.65403,
       "eml_conflict": true,
       "lead": {
@@ -2076,7 +1978,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2097,7 +1998,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 154.19 (-13.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2118,7 +2018,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA20 14.68 (+0.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2139,7 +2038,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.671582,
       "eml_conflict": false,
       "lead": {
@@ -2160,7 +2058,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2181,7 +2078,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.290359,
       "eml_conflict": false,
       "lead": {
@@ -2202,7 +2098,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.538765,
       "eml_conflict": false,
       "lead": {
@@ -2223,7 +2118,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 40.67 (-35.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2244,7 +2138,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.633792,
       "eml_conflict": false,
       "lead": {
@@ -2265,7 +2158,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2286,7 +2178,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2307,7 +2198,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2328,7 +2218,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2349,7 +2238,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2370,7 +2258,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2391,7 +2278,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2412,7 +2298,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 44.11 (+1.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2433,7 +2318,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2454,7 +2338,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 110.45 (-8.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2475,7 +2358,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2496,7 +2378,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2517,7 +2398,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 20.19 (-10.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2538,7 +2418,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 9.71 (-21.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2559,7 +2438,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 198.68 (-26.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2580,7 +2458,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 144.35 (+2.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2601,7 +2478,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2622,7 +2498,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2643,7 +2518,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 65.66 (-5.4%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2664,7 +2538,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2685,7 +2558,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 112.12 (-17.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2706,7 +2578,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.63995,
       "eml_conflict": true,
       "lead": {
@@ -2727,7 +2598,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 153.87 (+2.4%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2748,7 +2618,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 45.08 (+4.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2769,7 +2638,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA10-1.5% 39.70 (+0.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2790,7 +2658,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2811,7 +2678,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.521498,
       "eml_conflict": false,
       "lead": {
@@ -2832,7 +2698,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 163.40 (-33.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2853,7 +2718,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2874,7 +2738,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 342.13 (-8.6%)",
       "eml_prob": 0.661964,
       "eml_conflict": true,
       "lead": {
@@ -2895,7 +2758,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2916,7 +2778,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2937,7 +2798,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2958,7 +2818,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2979,7 +2838,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "2ATR 79.72 (+6.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3000,7 +2858,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3021,7 +2878,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3042,7 +2898,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 6.36 (-26.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3063,7 +2918,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3084,7 +2938,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 11.45 (+3.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3105,7 +2958,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3126,7 +2978,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 157.26 (-18.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3147,7 +2998,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3168,7 +3018,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 170.50 (-14.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3189,7 +3038,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 209.46 (-5.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3210,7 +3058,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 603.63 (+5.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3231,7 +3078,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3252,7 +3098,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 624.46 (-7.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3273,7 +3118,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 386.42 (-18.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3294,7 +3138,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 148.24 (-40.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3315,7 +3158,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 51.68 (-37.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3336,7 +3178,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3357,7 +3198,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3378,7 +3218,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.621782,
       "eml_conflict": false,
       "lead": {
@@ -3399,7 +3238,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 92.89 (-12.1%)",
       "eml_prob": 0.649111,
       "eml_conflict": true,
       "lead": {
@@ -3420,7 +3258,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3441,7 +3278,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3462,7 +3298,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3483,7 +3318,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3504,7 +3338,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3525,7 +3358,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3546,7 +3378,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 154.25 (+5.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3567,7 +3398,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 158.38 (-19.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3588,7 +3418,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3609,7 +3438,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 80.05 (-7.5%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3630,7 +3458,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA20 145.16 (+1.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3651,7 +3478,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 195.84 (-4.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3672,7 +3498,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 74.35 (-27.4%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3693,7 +3518,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3714,7 +3538,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 534.56 (-10.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3735,7 +3558,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3756,7 +3578,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 53.15 (-36.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3777,7 +3598,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 115.03 (-7.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3798,7 +3618,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 1914.28 (-3.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3819,7 +3638,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 186.17 (-0.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3840,7 +3658,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3861,7 +3678,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3882,7 +3698,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 111.02 (-0.1%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3903,7 +3718,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3924,7 +3738,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 162.28 (-26.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3945,7 +3758,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3966,7 +3778,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -3987,7 +3798,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4008,7 +3818,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4029,7 +3838,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4050,7 +3858,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 75.70 (+6.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4071,7 +3878,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4092,7 +3898,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4113,7 +3918,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 134.21 (-11.5%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4134,7 +3938,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 10.31 (+6.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4155,7 +3958,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 117.76 (+7.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4176,7 +3978,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4197,7 +3998,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4218,7 +4018,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4239,7 +4038,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4260,7 +4058,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4281,7 +4078,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4302,7 +4098,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4323,7 +4118,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 65.18 (-0.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4344,7 +4138,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 50.37 (-38.1%)",
       "eml_prob": 0.642923,
       "eml_conflict": true,
       "lead": {
@@ -4365,7 +4158,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4386,7 +4178,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 5.90 (+6.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4407,7 +4198,6 @@
       "action_color": "#ff9e2c",
       "status": "NOT READY (soft-exit)",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 9.23 (+2.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4428,7 +4218,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.679822,
       "eml_conflict": false,
       "lead": {
@@ -4449,7 +4238,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.55508,
       "eml_conflict": false,
       "lead": {
@@ -4470,7 +4258,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4491,7 +4278,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 195.77 (-7.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4512,7 +4298,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4533,7 +4318,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4554,7 +4338,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA50 160.58 (-14.7%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4575,7 +4358,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.406384,
       "eml_conflict": false,
       "lead": {
@@ -4596,7 +4378,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA10-1.5% 21.44 (-0.2%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4617,7 +4398,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.230248,
       "eml_conflict": false,
       "lead": {
@@ -4638,7 +4418,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4659,7 +4438,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4680,7 +4458,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.260242,
       "eml_conflict": false,
       "lead": {
@@ -4701,7 +4478,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4722,7 +4498,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4743,7 +4518,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA20 114.24 (+0.6%)",
       "eml_prob": 0.232283,
       "eml_conflict": false,
       "lead": {
@@ -4764,7 +4538,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4785,7 +4558,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4806,7 +4578,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA20 1357.87 (+3.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4827,7 +4598,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA20 46.71 (-0.1%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4848,7 +4618,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.353702,
       "eml_conflict": false,
       "lead": {
@@ -4869,7 +4638,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4890,7 +4658,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": 0.641418,
       "eml_conflict": true,
       "lead": {
@@ -4911,7 +4678,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": 0.677961,
       "eml_conflict": false,
       "lead": {
@@ -4932,7 +4698,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 26.00 (+3.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4953,7 +4718,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "2ATR 29.13 (+7.8%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4974,7 +4738,6 @@
       "action_color": "#5ad07a",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": "MA10-1.5% 28.93 (+5.3%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4995,7 +4758,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5016,7 +4778,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5037,7 +4798,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 40.98 (+9.0%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5058,7 +4818,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5079,7 +4838,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5100,7 +4858,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5121,7 +4878,6 @@
       "action_color": "#5ad07a",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": "MA10-1.5% 263.41 (+2.9%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5142,7 +4898,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5163,7 +4918,6 @@
       "action_color": "#ff9e2c",
       "status": "WAIT",
       "status_color": "#8593ac",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5184,7 +4938,6 @@
       "action_color": "#ff9e2c",
       "status": "RISK (building)",
       "status_color": "#ff6b6b",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5205,7 +4958,6 @@
       "action_color": "#ff6b6b",
       "status": "AVOID (active exit)",
       "status_color": "#ff6b6b",
-      "stop_ref": "MA200 28.20 (-23.6%)",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5226,7 +4978,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -5247,7 +4998,6 @@
       "action_color": "#ff9e2c",
       "status": "WARMING",
       "status_color": "#5ad07a",
-      "stop_ref": null,
       "eml_prob": 0.530486,
       "eml_conflict": false,
       "lead": {
