@@ -1,30 +1,30 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-17T04:39:22Z",
+  "generated_at": "2026-07-18T07:38:27Z",
   "meta": {
-    "as_of_date": "2026-07-16",
+    "as_of_date": "2026-07-17",
     "coverage_status": "PASS",
-    "source_rule_run_id": "52203326-4092-4b44-b8e1-e95195ca346f",
-    "source_ingest_run_id": "6e267c9d-b2f3-411e-bfdc-df32f72ddacd",
-    "snapshot_generated_at": "2026-07-17T00:17:10Z",
+    "source_rule_run_id": "e633683e-2254-4d86-96fc-a15c1d03c079",
+    "source_ingest_run_id": "378571fe-b0b6-45dd-8c2a-a73b39be68f4",
+    "snapshot_generated_at": "2026-07-18T07:36:46Z",
     "warnings": []
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-16",
-    "score": 74.1,
+    "as_of_date": "2026-07-17",
+    "score": 67.1,
     "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.716,
-      "qqq_close_location": -0.394,
-      "supz": -0.453,
-      "flow_z": -0.759,
-      "flow_mom": 0.0488,
-      "c1_warn_pct": 80.43
+      "c1z": 0.593,
+      "qqq_close_location": 0.103,
+      "supz": -0.281,
+      "flow_z": -0.26,
+      "flow_mom": 0.0214,
+      "c1_warn_pct": 79.56
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +32,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    53.6,
     69.8,
     67.4,
     57.1,
@@ -43,74 +42,16 @@
     67.3,
     57.8,
     65.4,
-    74.1
+    74.1,
+    67.1
   ],
   "caution_sessions": 12,
   "counts": {
     "entry": 0,
-    "continuation": 1
+    "continuation": 0
   },
   "entry": [],
-  "continuation": [
-    {
-      "ticker": "MANH",
-      "company_name": "Manhattan Associates",
-      "verdict": "WATCH",
-      "verdict_sub": "weak",
-      "phase": "ACCUMULATION",
-      "layer": "control_growth_software",
-      "setup_text": "vol20=1.22|tr20=1.34|cloc=0.84|zone=pivot_high|confirmed_above_zone",
-      "setup_tokens": [
-        "HOLD"
-      ],
-      "rank": null,
-      "score": null,
-      "score_trend": null,
-      "score_short": null,
-      "c1": {
-        "c15_prob": 0.127604,
-        "c15_prob_raw": 0.203792,
-        "confidence": "low",
-        "n_features": 27
-      },
-      "ddr": {
-        "ddr_5d_5pct": null,
-        "ddr_confidence": null,
-        "ddr_n_bucket": null,
-        "ddr_overheat": null,
-        "dd_profile_as_of_date": "2026-07-16",
-        "dd_current_pct": null,
-        "dd_to_median_pct": null,
-        "dd_median_pct": 0.1092096729921313,
-        "dd_p25_pct": 0.08832124604109123,
-        "dd_p75_pct": 0.12576289703197302,
-        "dd_worst_pct": 0.223293722360777,
-        "dd_best_pct": 0.06242868989701355,
-        "dd_sample_size": 10,
-        "dd_confidence": "high",
-        "dd_coverage_status": "FULL_10Y",
-        "dd_p_break_median": 0.6,
-        "dd_n_pullbacks_median": 15,
-        "dd_n_breaks_median": 9,
-        "dd_current_cycle_peak_date": null,
-        "dd_current_cycle_peak_price": null,
-        "dd_day_streak": null,
-        "dd_current_gain_pct": null
-      },
-      "zone_label": "pivot_high",
-      "exit_action": "No exit signal",
-      "exit_signal": "EXIT_0_HOLD",
-      "supply": "CONFIRM",
-      "supply_action": "ALLOW/HOLD",
-      "flow": "INFLOW",
-      "money_flow_score": null,
-      "age_bars": 31,
-      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
-      "buy_quality": "",
-      "buy_signal": "",
-      "buy_source": null
-    }
-  ],
+  "continuation": [],
   "momentum": {
     "leaders": [
       {
@@ -162,16 +103,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "LWLG",
-        "rs_pctl": 98,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "INTC",
-        "rs_pctl": 97,
+        "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -186,16 +119,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "UCTT",
-        "rs_pctl": 96,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "VIAV",
-        "rs_pctl": 96,
+        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -210,7 +135,23 @@
         "snapshot_clean": false
       },
       {
+        "ticker": "UCTT",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
         "ticker": "TER",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "LWLG",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
