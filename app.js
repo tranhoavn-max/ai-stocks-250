@@ -50,10 +50,37 @@ const PHASE = {
   STRONG_UPTREND: "var(--green)", UPTREND: "var(--green)", ACCUMULATION: "var(--teal)",
   NEUTRAL: "var(--mut)", DISTRIBUTION: "var(--amber)", STRONG_DOWNTREND: "var(--red)", DOWNTREND: "var(--red)",
 };
+// Display-only short labels — MIRROR of packages/shared-presentation/src/short.ts
+// (user-approved matrix 2026-07-20). Kept in lockstep by
+// tests/test_web_short_labels_parity.py. 1:1 relabel for dense tables; unknown/
+// null values pass through verbatim, and colors/tokens keep reading the RAW value.
+const SHORT_ACTION = {
+  "No exit signal": "HOLD",
+  "Tighten stop / no add": "TIGHTEN",
+  "Trim / reduce risk": "TRIM",
+  "Exit on close confirmation": "EXIT",
+  "Exit / preserve capital": "HARD EXIT",
+};
+const SHORT_STATUS = {
+  "AVOID (active exit)": "AVOID",
+  "RISK (building)": "RISK",
+  "READY (enter)": "READY",
+  "WARMING (early base)": "WARMING",
+  "NOT READY (soft-exit)": "NOT READY",
+};
+const SHORT_PHASE = {
+  STRONG_UPTREND: "UP+", UPTREND: "UP", STRONG_DOWNTREND: "DOWN+", DOWNTREND: "DOWN",
+  ACCUMULATION: "ACCUM", DISTRIBUTION: "DISTRIB",
+};
+const SHORT_FLOW = { STRONG_INFLOW: "INFLOW+", STRONG_OUTFLOW: "OUTFLOW+" };
+const shortAction = (v) => (v == null ? v : SHORT_ACTION[v] ?? v);
+const shortStatus = (v) => (v == null ? v : SHORT_STATUS[v] ?? v);
+const shortPhase = (v) => (v == null ? v : SHORT_PHASE[v] ?? v);
+const shortFlow = (v) => (v == null ? v : SHORT_FLOW[v] ?? v);
 const phaseBadge = (code) => {
   if (!code) return `<span class="subtle">—</span>`;
   const c = PHASE[code] || "var(--mut)";
-  return `<span class="pill" style="color:${c};border-color:${c};background:transparent">${esc(code)}</span>`;
+  return `<span class="pill" style="color:${c};border-color:${c};background:transparent">${esc(shortPhase(code))}</span>`;
 };
 const c1Cell = (c1) => {
   // Prefer the per-ticker raw model probability; the calibrated c15_prob collapses
@@ -351,7 +378,7 @@ async function renderCockpit() {
     <td>${tickerLink(r.ticker)}</td>
     <td>${setupHtml(r.setup_text)}</td>
     <td>${c1Cell(r.c1)}</td>
-    <td style="color:${e.flow_color || "var(--mut)"};font-size:11px">${esc(e.flow || "—")}</td>
+    <td style="color:${mfColor(e.flow)};font-size:11px">${esc(shortFlow(e.flow) || "—")}</td>
     <td class="subtle">${leadCell(r)}</td>
     <td>${phaseBadge(r.phase)}</td></tr>`;
   }).join("") ||
@@ -525,7 +552,7 @@ async function renderValuation() {
       <td class="val-ticker">${tickerLink(r.ticker)}${mobileDetail}</td>
       <td class="subtle" style="font-size:11px">${esc(r.ai_layer_code || "—")}</td>
       <td>${phaseBadge(r.phase_code)}</td>
-      <td style="color:${mfColor(r.money_flow_state)};font-size:11px">${esc(r.money_flow_state || "—")}</td>
+      <td style="color:${mfColor(r.money_flow_state)};font-size:11px">${esc(shortFlow(r.money_flow_state) || "—")}</td>
       <td class="r">${r.score != null ? r.score.toFixed(1) : "—"}</td>
       <td class="r">${pe}</td>
       <td class="r subtle">${r.layer_pe_median != null ? r.layer_pe_median.toFixed(1) : "—"}</td>
@@ -635,11 +662,11 @@ async function renderManager(kind) {
   const rows = (items.data || []).map((it) => {
     const e = em[it.ticker] || {};
     const sc = e.score != null ? (+e.score).toFixed(1) : "—";
-    const mf = `<td style="color:${e.flow_color || "var(--mut)"};font-size:11px">${esc(e.flow || "—")}</td>`;
+    const mf = `<td style="color:${mfColor(e.flow)};font-size:11px">${esc(shortFlow(e.flow) || "—")}</td>`;
     if (isPort) {
       return `<tr>
         <td>${tickerLink(it.ticker)}</td>
-        <td>${badgeHtml(e.action, e.action_color)}</td>
+        <td>${badgeHtml(shortAction(e.action), e.action_color)}</td>
         <td>${badgeHtml(e.health, e.health_color)}</td>
         <td>${c1Pct(e.c1_prob)}</td>
         ${mf}
@@ -649,7 +676,7 @@ async function renderManager(kind) {
     }
     return `<tr>
       <td>${tickerLink(it.ticker)}</td>
-      <td>${badgeHtml(e.status, e.status_color)}</td>
+      <td>${badgeHtml(shortStatus(e.status), e.status_color)}</td>
       ${mf}
       <td>${phaseBadge(e.phase)}</td>
       <td class="subtle">${leadHtml(e.lead)}</td>
@@ -660,7 +687,7 @@ async function renderManager(kind) {
   const ncol = isPort ? 8 : 7;
   const body = rows || `<tr><td colspan="${ncol}" class="subtle" style="padding:14px">No tickers yet — add your first one.</td></tr>`;
   const head = isPort
-    ? `<th>Ticker</th><th>Action</th><th>Health</th><th>C1</th><th>MF</th><th>Phase</th><th class="r">Score</th><th class="r"></th>`
+    ? `<th>Ticker</th><th>Action</th><th>Health</th><th>RISK</th><th>MF</th><th>Phase</th><th class="r">Score</th><th class="r"></th>`
     : `<th>Ticker</th><th>Status</th><th>MF</th><th>Phase</th><th>Lead</th><th class="r">EML</th><th class="r"></th>`;
 
   return `
@@ -718,7 +745,7 @@ async function renderTickerDetail(tk) {
     MA200_MA50: "var(--amber)", BELOW_MA200: "var(--red)" };
   const [vLabel, vColor, vMean] = EXIT_LADDER[d.exit_signal_code] || [d.exit_signal_code || "—", "var(--mut)", ""];
   const c1 = e.c1_prob, eml = e.eml_prob;
-  const mf = e.flow || "—", mfColorV = e.flow_color || "var(--mut)";
+  const mf = shortFlow(e.flow) || "—", mfColorV = mfColor(e.flow);
   const phase = e.phase;
 
   const row = (k, v, cls, src) =>

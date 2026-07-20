@@ -135,6 +135,15 @@ header.shell {
 }
 .acct-btn:hover { border-color: var(--brand); background: rgba(201, 162, 78, .08); color: var(--brand); }
 .acct-btn:active { transform: translateY(1px); }
+/* Manager add-form: Add is the primary action — gold fill, sized to match the
+   ticker input's height (font 13 + padding 8). Scoped so account-action .acct-btn
+   stay outlined. The input's stray bottom margin is zeroed for a clean baseline. */
+.add-form .auth-input { margin-bottom: 0; }
+.add-form .acct-btn {
+  background: var(--brand); border-color: var(--brand); color: #07090C;
+  font-weight: 700; font-size: 13px; padding: 9px 16px;
+}
+.add-form .acct-btn:hover { background: var(--brand); border-color: var(--brand); color: #07090C; filter: brightness(1.08); }
 
 /* philosophy */
 .philo {
