@@ -137,6 +137,32 @@ function sparkline(vals, elevated = 60, fire = 80) {
   return svg + dot + lbl(yF, "80", "hi") + lbl(yE, "60", "el");
 }
 
+// Radial caution gauge (Bivium 1a look). Geometry mirrors the design-system CautionGauge
+// (250° sweep from -215°). The arc is coloured by the product's real tier (hex passed in),
+// NOT the DS regime spectrum, so it always agrees with the tier pill + score (and never goes
+// blue). Score can be a fraction (e.g. 67.1); "—" when unavailable.
+function cautionGauge(score, hex) {
+  const dim = 128, cx = dim / 2, cy = dim / 2, r = dim * 0.37, sw = dim * 0.066;
+  const startDeg = -215, totalDeg = 250;
+  const has = score != null && !isNaN(+score);
+  const clamped = has ? Math.min(Math.max(+score, 0), 100) : 0;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const pt = (deg, rad) => ({ x: cx + rad * Math.cos(toRad(deg)), y: cy + rad * Math.sin(toRad(deg)) });
+  const arc = (a1, a2, rad) => {
+    const s = pt(a1, rad), e = pt(a2, rad);
+    const large = a2 - a1 > 180 ? 1 : 0;
+    return `M ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${rad} ${rad} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)}`;
+  };
+  const track = arc(startDeg, startDeg + totalDeg, r);
+  const val = arc(startDeg, startDeg + (clamped / 100) * totalDeg, r);
+  return `<svg width="${dim}" height="${dim}" viewBox="0 0 ${dim} ${dim}" role="img" aria-label="Market caution ${has ? score : "unavailable"} of 100">
+    <path d="${track}" fill="none" stroke="#283139" stroke-width="${sw}" stroke-linecap="round"></path>
+    ${has ? `<path d="${val}" fill="none" stroke="${hex}" stroke-width="${sw}" stroke-linecap="round" style="filter:drop-shadow(0 0 5px ${hex})"></path>` : ""}
+    <text x="${cx}" y="${cy - 3}" text-anchor="middle" dominant-baseline="central" fill="${hex}" style="font-family:var(--mono);font-size:${(dim * 0.22).toFixed(0)}px;font-weight:600">${has ? esc(String(score)) : "—"}</text>
+    <text x="${cx}" y="${(cy + dim * 0.17).toFixed(0)}" text-anchor="middle" fill="#8B939C" style="font-family:var(--ui);font-size:${(dim * 0.082).toFixed(0)}px;font-weight:600;letter-spacing:.14em">CAUTION</text>
+  </svg>`;
+}
+
 // Go board with depth — gradient stones, drop shadow, specular highlight, a gold
 // "decisive move" with glow + last-move marker, and a coral "sacrifice" triangle.
 // w=you · b=market · gold=decisive move · sac=sacrifice stone.
@@ -345,8 +371,8 @@ async function renderCockpit() {
   const momChips = mom ? mom.leaders.map((m) => {
     const flags = (m.risk_flags && m.risk_flags.length) ? m.risk_flags : [];
     const isEntry = !!m.is_entry, hasRisk = flags.length > 0;
-    // Baseline leaders stay neutral (all are elite ~RS95-100); only ENTRY (green) or
-    // risk-flagged (amber) names stand out, so the eye lands on what needs attention.
+    // Mockup 1a palette: leaders stay neutral; only ENTRY (green) or risk-flagged (amber)
+    // names take colour, so the eye lands on what needs attention. No blue/teal here.
     const dotColor = isEntry ? "var(--green)" : hasRisk ? "var(--amber)" : "var(--mut)";
     const cls = isEntry ? " is-entry" : hasRisk ? " has-risk" : "";
     const rs = m.rs_pctl == null ? null : Math.max(0, Math.min(100, Math.round(+m.rs_pctl)));
@@ -370,74 +396,85 @@ async function renderCockpit() {
   const warningDisclosure = warnings.length ? `<details class="coverage-warnings"><summary>⚠ ${warnings.length} coverage warning${warnings.length === 1 ? "" : "s"}</summary><ul>${warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul></details>` : "";
   const tierU = (mc.tier || "").toUpperCase();
   const tierC = tierU === "HIGH" ? "var(--red)" : tierU === "NORMAL" ? "var(--green)" : "var(--amber)";
+  const tierHex = tierU === "HIGH" ? "#E05A4E" : tierU === "NORMAL" ? "#56B381" : "#F5C842";
   const tierBg = tierU === "HIGH" ? "rgba(255,77,77,.12)" : tierU === "NORMAL" ? "rgba(38,208,124,.12)" : "rgba(255,158,27,.12)";
+  // Honest caution banner copy — derived only from the real caution rule/thresholds
+  // (score = modeled P(risk_off within ~20 sessions); "fires" at the HIGH threshold). No
+  // fabricated regime label and no new trading directive: the scope field states caution is
+  // display-only and does NOT gate entry/verdict/BUY/EXIT, so the banner says exactly that.
+  const elT = mc.elevated_threshold ?? 60, hiT = mc.fire_threshold ?? 80;
+  const cautionLede = tierU === "HIGH"
+    ? `High near-term risk-off probability — score at or above the ≥ ${hiT} alert threshold.`
+    : tierU === "NORMAL"
+    ? `Low near-term risk-off probability — score below the ${elT} elevated mark.`
+    : tierU === "ELEVATED"
+    ? `Elevated near-term risk-off probability — score ≥ ${elT}, below the ≥ ${hiT} alert.`
+    : "Market caution level unavailable.";
 
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
     <h1 class="h1big">Decision Desk</h1>
     <div class="desk-meta">
-      <span class="pill" style="color:var(--teal);border-color:var(--teal);background:rgba(45,212,191,.12)">COVERAGE ${esc(coverage)}</span>
-      <span class="subtle">ENTRY=${d.counts.entry} · ON-DECK=${d.counts.continuation}</span>
+      <span class="pill" style="color:${coverage === "PASS" ? "var(--green)" : "var(--amber)"};border-color:${coverage === "PASS" ? "var(--green)" : "var(--amber)"};background:${coverage === "PASS" ? "rgba(86,179,129,.12)" : "rgba(245,200,66,.12)"}">COVERAGE ${esc(coverage)}</span>
+      <span class="subtle" style="font-family:var(--mono)">ENTRY=${d.counts.entry} · ON-DECK=${d.counts.continuation}</span>
     </div>
-  </div>
-
-  <div class="market-strip" aria-label="End-of-day market status">
-    <div class="ms-date"><span class="market-k">Data date</span><strong>${esc(d.meta?.as_of_date || "—")} <small>EOD</small></strong></div>
-    <div class="ms-gate"><span class="market-k">Market gate</span><strong class="gate-static" style="color:${gateColor}">${gate ? "●" : "⚠"} GATE: ${gateText}</strong></div>
-    <div class="ms-cov"><span class="market-k">Coverage</span><strong>${esc(coverage)}</strong></div>
-    <div class="ms-sig"><span class="market-k">Signals</span><strong>${d.counts.entry} entry · ${d.counts.continuation} on-deck</strong></div>
   </div>
   ${warningDisclosure}
 
-  <div class="cau">
-    <div class="cau-left">
-      <div class="cau-label">Market Caution</div>
-      <div class="cau-num">
-        <span class="cau-score" style="color:${tierC}">${mc.score ?? "—"}</span>
-        <span class="subtle" style="font-size:15px">/100</span>
-        <span class="pill" style="color:${tierC};border-color:${tierC};background:${tierBg};text-transform:uppercase">${esc(mc.tier || "—")}</span>
-      </div>
-      <div class="cau-scale">ELEVATED ≥ ${mc.elevated_threshold ?? 60} · HIGH ≥ ${mc.fire_threshold ?? 80}${d.caution_sessions ? ` · ${d.caution_sessions} sessions` : ""}</div>
-    </div>
+  <div class="cau cau-banner" style="border-left:4px solid ${tierC}">
     <div class="cau-right">
-      <div class="cau-spark">${sparkline(d.caution_history, mc.elevated_threshold ?? 60, mc.fire_threshold ?? 80)}</div>
+      <div class="cau-head">
+        <span class="cau-dot" style="background:${tierC};box-shadow:0 0 8px ${tierC}"></span>
+        <span class="cau-eyebrow">Market Caution</span>
+        <span class="cau-tier" style="color:${tierC}">${esc(mc.tier || "—")}</span>
+      </div>
+      <p class="cau-lede">${esc(cautionLede)} <span class="cau-note">Display-only — does not gate entries, verdicts, or exits.</span></p>
       <div class="chips">${chips}</div>
+      <div class="cau-scale">ELEVATED ≥ ${elT} · HIGH ≥ ${hiT}${d.caution_sessions ? ` · ${d.caution_sessions} sessions` : ""}</div>
+    </div>
+    <div class="cau-gauge">${cautionGauge(mc.score, tierHex)}</div>
+  </div>
+
+  <div class="philo">
+    <div style="flex:0 0 auto">${goBoardSVG()}</div>
+    <div style="flex:1 1 280px;min-width:240px">
+      <h2>GO BOARD PHILOSOPHY</h2>
+      <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
+      <ul>
+        <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
+        <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
+        <li><span style="color:var(--brand)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
+        <li><span style="color:#E05A4E">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
+      </ul>
     </div>
   </div>
 
   <div class="section-h" style="gap:12px">
     <h2>① New Triggers</h2>
-    <span class="gate-btn pill" role="status" style="color:${gateColor};border-color:${gateColor}">${gate ? "●" : "⚠"} GATE: ${gateText}</span>
+    <span class="gate-btn pill" role="status" style="border-color:${gateColor}"><b class="gate-static" style="color:${gateColor};font-weight:500">${gate ? "●" : "⚠"} GATE: ${gateText}</b></span>
   </div>
   <div id="gate-banner" class="banner-amber" style="${gate ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
     <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>
 
-  <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
-  <div class="table-wrap"><table class="dc"><thead><tr>
-    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Blocker</th><th>Lead</th><th>Phase</th>
-  </tr></thead><tbody>${ondeckRows}</tbody></table></div>
-
-  <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
-  <div class="mom">${momChips}</div>
-
-  <details class="philo-disclosure">
-    <summary>Methodology · Go Board Philosophy</summary>
-    <div class="philo">
-      <div style="flex:0 0 auto">${goBoardSVG()}</div>
-      <div style="flex:1 1 280px;min-width:240px">
-        <h2>GO BOARD PHILOSOPHY</h2>
-        <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
-        <ul>
-          <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
-          <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
-          <li><span style="color:var(--teal)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
-          <li><span style="color:#ff7a59">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
-        </ul>
-      </div>
+  <div class="two-col">
+    <div>
+      <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
+      <div class="table-wrap"><table class="dc"><thead><tr>
+        <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Blocker</th><th>Lead</th><th>Phase</th>
+      </tr></thead><tbody>${ondeckRows}</tbody></table></div>
     </div>
-  </details>`;
+    <div>
+      <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
+      <div class="mom">${momChips}</div>
+    </div>
+  </div>
+
+  <div class="desk-footer">
+    <span class="desk-quote">"Festina lente — make haste slowly."</span>
+    <span class="desk-disclaimer">Display-only signals · NOT investment advice · EOD data, no intraday refresh</span>
+  </div>`;
 }
 
 // Valuation freshness is authoritative in the bundle manifest (data/latest.json →

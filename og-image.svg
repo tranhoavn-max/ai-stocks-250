@@ -1,23 +1,60 @@
-<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="US AI Stock Agent — daily US equities cockpit">
-  <title>US AI Stock Agent — daily US equities cockpit</title>
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0C1116"/>
+  
+  <!-- Subtle grid pattern -->
   <defs>
-    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#E7C766"/>
-      <stop offset="0.55" stop-color="#C9A227"/>
-      <stop offset="1" stop-color="#A8851C"/>
-    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#283139" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+    <radialGradient id="goldGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#C9A24E" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#0C1116" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect x="0" y="0" width="1200" height="630" fill="#0D1117"/>
-  <rect x="24" y="24" width="1152" height="582" rx="28" fill="none" stroke="#1E2733" stroke-width="2"/>
+  
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#goldGlow)"/>
 
-  <g transform="translate(120,175)">
-    <circle cx="140" cy="140" r="120" fill="none" stroke="url(#gold)" stroke-width="11"/>
-    <path d="M140 63 L212 189 L68 189 Z" fill="none" stroke="url(#gold)" stroke-width="13" stroke-linejoin="round"/>
-    <circle cx="140" cy="156" r="15" fill="url(#gold)"/>
+  <!-- Card Border -->
+  <rect x="40" y="40" width="1120" height="550" rx="16" fill="#11161D" stroke="#2A2418" stroke-width="2"/>
+
+  <!-- Brand Mark -->
+  <g transform="translate(80, 85)">
+    <circle cx="36" cy="36" r="32" fill="none" stroke="#C9A24E" stroke-width="2.5"/>
+    <circle cx="36" cy="38" r="10" fill="#5BC2D0" opacity="0.1"/>
+    <polygon points="36,14 56,54 16,54" fill="none" stroke="#5BC2D0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="36" cy="46" r="2.5" fill="#C9A24E"/>
   </g>
 
-  <text x="470" y="270" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" font-size="66" font-weight="700" fill="#F4EEDD">US AI Stock Agent</text>
-  <text x="472" y="340" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" font-size="34" font-weight="500" fill="#C9A227">Daily AI &amp; Tech Stock Cockpit</text>
-  <text x="472" y="392" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" font-size="24" font-weight="400" fill="#8A93A0">AI value chain · chips → cloud → apps</text>
-  <text x="472" y="440" font-family="Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif" font-size="19" font-weight="400" fill="#5E6672">Display-only · not investment advice</text>
+  <!-- Brand Title -->
+  <text x="165" y="120" font-family="Inter, sans-serif" font-weight="700" font-size="28" letter-spacing="4" fill="#E9EAEC">PHANTOM</text>
+  <text x="330" y="120" font-family="monospace" font-weight="500" font-size="20" letter-spacing="2" fill="#8B939C">US</text>
+
+  <!-- Main Headline -->
+  <text x="80" y="240" font-family="'Cormorant Garamond', Georgia, serif" font-weight="500" font-size="54" fill="#E9EAEC">Phantom US — Daily AI &amp; Tech Stock Cockpit</text>
+  
+  <text x="80" y="300" font-family="Inter, sans-serif" font-weight="400" font-size="24" fill="#8B939C">Daily EOD decision desk across chips, data centers, cloud, and AI apps.</text>
+
+  <!-- Feature Pills -->
+  <g transform="translate(80, 360)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="210" height="42" rx="21" fill="none" stroke="#283139" stroke-width="1.5"/>
+    <circle cx="22" cy="21" r="5" fill="#56B381"/>
+    <text x="36" y="27" font-family="monospace" font-weight="500" font-size="16" fill="#E9EAEC">MARKET GATE</text>
+
+    <!-- Pill 2 -->
+    <rect x="230" y="0" width="220" height="42" rx="21" fill="none" stroke="#283139" stroke-width="1.5"/>
+    <circle cx="252" cy="21" r="5" fill="#F5C842"/>
+    <text x="266" y="27" font-family="monospace" font-weight="500" font-size="16" fill="#E9EAEC">MARKET CAUTION</text>
+
+    <!-- Pill 3 -->
+    <rect x="470" y="0" width="190" height="42" rx="21" fill="none" stroke="#283139" stroke-width="1.5"/>
+    <circle cx="492" cy="21" r="5" fill="#5BC2D0"/>
+    <text x="506" y="27" font-family="monospace" font-weight="500" font-size="16" fill="#E9EAEC">P/E VALUATION</text>
+  </g>
+
+  <!-- Footer Info -->
+  <line x1="80" y1="480" x2="1120" y2="480" stroke="#283139" stroke-width="1"/>
+  <text x="80" y="525" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic" font-size="22" fill="#C9A24E">"Festina lente — make haste slowly."</text>
+  <text x="1120" y="525" font-family="monospace" font-size="16" fill="#8B939C" text-anchor="end">us.biviumlabs.com · Bivium Labs</text>
 </svg>
