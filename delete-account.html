@@ -1,0 +1,155 @@
+<!doctype html>
+<!--
+  Account-deletion instructions for Phantom US (served extensionless at /delete-account
+  on GitHub Pages). Self-contained like privacy.html: inline CSS, no app.js/style.css
+  dependency, only same-origin self-hosted fonts. This is the public URL app stores
+  (Google Play Data safety) require for account deletion. Written against what THIS app
+  actually does: in-app self-serve delete (Account tab -> Delete account, which calls the
+  server-side delete_account RPC and cascades tracked_items), plus an email fallback.
+  Keep in sync with the app's real delete flow and privacy.html.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Delete Your Account · Phantom US · Bivium Labs</title>
+  <meta name="description" content="How to delete your Phantom US (Bivium Labs) account and all its data: self-serve in the app in seconds, or by email. Permanent and complete." />
+  <link rel="canonical" href="https://us.biviumlabs.com/delete-account" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0C1116" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    @font-face {
+      font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap;
+      src: url('inter-latin.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond'; font-style: normal; font-weight: 500; font-display: swap;
+      src: url('cormorant-garamond-normal-500-latin.woff2') format('woff2');
+    }
+    :root {
+      --bg: #0C1116; --panel: #11161D; --line: #283139; --hair: #1A222B;
+      --txt: #E9EAEC; --sub: #C2C8CE; --mut: #8B939C; --dim: #5C6570;
+      --gold: #C9A24E; --gold-2: #D9B765; --red: #E05A4E;
+      --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --voice: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); }
+    body {
+      font-family: var(--ui); color: var(--sub);
+      line-height: 1.7; font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: rgba(201,162,78,.28); }
+    main { max-width: 760px; margin: 0 auto; padding: 40px 22px 64px; }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; text-decoration: none; }
+    .brand-name {
+      font-family: var(--ui); font-size: 14px; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--txt);
+    }
+    .brand-sub { font-size: 10px; letter-spacing: .2em; color: var(--mut); margin-top: 3px; }
+    h1 { font-family: var(--voice); font-weight: 500; font-size: 32px; color: var(--txt); margin: 0; line-height: 1.2; }
+    .eff { color: var(--mut); font-size: 13px; margin: 10px 0 0; }
+    .rule { width: 36px; height: 2px; background: var(--gold); border: 0; border-radius: 1px; margin: 16px 0 4px; }
+    h2 {
+      font-size: 12px; letter-spacing: .14em; color: var(--gold);
+      text-transform: uppercase; font-weight: 600; font-family: var(--ui);
+      margin: 34px 0 12px;
+    }
+    p { margin: 0 0 10px; }
+    ul { margin: 0; padding: 0; list-style: none; }
+    li { position: relative; padding-left: 18px; margin-bottom: 9px; }
+    li::before { content: '•'; position: absolute; left: 2px; color: var(--gold-2); }
+    ol { margin: 0; padding-left: 20px; }
+    ol li { padding-left: 4px; margin-bottom: 9px; }
+    ol li::before { content: none; }
+    .steps {
+      background: var(--panel); border: 1px solid var(--hair);
+      border-radius: 14px; padding: 18px 20px 18px 8px; margin: 4px 0 6px;
+    }
+    .steps ol { padding-left: 24px; }
+    .warn {
+      margin-top: 10px; color: var(--txt); font-size: 13.5px;
+      border-left: 2px solid var(--red); padding: 2px 0 2px 12px;
+    }
+    .contact {
+      margin-top: 36px; background: var(--panel);
+      border: 1px solid var(--hair); border-radius: 14px; padding: 18px 20px;
+    }
+    .contact h2 { margin-top: 0; }
+    a { color: var(--gold-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; border-radius: 4px; }
+    .foot { color: var(--dim); font-size: 12px; text-align: center; margin-top: 40px; }
+    .foot a { color: var(--mut); }
+    strong { color: var(--txt); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="brand" href="/">
+      <svg width="36" height="36" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="0" y="0" width="26" height="26" rx="5" fill="#0C1116"></rect>
+        <circle cx="13" cy="13" r="10" fill="none" stroke="#C9A24E" stroke-width="1"></circle>
+        <polygon points="13,6 19,18 7,18" fill="none" stroke="#C9A24E" stroke-width="1" stroke-linejoin="round" stroke-linecap="round"></polygon>
+        <circle cx="13" cy="15.8" r="0.9" fill="#D9B765"></circle>
+      </svg>
+      <span>
+        <span class="brand-name" style="display:block">Phantom US</span>
+        <span class="brand-sub" style="display:block">BIVIUM LABS</span>
+      </span>
+    </a>
+
+    <h1>Delete Your Account</h1>
+    <p class="eff">Last updated July 21, 2026 · Bivium Labs</p>
+    <hr class="rule" />
+
+    <h2>Overview</h2>
+    <p>An account with Phantom US is optional and stores only your private watchlist and
+    portfolio tickers. You can delete your account and all of its data at any time, in two
+    ways. Deletion is permanent and complete.</p>
+
+    <h2>Option 1 — In the app (immediate)</h2>
+    <div class="steps">
+      <ol>
+        <li>Open the cockpit at
+          <a href="https://us.biviumlabs.com/cockpit">us.biviumlabs.com/cockpit</a>.</li>
+        <li>Go to the <strong>Account</strong> tab and sign in.</li>
+        <li>Tap <strong>Delete account</strong> and confirm.</li>
+      </ol>
+    </div>
+    <p class="warn">This removes your login and all your data right away, permanently. It
+    cannot be undone.</p>
+
+    <h2>Option 2 — By email</h2>
+    <p>Email <a href="mailto:contact@biviumlabs.com?subject=Delete%20my%20Phantom%20US%20account">contact@biviumlabs.com</a>
+    from the address you registered with and ask us to delete your account. We process
+    deletion requests within a reasonable time (normally within 30 days), except where the
+    law requires retention.</p>
+
+    <h2>What gets deleted</h2>
+    <ul>
+      <li><strong>Your account:</strong> your email address and password.</li>
+      <li><strong>Your lists:</strong> every watchlist and portfolio ticker you saved, along
+        with their order and timestamps.</li>
+    </ul>
+    <p>Nothing you created remains after deletion. We hold no other personal data about you
+    (see the <a href="/privacy">Privacy Policy</a>).</p>
+
+    <h2>What this does not affect</h2>
+    <ul>
+      <li>The public site — Cockpit and Valuation — stays available without an account.</li>
+      <li>Deleting your account does not delete these instructions or the public site.</li>
+    </ul>
+
+    <div class="contact">
+      <h2>Need help?</h2>
+      <p>Questions about deleting your account:
+        <a href="mailto:contact@biviumlabs.com">contact@biviumlabs.com</a>.</p>
+    </div>
+
+    <p class="foot"><a href="/">Home</a> · <a href="/privacy">Privacy</a> · © Bivium Labs · Festina Lente</p>
+  </main>
+</body>
+</html>
