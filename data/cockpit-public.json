@@ -1,30 +1,30 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-18T07:38:27Z",
+  "generated_at": "2026-07-21T00:21:05Z",
   "meta": {
-    "as_of_date": "2026-07-17",
+    "as_of_date": "2026-07-20",
     "coverage_status": "PASS",
-    "source_rule_run_id": "e633683e-2254-4d86-96fc-a15c1d03c079",
-    "source_ingest_run_id": "378571fe-b0b6-45dd-8c2a-a73b39be68f4",
-    "snapshot_generated_at": "2026-07-18T07:36:46Z",
+    "source_rule_run_id": "9149a4ec-7744-48ef-b6f0-96c77fa3b573",
+    "source_ingest_run_id": "a6bf59cf-7e1d-4561-8509-98ea05031ace",
+    "snapshot_generated_at": "2026-07-21T00:19:19Z",
     "warnings": []
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-17",
-    "score": 67.1,
-    "tier": "elevated",
+    "as_of_date": "2026-07-20",
+    "score": 59.8,
+    "tier": "normal",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.593,
-      "qqq_close_location": 0.103,
-      "supz": -0.281,
-      "flow_z": -0.26,
-      "flow_mom": 0.0214,
-      "c1_warn_pct": 79.56
+      "c1z": -0.002,
+      "qqq_close_location": -0.893,
+      "supz": -0.738,
+      "flow_z": -0.418,
+      "flow_mom": 0.0027,
+      "c1_warn_pct": 74.81
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +32,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    69.8,
     67.4,
     57.1,
     68.4,
@@ -43,7 +42,8 @@
     57.8,
     65.4,
     74.1,
-    67.1
+    67.1,
+    59.8
   ],
   "caution_sessions": 12,
   "counts": {
@@ -55,7 +55,7 @@
   "momentum": {
     "leaders": [
       {
-        "ticker": "LITE",
+        "ticker": "MU",
         "rs_pctl": 100,
         "top_decile": true,
         "is_entry": false,
@@ -63,7 +63,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "MU",
+        "ticker": "LITE",
         "rs_pctl": 100,
         "top_decile": true,
         "is_entry": false,
@@ -79,7 +79,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AEHR",
+        "ticker": "STX",
         "rs_pctl": 99,
         "top_decile": true,
         "is_entry": false,
@@ -87,7 +87,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "STX",
+        "ticker": "AEHR",
         "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
@@ -127,6 +127,14 @@
         "snapshot_clean": false
       },
       {
+        "ticker": "TER",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
         "ticker": "ICHR",
         "rs_pctl": 96,
         "top_decile": true,
@@ -136,14 +144,6 @@
       },
       {
         "ticker": "UCTT",
-        "rs_pctl": 96,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
-        "ticker": "TER",
         "rs_pctl": 96,
         "top_decile": true,
         "is_entry": false,
