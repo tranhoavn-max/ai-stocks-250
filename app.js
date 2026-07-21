@@ -625,6 +625,82 @@ function renderLogin(msg) {
   </div></div>`;
 }
 
+/* ---------- Account (dedicated view over existing Supabase auth) ---------- */
+// Signed-out visitors fall through to the login form; signed-in users get email +
+// status + Log out + Delete account. Delete calls the server-side `delete_account`
+// RPC (SECURITY DEFINER — removes the auth user; tracked_items cascade off it).
+function renderAccount() {
+  if (!currentUser) return renderLogin();
+  const email = currentUser.email || "—";
+  return `<div class="locked"><div class="lk-card" style="text-align:left">
+    <h2 style="text-align:center">Account</h2>
+    <div class="acct-rows">
+      <div class="acct-row"><span class="acct-k">Email</span><span class="acct-v">${esc(email)}</span></div>
+      <div class="acct-row"><span class="acct-k">Status</span><span class="acct-v">Signed in · RLS-protected</span></div>
+    </div>
+    <button class="acct-btn" style="width:100%;margin-top:16px" onclick="window.__logout()">Log out</button>
+    <button class="acct-btn danger" style="width:100%;margin-top:10px" onclick="window.__deleteAccount()">Delete account</button>
+    <div id="acct-msg" class="subtle" style="margin-top:10px;min-height:16px"></div>
+    <p class="subtle" style="margin-top:10px;font-size:11px">Secure sign-in · your Portfolio &amp; Watchlist are visible only to you.</p>
+  </div></div>`;
+}
+
+/* ---------- About (static, public — no auth, no data feeds) ---------- */
+const SUPPORT_EMAIL = "contact@biviumlabs.com";
+function renderAbout() {
+  const mailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("[Phantom US] Support")}`;
+  return `
+  <div class="panel about-hero">
+    <div class="about-lockup">
+      <svg width="34" height="34" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="0" y="0" width="26" height="26" rx="5" fill="#0C1116"></rect>
+        <circle cx="13" cy="13" r="10" fill="none" stroke="#C9A24E" stroke-width="1"></circle>
+        <polygon points="13,6 19,18 7,18" fill="none" stroke="#C9A24E" stroke-width="1" stroke-linejoin="round" stroke-linecap="round"></polygon>
+        <circle cx="13" cy="15.8" r="0.9" fill="#D9B765"></circle>
+      </svg>
+      <span class="about-word"><span class="w1">Phantom</span><span class="w2">US · Bivium Labs</span></span>
+    </div>
+    <p class="about-tag">Experimental research on money-flow signals and leading stocks across the US AI value chain.</p>
+  </div>
+
+  <div class="section-h"><h2>About this project</h2></div>
+  <div class="panel about-prose">
+    <p><strong>Phantom US</strong> is an experimental, personal research system by Bivium Labs. It tracks
+    money flow and relative strength across leading US AI &amp; tech stocks — chips, data centers, cloud,
+    and AI applications — and surfaces end-of-day signals in a daily cockpit.</p>
+    <p>Everything here is <strong>display-only research output</strong>, computed from end-of-day data
+    after the close and reviewed the next morning. It is a place to study how signals behave over time —
+    not a live trading terminal, and not a product or advisory service.</p>
+    <p>When a value is missing or a feed is incomplete, the cockpit shows <em>—</em> and says so, rather
+    than guessing. Freshness is stamped in the header so you always know what data a view reflects.</p>
+  </div>
+
+  <div class="philo">
+    <div style="flex:0 0 160px">
+      <h2>Principles</h2>
+      <p class="philo-sub">How this project behaves.</p>
+    </div>
+    <ul style="flex:1 1 320px">
+      <li><strong>End of day, on purpose.</strong> No intraday noise, no live orders — signals are computed from the daily close and reviewed calmly the next morning.</li>
+      <li><strong>Display-only, not advice.</strong> Signals are research output, never buy/sell recommendations. You make every decision; nothing here is an order.</li>
+      <li><strong>Honest about freshness and error.</strong> Data is stamped, signals are experimental and can be wrong, and gaps are shown as <em>—</em> instead of a guess.</li>
+    </ul>
+  </div>
+
+  <div class="section-h"><h2>Support</h2></div>
+  <div class="panel">
+    <p class="subtle" style="font-size:12.5px;color:var(--txt);line-height:1.6;margin:0">
+      Questions, bugs, or feedback? Email us and we'll take a look. This opens your own mail client —
+      nothing is sent automatically and no account data leaves your device.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <a class="acct-btn" href="${mailto}">Email support</a>
+      <button class="acct-btn" onclick="window.__copyEmail(this)">Copy ${esc(SUPPORT_EMAIL)}</button>
+    </div>
+  </div>
+
+  <div class="disclaimer">Phantom US is an experimental personal research project by Bivium Labs. Display-only, computed from end-of-day data that may contain errors — <strong>not investment advice</strong> and not a recommendation to buy or sell any security. See <a href="privacy.html" style="color:var(--brand)">Privacy</a>.</div>`;
+}
+
 function badgeHtml(label, color) {
   if (!label || label === "—") return `<span class="subtle">—</span>`;
   return `<span class="pill" style="color:${color};border-color:${color};background:transparent">${esc(label)}</span>`;
@@ -949,6 +1025,8 @@ const ROUTES = {
   valuation: { label: "Valuation", render: renderValuation },
   portfolio: { label: "Portfolio", render: () => renderManager("PORTFOLIO") },
   watchlist: { label: "Watchlist", render: () => renderManager("WATCHLIST") },
+  account: { label: "Account", render: () => renderAccount() },
+  about: { label: "About", render: () => renderAbout() },
   login: { label: "Log in", render: () => renderLogin() },
 };
 
@@ -983,6 +1061,32 @@ window.__authSubmit = function (e) {
 window.__logout = async function () {
   const client = supa();
   if (client) await client.auth.signOut();
+};
+window.__deleteAccount = function () {
+  const msg = document.getElementById("acct-msg");
+  const ok = window.confirm(
+    "Delete your account permanently?\n\nThis removes your login and all your Portfolio & Watchlist data. This cannot be undone.");
+  if (!ok) return;
+  (async () => {
+    const client = supa();
+    if (!client) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = "Supabase is not ready yet."; } return; }
+    if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "Deleting…"; }
+    const { error } = await client.rpc("delete_account");
+    if (error) {
+      if (msg) { msg.style.color = "var(--red)"; msg.textContent = `Could not delete: ${error.message} — email ${SUPPORT_EMAIL}.`; }
+      return;
+    }
+    // Server dropped the auth user (tracked_items cascade off it). Clear the session
+    // locally and return to the public cockpit; onAuthStateChange refreshes the header.
+    await client.auth.signOut();
+    location.hash = "cockpit";
+  })();
+};
+window.__copyEmail = function (btn) {
+  const done = () => { if (btn) { const t = btn.textContent; btn.textContent = "Copied ✓"; setTimeout(() => { btn.textContent = t; }, 1600); } };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(SUPPORT_EMAIL).then(done, () => {});
+  }
 };
 window.__addItem = function (e, kind) {
   e.preventDefault();

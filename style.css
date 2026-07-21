@@ -345,6 +345,26 @@ table.dc td { padding: 10px 12px; border-bottom: 1px solid #1A222B; font-family:
 .row-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
 .row-del:hover { background: var(--red); color: #fff; }
 
+/* account view (dedicated) */
+.acct-rows { display: flex; flex-direction: column; margin-top: 8px; border-top: 1px solid var(--line2); }
+.acct-row { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line2); font-size: 13px; }
+.acct-k { color: var(--mut); }
+.acct-v { color: var(--txt); font-family: var(--mono); font-weight: 500; text-align: right; word-break: break-all; }
+.acct-btn.danger { border-color: var(--red); color: var(--red); }
+.acct-btn.danger:hover { background: rgba(224,90,78,.1); border-color: var(--red); color: var(--red); }
+
+/* about view (static) */
+.about-hero { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.about-lockup { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
+.about-word { display: flex; flex-direction: column; line-height: 1; }
+.about-word .w1 { font-family: var(--ui); font-weight: 600; letter-spacing: .16em; font-size: 19px; text-transform: uppercase; color: var(--txt); }
+.about-word .w2 { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; color: var(--brand); margin-top: 6px; text-transform: uppercase; }
+.about-tag { color: var(--mut); font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.4; flex: 1 1 260px; margin: 0; }
+.about-prose p { color: var(--txt); font-size: 13px; line-height: 1.6; margin: 0 0 10px; }
+.about-prose p:last-child { margin-bottom: 0; }
+.about-prose em { font-style: italic; color: var(--mut); }
+.philo ul li strong { color: var(--txt); font-weight: 600; }
+
 /* ticker detail panel */
 .tk { cursor: pointer; }
 .tk:hover { color: var(--brand); text-decoration: underline; }
