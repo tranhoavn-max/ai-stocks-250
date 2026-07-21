@@ -1094,7 +1094,22 @@ window.__authSubmit = function (e) {
     const { data, error } = _authMode === "signup"
       ? await client.auth.signUp({ email, password: pass, options: { emailRedirectTo: location.origin + "/cockpit" } })
       : await client.auth.signInWithPassword({ email, password: pass });
-    if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
+    if (error) {
+      // Log the full error for diagnosis; GoTrue can return an opaque 500 with an
+      // empty body (renders as "{}") when the confirmation email fails to SEND
+      // (e.g. SMTP/Resend misconfig) — surface something readable instead.
+      console.error("[auth] " + (_authMode === "signup" ? "signUp" : "signInWithPassword") + " failed:", error);
+      const raw = error && error.message ? String(error.message).trim() : "";
+      const useful = raw && raw !== "{}" && raw !== "[object Object]";
+      if (msg) {
+        msg.style.color = "var(--red)";
+        msg.textContent = useful ? raw
+          : `Couldn't complete sign-${_authMode === "signup" ? "up" : "in"}`
+            + (error && error.status ? ` (error ${error.status})` : "")
+            + `. If this keeps happening, email ${SUPPORT_EMAIL}.`;
+      }
+      return;
+    }
     if (_authMode === "signup" && !data.session) {
       if (msg) { msg.style.color = "var(--green)"; msg.textContent = "Account created — check your email to confirm, then sign in."; }
       return;
