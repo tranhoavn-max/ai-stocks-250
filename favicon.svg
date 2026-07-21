@@ -1,7 +1,6 @@
 <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="Phantom — delta mark">
   <rect width="120" height="120" rx="24" fill="#0C1116"/>
   <circle cx="60" cy="60" r="46" fill="none" stroke="#C9A24E" stroke-width="3.5"/>
-  <circle cx="60" cy="62" r="14" fill="#5BC2D0" opacity="0.1"/>
-  <polygon points="60,28 88,86 32,86" fill="none" stroke="#5BC2D0" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="60" cy="74" r="4" fill="#C9A24E"/>
+  <polygon points="60,28 88,86 32,86" fill="none" stroke="#C9A24E" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="60" cy="74" r="4" fill="#D9B765"/>
 </svg>
