@@ -1,0 +1,165 @@
+<!doctype html>
+<!--
+  Privacy Policy for Phantom US (served extensionless at /privacy on GitHub Pages).
+  Self-contained like index.html: inline CSS, no app.js/style.css dependency, only
+  same-origin self-hosted fonts. Modeled on VN's web/privacy.html but written against
+  what THIS web app actually does: optional Supabase email+password account, per-account
+  tracked_items (portfolio/watchlist tickers + sort order + timestamps), session token in
+  browser storage, static hosting. No analytics of any kind on this site. If the app's
+  data collection changes, update this page AND the effective date together.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy · Phantom US · Bivium Labs</title>
+  <meta name="description" content="Privacy policy for Phantom US (Bivium Labs): minimal collection, no ads, no tracking, no third-party analytics. Accounts are optional and store only your watchlist and portfolio tickers." />
+  <link rel="canonical" href="https://us.biviumlabs.com/privacy" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0C1116" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <style>
+    @font-face {
+      font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap;
+      src: url('inter-latin.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Cormorant Garamond'; font-style: normal; font-weight: 500; font-display: swap;
+      src: url('cormorant-garamond-normal-500-latin.woff2') format('woff2');
+    }
+    :root {
+      --bg: #0C1116; --panel: #11161D; --line: #283139; --hair: #1A222B;
+      --txt: #E9EAEC; --sub: #C2C8CE; --mut: #8B939C; --dim: #5C6570;
+      --gold: #C9A24E; --gold-2: #D9B765;
+      --ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --voice: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); }
+    body {
+      font-family: var(--ui); color: var(--sub);
+      line-height: 1.7; font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: rgba(201,162,78,.28); }
+    main { max-width: 760px; margin: 0 auto; padding: 40px 22px 64px; }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; text-decoration: none; }
+    .brand-name {
+      font-family: var(--ui); font-size: 14px; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--txt);
+    }
+    .brand-sub { font-size: 10px; letter-spacing: .2em; color: var(--mut); margin-top: 3px; }
+    h1 { font-family: var(--voice); font-weight: 500; font-size: 32px; color: var(--txt); margin: 0; line-height: 1.2; }
+    .eff { color: var(--mut); font-size: 13px; margin: 10px 0 0; }
+    .rule { width: 36px; height: 2px; background: var(--gold); border: 0; border-radius: 1px; margin: 16px 0 4px; }
+    h2 {
+      font-size: 12px; letter-spacing: .14em; color: var(--gold);
+      text-transform: uppercase; font-weight: 600; font-family: var(--ui);
+      margin: 34px 0 12px;
+    }
+    p { margin: 0 0 10px; }
+    ul { margin: 0; padding: 0; list-style: none; }
+    li { position: relative; padding-left: 18px; margin-bottom: 9px; }
+    li::before { content: '•'; position: absolute; left: 2px; color: var(--gold-2); }
+    .contact {
+      margin-top: 36px; background: var(--panel);
+      border: 1px solid var(--hair); border-radius: 14px; padding: 18px 20px;
+    }
+    .contact h2 { margin-top: 0; }
+    a { color: var(--gold-2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--gold-2); outline-offset: 3px; border-radius: 4px; }
+    .foot { color: var(--dim); font-size: 12px; text-align: center; margin-top: 40px; }
+    strong { color: var(--txt); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="brand" href="/">
+      <svg width="36" height="36" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="0" y="0" width="26" height="26" rx="5" fill="#0C1116"></rect>
+        <circle cx="13" cy="13" r="10" fill="none" stroke="#C9A24E" stroke-width="1"></circle>
+        <circle cx="13" cy="13.4" r="3" fill="#5BC2D0" opacity="0.1"></circle>
+        <polygon points="13,6 19,18 7,18" fill="none" stroke="#5BC2D0" stroke-width="1" stroke-linejoin="round" stroke-linecap="round"></polygon>
+        <circle cx="13" cy="15.8" r="0.9" fill="#C9A24E"></circle>
+      </svg>
+      <span>
+        <span class="brand-name" style="display:block">Phantom US</span>
+        <span class="brand-sub" style="display:block">BIVIUM LABS</span>
+      </span>
+    </a>
+
+    <h1>Privacy Policy</h1>
+    <p class="eff">Effective July 21, 2026 · Bivium Labs</p>
+    <hr class="rule" />
+
+    <h2>Summary</h2>
+    <p>Phantom US shows display-only, end-of-day research signals for US stocks. You can use
+    the whole public site without an account. An account is optional and exists only to save
+    a private watchlist and portfolio list; we collect the minimum needed for that and
+    nothing more.</p>
+
+    <h2>Data we collect</h2>
+    <ul>
+      <li><strong>Account (optional):</strong> your email address and a password. The password
+        is hashed by our authentication provider; we never store or see it in plain text.</li>
+      <li><strong>Watchlist &amp; portfolio:</strong> the tickers you add, their sort order,
+        and when you added them. Stored per account and visible only to you.</li>
+      <li><strong>Session:</strong> a login token kept in your browser's local storage so you
+        stay signed in. Clearing site data removes it.</li>
+      <li><strong>Hosting logs:</strong> this is a static site; its hosting provider may keep
+        standard server logs (such as IP address and request time) to operate the service.</li>
+    </ul>
+
+    <h2>What we do NOT do</h2>
+    <ul>
+      <li>No advertising, no behavioral tracking, and no third-party analytics on this site.</li>
+      <li>No selling, renting, or sharing of your personal data for marketing purposes.</li>
+      <li>No collection beyond what is listed above.</li>
+    </ul>
+
+    <h2>How we use data</h2>
+    <ul>
+      <li>To authenticate you and keep you signed in.</li>
+      <li>To store and display your private watchlist and portfolio list.</li>
+      <li>To respond when you contact us by email.</li>
+    </ul>
+
+    <h2>Storage &amp; security</h2>
+    <p>Account and list data are stored with a third-party cloud service and isolated per
+    account (row-level security): only you, after signing in, can access your lists. Data
+    travels over encrypted connections (HTTPS). We apply reasonable safeguards, but no method
+    of transmission or storage is 100% secure.</p>
+
+    <h2>Sharing</h2>
+    <p>We share data only with the cloud providers that operate authentication, storage, and
+    static hosting for us, acting as data processors. Beyond that, we do not share your
+    personal data with any third party for commercial purposes, unless required by law.</p>
+
+    <h2>Retention &amp; deletion</h2>
+    <p>We keep your data while your account is active. To delete your account and its data,
+    email <a href="mailto:contact@biviumlabs.com">contact@biviumlabs.com</a> from the address
+    you registered with; we process deletion requests within a reasonable time (normally
+    within 30 days), except where the law requires retention. You can add or remove
+    watchlist and portfolio entries yourself at any time in the app.</p>
+
+    <h2>Children</h2>
+    <p>This site is not directed to, and does not knowingly collect data from, anyone under 16.</p>
+
+    <h2>Not investment advice</h2>
+    <p>Everything on this site is for reference only and is not personalized investment
+    advice. Trading decisions and their risk are entirely yours.</p>
+
+    <h2>Changes</h2>
+    <p>We may update this policy. When we do, the effective date at the top of this page
+    will change.</p>
+
+    <div class="contact">
+      <h2>Contact</h2>
+      <p>Privacy questions: <a href="mailto:contact@biviumlabs.com">contact@biviumlabs.com</a>.</p>
+    </div>
+
+    <p class="foot">© Bivium Labs · Festina Lente</p>
+  </main>
+</body>
+</html>
