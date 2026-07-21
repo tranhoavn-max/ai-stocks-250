@@ -627,9 +627,15 @@ function renderLogin(msg) {
 }
 
 // Recovery-only "set a new password" view. Reached when the user clicks the reset
-// link in their email → supabase-js detects the recovery token in the URL and fires
-// onAuthStateChange("PASSWORD_RECOVERY"), which routes here.
-let _recovery = false;
+// link in their email. The link lands as /cockpit#...&type=recovery (implicit flow);
+// relying on the PASSWORD_RECOVERY event alone is RACY — supabase-js can fire and clear
+// the URL before our onAuthStateChange listener registers, dropping the user on the
+// cockpit already signed in. So capture the intent straight off the URL at module load,
+// BEFORE supabase-js consumes the hash, and honor it everywhere routing happens.
+let _recovery = (function () {
+  try { return /(?:^|[#&])type=recovery(?:&|$)/.test(location.hash || ""); }
+  catch (_) { return false; }
+})();
 function renderResetPassword() {
   if (!_recovery) return renderLogin();
   return `<div class="locked"><div class="lk-card" style="text-align:left">
@@ -1276,12 +1282,14 @@ async function initAuth() {
     currentUser = data.session ? data.session.user : null;
   } catch (_) { currentUser = null; }
   updateAuthUI();
-  client.auth.onAuthStateChange((_evt, session) => {
+  client.auth.onAuthStateChange((evt, session) => {
     currentUser = session ? session.user : null;
     updateAuthUI();
-    // A reset-email click lands here with a recovery session — route to the
-    // set-new-password form instead of treating the user as fully signed in.
-    if (_evt === "PASSWORD_RECOVERY") { _recovery = true; navigate("reset"); return; }
+    // A reset-email click gives a recovery session — show the set-new-password form,
+    // never treat it as a normal sign-in. Honor BOTH the event and the URL-derived
+    // flag, since the event alone can be missed (see _recovery capture above).
+    if (evt === "PASSWORD_RECOVERY") _recovery = true;
+    if (_recovery) { navigate("reset"); return; }
     navigate(location.hash.slice(1) || "cockpit");
   });
 }
@@ -1296,9 +1304,14 @@ async function wire() {
     const tk = (el.dataset.tk || el.textContent || "").trim().toUpperCase();
     if (tk) location.hash = "t/" + encodeURIComponent(tk);
   });
-  window.addEventListener("hashchange", () => navigate(location.hash.slice(1)));
+  // During recovery, supabase-js clearing the token fragment fires a hashchange —
+  // keep the user on the reset form instead of bouncing them to the cockpit.
+  window.addEventListener("hashchange", () => {
+    if (_recovery) { navigate("reset"); return; }
+    navigate(location.hash.slice(1));
+  });
   initHeader();
   await initAuth();
-  navigate(location.hash.slice(1) || "cockpit");
+  navigate(_recovery ? "reset" : (location.hash.slice(1) || "cockpit"));
 }
 document.addEventListener("DOMContentLoaded", wire);
