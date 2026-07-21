@@ -621,7 +621,25 @@ function renderLogin(msg) {
       <button type="submit" class="acct-btn" style="width:100%;margin-top:6px" id="auth-submit">Sign in</button>
     </form>
     <div id="auth-msg" class="subtle" style="margin-top:10px;min-height:16px;${msg ? "color:var(--red)" : ""}">${esc(msg || "")}</div>
+    <button type="button" class="linklike" onclick="window.__resetPassword()">Forgot password?</button>
     <p class="subtle" style="margin-top:10px;font-size:11px">Sign in to manage your private Portfolio &amp; Watchlist. Cockpit / Valuation are viewable without an account.</p>
+  </div></div>`;
+}
+
+// Recovery-only "set a new password" view. Reached when the user clicks the reset
+// link in their email → supabase-js detects the recovery token in the URL and fires
+// onAuthStateChange("PASSWORD_RECOVERY"), which routes here.
+let _recovery = false;
+function renderResetPassword() {
+  if (!_recovery) return renderLogin();
+  return `<div class="locked"><div class="lk-card" style="text-align:left">
+    <h2 style="text-align:center">Set a new password</h2>
+    <form onsubmit="return window.__setNewPassword(event)">
+      <input id="np-pass" type="password" placeholder="New password" autocomplete="new-password" required minlength="6" class="auth-input" />
+      <input id="np-pass2" type="password" placeholder="Confirm new password" autocomplete="new-password" required minlength="6" class="auth-input" />
+      <button type="submit" class="acct-btn" style="width:100%;margin-top:6px">Update password</button>
+    </form>
+    <div id="np-msg" class="subtle" style="margin-top:10px;min-height:16px" role="status"></div>
   </div></div>`;
 }
 
@@ -1049,6 +1067,7 @@ const ROUTES = {
   account: { label: "Account", render: () => renderAccount() },
   about: { label: "About", render: () => renderAbout() },
   login: { label: "Log in", render: () => renderLogin() },
+  reset: { label: "Reset password", render: () => renderResetPassword() },
 };
 
 /* ---------- auth + CRUD handlers (global, called from inline onclick) ---------- */
@@ -1068,8 +1087,13 @@ window.__authSubmit = function (e) {
     const email = document.getElementById("auth-email").value.trim();
     const pass = document.getElementById("auth-pass").value;
     if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "…"; }
-    const fn = _authMode === "signup" ? "signUp" : "signInWithPassword";
-    const { data, error } = await client.auth[fn]({ email, password: pass });
+    // On signup, pin the confirmation link to /cockpit (the only page that loads
+    // supabase-js and can consume the token). The static "/" landing is scriptless, so
+    // relying on the project Site URL alone would silently break confirmation if it were
+    // ever set to "/". /cockpit must also be in the Supabase Redirect URLs allow-list.
+    const { data, error } = _authMode === "signup"
+      ? await client.auth.signUp({ email, password: pass, options: { emailRedirectTo: location.origin + "/cockpit" } })
+      : await client.auth.signInWithPassword({ email, password: pass });
     if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
     if (_authMode === "signup" && !data.session) {
       if (msg) { msg.style.color = "var(--green)"; msg.textContent = "Account created — check your email to confirm, then sign in."; }
@@ -1082,6 +1106,40 @@ window.__authSubmit = function (e) {
 window.__logout = async function () {
   const client = supa();
   if (client) await client.auth.signOut();
+};
+// Request a password-reset email. redirectTo pins the recovery link to /cockpit
+// (must be in the Supabase Redirect URLs allow-list). Neutral message = no account
+// enumeration (we never reveal whether the email exists).
+window.__resetPassword = function () {
+  (async () => {
+    const client = supa();
+    const msg = document.getElementById("auth-msg");
+    const field = document.getElementById("auth-email");
+    const email = field ? field.value.trim() : "";
+    if (!email) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = "Enter your email above first, then tap Forgot password."; } return; }
+    if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "…"; }
+    const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/cockpit" });
+    if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
+    if (msg) { msg.style.color = "var(--green)"; msg.textContent = "If that email has an account, a reset link is on its way. Check your inbox."; }
+  })();
+};
+// Commit the new password during a recovery session, then hand off to Account.
+window.__setNewPassword = function (e) {
+  e.preventDefault();
+  (async () => {
+    const client = supa();
+    const msg = document.getElementById("np-msg");
+    const p1 = document.getElementById("np-pass").value;
+    const p2 = document.getElementById("np-pass2").value;
+    if (p1 !== p2) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = "Passwords do not match."; } return; }
+    if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "…"; }
+    const { error } = await client.auth.updateUser({ password: p1 });
+    if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
+    _recovery = false;
+    if (msg) { msg.style.color = "var(--green)"; msg.textContent = "Password updated. Taking you to your account…"; }
+    setTimeout(() => { location.hash = "account"; }, 900);
+  })();
+  return false;
 };
 window.__deleteAccount = function () {
   const msg = document.getElementById("acct-msg");
@@ -1206,6 +1264,9 @@ async function initAuth() {
   client.auth.onAuthStateChange((_evt, session) => {
     currentUser = session ? session.user : null;
     updateAuthUI();
+    // A reset-email click lands here with a recovery session — route to the
+    // set-new-password form instead of treating the user as fully signed in.
+    if (_evt === "PASSWORD_RECOVERY") { _recovery = true; navigate("reset"); return; }
     navigate(location.hash.slice(1) || "cockpit");
   });
 }
