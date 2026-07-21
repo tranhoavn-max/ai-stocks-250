@@ -1083,6 +1083,10 @@ window.__authMode = function (m) {
   document.querySelectorAll(".auth-tab").forEach((b) => b.classList.toggle("active", b.dataset.mode === m));
   const btn = document.getElementById("auth-submit");
   if (btn) btn.textContent = m === "signup" ? "Sign up" : "Sign in";
+  // Clear any stale message from the other mode (e.g. signup's "check your email"
+  // must not linger on the Sign in tab).
+  const msg = document.getElementById("auth-msg");
+  if (msg) { msg.textContent = ""; msg.style.color = ""; }
 };
 window.__authSubmit = function (e) {
   e.preventDefault();
