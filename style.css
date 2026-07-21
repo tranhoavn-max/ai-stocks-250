@@ -345,11 +345,34 @@ table.dc td { padding: 10px 12px; border-bottom: 1px solid #1A222B; font-family:
 .row-del { background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
 .row-del:hover { background: var(--red); color: #fff; }
 
-/* account view (dedicated) */
-.acct-rows { display: flex; flex-direction: column; margin-top: 8px; border-top: 1px solid var(--line2); }
-.acct-row { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line2); font-size: 13px; }
-.acct-k { color: var(--mut); }
-.acct-v { color: var(--txt); font-family: var(--mono); font-weight: 500; text-align: right; word-break: break-all; }
+/* account view (dedicated) — reuses the cockpit's .td-rows + .lk-card + pill/dot
+   vocabulary so it reads as the same product, not a bolt-on. */
+.acct-card { text-align: left; animation: acctIn .28s cubic-bezier(0.16,1,0.3,1); }
+@keyframes acctIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.acct-head { display: flex; flex-direction: column; align-items: center; gap: 9px; text-align: center; }
+.acct-head h2 { margin: 0; }
+.acct-avatar {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 24px; font-weight: 600; color: var(--brand);
+  background: radial-gradient(circle at 30% 25%, rgba(201,162,78,.20), rgba(201,162,78,.04));
+  border: 1px solid var(--brand);
+  box-shadow: inset 0 1px 0 rgba(217,183,101,.25);
+}
+.acct-status {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; color: var(--green);
+  background: rgba(86,179,129,.08); border: 1px solid rgba(86,179,129,.28);
+  border-radius: 9999px; padding: 3px 11px;
+}
+.acct-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px rgba(86,179,129,.55); }
+.acct-meta { margin: 18px 0 4px; }
+.acct-email { max-width: 62%; word-break: break-all; }
+.acct-wide { width: 100%; margin-top: 14px; }
+.acct-danger { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line2); }
+.acct-danger .acct-wide { margin-top: 0; }
+.acct-help { color: var(--mut); font-size: 11px; line-height: 1.5; margin: 9px 0 0; }
+.acct-msg { min-height: 16px; margin-top: 12px; }
 .acct-btn.danger { border-color: var(--red); color: var(--red); }
 .acct-btn.danger:hover { background: rgba(224,90,78,.1); border-color: var(--red); color: var(--red); }
 

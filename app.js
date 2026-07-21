@@ -629,19 +629,40 @@ function renderLogin(msg) {
 // Signed-out visitors fall through to the login form; signed-in users get email +
 // status + Log out + Delete account. Delete calls the server-side `delete_account`
 // RPC (SECURITY DEFINER — removes the auth user; tracked_items cascade off it).
+// Real Supabase session fields only (created_at / last_sign_in_at live on the
+// user object). Missing values render as the app-wide "—" marker, never guessed.
+function fmtMonthYear(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return isNaN(d) ? "—" : d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}
+function fmtDate(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return isNaN(d) ? "—" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 function renderAccount() {
   if (!currentUser) return renderLogin();
-  const email = currentUser.email || "—";
-  return `<div class="locked"><div class="lk-card" style="text-align:left">
-    <h2 style="text-align:center">Account</h2>
-    <div class="acct-rows">
-      <div class="acct-row"><span class="acct-k">Email</span><span class="acct-v">${esc(email)}</span></div>
-      <div class="acct-row"><span class="acct-k">Status</span><span class="acct-v">Signed in · RLS-protected</span></div>
+  const u = currentUser;
+  const email = u.email || "—";
+  const initial = esc((u.email && u.email[0] ? u.email[0] : "?").toUpperCase());
+  return `<div class="locked"><div class="lk-card acct-card">
+    <div class="acct-head">
+      <div class="acct-avatar" aria-hidden="true">${initial}</div>
+      <h2>Account</h2>
+      <span class="acct-status"><span class="dot" aria-hidden="true"></span>Signed in · RLS-secured</span>
     </div>
-    <button class="acct-btn" style="width:100%;margin-top:16px" onclick="window.__logout()">Log out</button>
-    <button class="acct-btn danger" style="width:100%;margin-top:10px" onclick="window.__deleteAccount()">Delete account</button>
-    <div id="acct-msg" class="subtle" style="margin-top:10px;min-height:16px"></div>
-    <p class="subtle" style="margin-top:10px;font-size:11px">Secure sign-in · your Portfolio &amp; Watchlist are visible only to you.</p>
+    <div class="td-rows acct-meta">
+      <div class="td-r"><span class="td-k">Email</span><span class="td-v acct-email">${esc(email)}</span></div>
+      <div class="td-r"><span class="td-k">Member since</span><span class="td-v">${esc(fmtMonthYear(u.created_at))}</span></div>
+      <div class="td-r"><span class="td-k">Last sign-in</span><span class="td-v">${esc(fmtDate(u.last_sign_in_at))}</span></div>
+    </div>
+    <button class="acct-btn acct-wide" onclick="window.__logout()">Log out</button>
+    <div class="acct-danger">
+      <button class="acct-btn danger acct-wide" onclick="window.__deleteAccount()">Delete account</button>
+      <p class="acct-help">Permanently removes your login and all Portfolio &amp; Watchlist data. This cannot be undone.</p>
+    </div>
+    <div id="acct-msg" class="subtle acct-msg" role="status"></div>
   </div></div>`;
 }
 
