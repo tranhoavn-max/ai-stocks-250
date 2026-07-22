@@ -841,6 +841,12 @@ async function detailMap() {
    those guards. MA-only scope: no dated-feed fetch, no caution/EML/DDR/phase, no
    calendar — reuses detailMap() (ticker-detail.json) exactly like renderTickerDetail. */
 const JOURNAL_MOOD = { CALM: "Calm", FOMO: "FOMO", RECOVER_LOSS: "Recovering a loss", UNCERTAIN: "Uncertain" };
+// One coherent semantic colour legend shared by the exit radios, the context MA rows, and the
+// open-trades table: MA20 green (tightest) -> MA50 teal -> MA200 amber, Manual gold, None muted.
+// Mirrors the ticker-detail zone ladder so a colour always means the same thing in the Journal.
+const J_MA_COLOR = { MA20: "var(--green)", MA50: "var(--teal)", MA200: "var(--amber)", MANUAL: "var(--brand)", NONE_AVAILABLE: "var(--mut)" };
+const J_MOOD_COLOR = { CALM: "var(--green)", FOMO: "var(--amber)", RECOVER_LOSS: "var(--red)", UNCERTAIN: "var(--mut)" };
+const J_ZONE_COLOR = { ABOVE_MA20: "var(--green)", MA50_MA20: "var(--teal)", MA200_MA50: "var(--amber)", BELOW_MA200: "var(--red)" };
 const todayISO = () => new Date().toISOString().slice(0, 10);
 function journalExitLabel(r) {
   if (r.exit_ma === "MANUAL") return `Manual @ ${fnum(r.exit_target)}`;
@@ -867,8 +873,8 @@ async function renderJournal() {
       <td>${tickerLink(r.ticker)}</td>
       <td>${esc(r.executed_entry_date)}</td>
       <td class="r">${fnum(r.entry_price_user)}</td>
-      <td>${esc(journalExitLabel(r))}</td>
-      <td>${esc(JOURNAL_MOOD[r.mood] || "—")}</td>
+      <td style="color:${J_MA_COLOR[r.exit_ma] || "var(--mut)"};font-weight:600">${esc(journalExitLabel(r))}</td>
+      <td style="color:${J_MOOD_COLOR[r.mood] || "var(--mut)"}">${esc(JOURNAL_MOOD[r.mood] || "—")}</td>
       <td class="r"><button class="acct-btn" type="button" onclick="window.__journalOpenClose('${esc(r.id)}')">Close</button></td>
       <td class="r"><button class="row-del" type="button" title="Delete" onclick="window.__journalDelete('${esc(r.id)}')">✕</button></td>
     </tr>`).join("") ||
@@ -921,11 +927,11 @@ async function renderJournal() {
       <div class="j-exit">
         <div class="td-h">Exit commitment</div>
         <div class="j-radios" id="j-radios">
-          <label class="j-radio"><input type="radio" name="j-exit" value="MA20" /> MA20</label>
-          <label class="j-radio"><input type="radio" name="j-exit" value="MA50" /> MA50</label>
-          <label class="j-radio"><input type="radio" name="j-exit" value="MA200" /> MA200</label>
-          <label class="j-radio"><input type="radio" name="j-exit" value="MANUAL" /> Manual</label>
-          <label class="j-radio"><input type="radio" name="j-exit" value="NONE_AVAILABLE" /> None available</label>
+          <label class="j-radio" data-ma="MA20"><input type="radio" name="j-exit" value="MA20" /> MA20</label>
+          <label class="j-radio" data-ma="MA50"><input type="radio" name="j-exit" value="MA50" /> MA50</label>
+          <label class="j-radio" data-ma="MA200"><input type="radio" name="j-exit" value="MA200" /> MA200</label>
+          <label class="j-radio" data-ma="MANUAL"><input type="radio" name="j-exit" value="MANUAL" /> Manual</label>
+          <label class="j-radio" data-ma="NONE_AVAILABLE"><input type="radio" name="j-exit" value="NONE_AVAILABLE" /> None available</label>
         </div>
         <div id="j-manual-wrap" hidden>
           <label class="j-field"><span class="j-lbl">Exit target price</span>
@@ -1009,10 +1015,10 @@ function wireJournal() {
     }
     ctxLineEl.textContent = `Context from session ${ctx.trade_date} (latest available)`;
     ctxRowsEl.innerHTML =
-      `<div class="td-r"><span class="td-k">MA20</span><span class="td-v">${fnum(ctx.ma20)}</span></div>`
-      + `<div class="td-r"><span class="td-k">MA50</span><span class="td-v">${fnum(ctx.ma50)}</span></div>`
-      + `<div class="td-r"><span class="td-k">MA200</span><span class="td-v">${fnum(ctx.ma200)}</span></div>`
-      + `<div class="td-r"><span class="td-k">Zone</span><span class="td-v">${esc(ctx.zone || "—")}</span></div>`;
+      `<div class="td-r"><span class="td-k">MA20</span><span class="td-v" style="color:var(--green)">${fnum(ctx.ma20)}</span></div>`
+      + `<div class="td-r"><span class="td-k">MA50</span><span class="td-v" style="color:var(--teal)">${fnum(ctx.ma50)}</span></div>`
+      + `<div class="td-r"><span class="td-k">MA200</span><span class="td-v" style="color:var(--amber)">${fnum(ctx.ma200)}</span></div>`
+      + `<div class="td-r"><span class="td-k">Zone</span><span class="td-v" style="color:${ctx.zone ? (J_ZONE_COLOR[ctx.zone] || "var(--txt)") : "var(--mut)"}">${esc(ctx.zone || "—")}</span></div>`;
   }
 
   // Vacuous check: "exit when close breaks below MAx" is only meaningful if the entry

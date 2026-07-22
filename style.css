@@ -397,9 +397,23 @@ table.dc td { padding: 10px 12px; border-bottom: 1px solid #1A222B; font-family:
   border-radius: 9999px; padding: 6px 12px; cursor: pointer; min-height: 32px;
 }
 .j-radio input { accent-color: var(--brand); }
-.j-radio.locked { color: var(--mut); border-color: var(--line2); cursor: not-allowed; }
+/* Semantic colour legend on the exit ladder: the radio dot carries its MA colour, and the
+   selected pill fills with a tint of the same colour (green MA20 -> teal MA50 -> amber MA200,
+   gold Manual, muted None) so the commitment reads at a glance. */
+.j-radio[data-ma="MA20"] input { accent-color: var(--green); }
+.j-radio[data-ma="MA50"] input { accent-color: var(--teal); }
+.j-radio[data-ma="MA200"] input { accent-color: var(--amber); }
+.j-radio[data-ma="NONE_AVAILABLE"] input { accent-color: var(--mut); }
+.j-radio:has(input:checked) { font-weight: 600; }
+.j-radio[data-ma="MA20"]:has(input:checked) { color: var(--green); border-color: var(--green); background: rgba(86,179,129,.15); }
+.j-radio[data-ma="MA50"]:has(input:checked) { color: var(--teal); border-color: var(--teal); background: rgba(91,194,208,.15); }
+.j-radio[data-ma="MA200"]:has(input:checked) { color: var(--amber); border-color: var(--amber); background: rgba(245,200,66,.15); }
+.j-radio[data-ma="MANUAL"]:has(input:checked) { color: var(--brand); border-color: var(--brand); background: var(--lem); }
+.j-radio[data-ma="NONE_AVAILABLE"]:has(input:checked) { color: var(--mut); border-color: var(--mut); background: rgba(139,147,156,.13); }
+.j-radio.locked { color: var(--mut); border-color: var(--line2); background: var(--panel); cursor: not-allowed; }
 .j-radio input:disabled { cursor: not-allowed; }
-.j-reason { color: var(--mut); font-size: 10.5px; }
+.j-reason { color: var(--amber); font-size: 10.5px; }
+.j-context { border-left: 2px solid var(--brand); }
 #j-manual-wrap { margin-top: 10px; max-width: 220px; }
 textarea.auth-input { resize: vertical; min-height: 46px; font-family: inherit; }
 select.auth-input { appearance: none; }
