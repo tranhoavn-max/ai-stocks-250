@@ -378,6 +378,42 @@ table.dc td { padding: 10px 12px; border-bottom: 1px solid #1A222B; font-family:
 .acct-btn.danger { border-color: var(--red); color: var(--red); }
 .acct-btn.danger:hover { background: rgba(224,90,78,.1); border-color: var(--red); color: var(--red); }
 
+/* journal (record a trade / open / closed) — reuses .panel/.td-rows/.acct-btn/.auth-input
+   vocabulary; only the form controls + close modal are new. */
+.j-form { margin: 4px 0; }
+.j-field { display: block; margin-bottom: 10px; }
+.j-lbl { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--mut); font-weight: 600; margin-bottom: 5px; }
+.j-field .auth-input { margin-bottom: 0; }
+.j-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.j-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:700px) { .j-grid, .j-grid2 { grid-template-columns: 1fr; } }
+.j-context { margin: 14px 0; padding: 12px 16px; }
+.j-context .td-rows { margin-top: 8px; }
+.j-exit { margin: 4px 0 14px; }
+.j-radios { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.j-radio {
+  display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500;
+  color: var(--txt); background: var(--panel); border: 1px solid #283139;
+  border-radius: 9999px; padding: 6px 12px; cursor: pointer; min-height: 32px;
+}
+.j-radio input { accent-color: var(--brand); }
+.j-radio.locked { color: var(--mut); border-color: var(--line2); cursor: not-allowed; }
+.j-radio input:disabled { cursor: not-allowed; }
+.j-reason { color: var(--mut); font-size: 10.5px; }
+#j-manual-wrap { margin-top: 10px; max-width: 220px; }
+textarea.auth-input { resize: vertical; min-height: 46px; font-family: inherit; }
+select.auth-input { appearance: none; }
+
+/* close-trade modal */
+.cm-overlay {
+  position: fixed; inset: 0; z-index: 50; display: flex; align-items: center;
+  justify-content: center; background: rgba(7,9,12,.62); padding: 20px;
+}
+.cm-overlay[hidden] { display: none; }
+.cm-box { width: 100%; max-width: 380px; text-align: left; }
+.cm-box h3 { font-family: var(--serif); font-size: 18px; font-weight: 600; color: var(--txt); }
+.cm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+
 /* about view (static) */
 .about-hero { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .about-lockup { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }

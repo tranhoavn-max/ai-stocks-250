@@ -832,6 +832,362 @@ async function detailMap() {
   return _detail;
 }
 
+/* ---------- Journal (near-today, MA-only trading journal) ----------
+   Records a per-user "what I saw before I bought" plan row against journal_trades
+   (RLS-scoped; see docs/specs/deployment/supabase-schema.sql). The DB triggers own
+   immutability: INSERT forces created_at/status=OPEN/null-exits/own user_id; UPDATE
+   allows ONLY the single OPEN -> CLOSED transition filling exit_date + exit_price_user
+   (+ optional exit_note). This client sends only writable columns and never fights
+   those guards. MA-only scope: no dated-feed fetch, no caution/EML/DDR/phase, no
+   calendar — reuses detailMap() (ticker-detail.json) exactly like renderTickerDetail. */
+const JOURNAL_MOOD = { CALM: "Calm", FOMO: "FOMO", RECOVER_LOSS: "Recovering a loss", UNCERTAIN: "Uncertain" };
+const todayISO = () => new Date().toISOString().slice(0, 10);
+function journalExitLabel(r) {
+  if (r.exit_ma === "MANUAL") return `Manual @ ${fnum(r.exit_target)}`;
+  if (r.exit_ma === "NONE_AVAILABLE") return "None";
+  return r.exit_ma || "—";
+}
+function journalHoldingDays(entryDate, exitDate) {
+  if (!entryDate || !exitDate) return null;
+  const a = new Date(`${entryDate}T00:00:00Z`), b = new Date(`${exitDate}T00:00:00Z`);
+  if (isNaN(a) || isNaN(b)) return null;
+  return Math.round((b - a) / 86400000);
+}
+
+async function renderJournal() {
+  if (!currentUser) return renderLogin("Sign in to use your Journal.");
+  const client = supa();
+  const { data, error } = await client.from("journal_trades").select("*").order("created_at", { ascending: false });
+  if (error) return `<div class="status-line" style="color:var(--red)">Error: ${esc(error.message)}</div>`;
+  const rows = data || [];
+  const open = rows.filter((r) => r.status === "OPEN");
+  const closed = rows.filter((r) => r.status === "CLOSED");
+
+  const openRows = open.map((r) => `<tr>
+      <td>${tickerLink(r.ticker)}</td>
+      <td>${esc(r.executed_entry_date)}</td>
+      <td class="r">${fnum(r.entry_price_user)}</td>
+      <td>${esc(journalExitLabel(r))}</td>
+      <td>${esc(JOURNAL_MOOD[r.mood] || "—")}</td>
+      <td class="r"><button class="acct-btn" type="button" onclick="window.__journalOpenClose('${esc(r.id)}')">Close</button></td>
+      <td class="r"><button class="row-del" type="button" title="Delete" onclick="window.__journalDelete('${esc(r.id)}')">✕</button></td>
+    </tr>`).join("") ||
+    `<tr><td colspan="7" class="subtle" style="padding:14px">No open trades yet.</td></tr>`;
+
+  const closedRows = closed.map((r) => {
+    const days = journalHoldingDays(r.executed_entry_date, r.exit_date);
+    return `<tr>
+      <td>${tickerLink(r.ticker)}</td>
+      <td>${esc(r.executed_entry_date)} → ${esc(r.exit_date)}</td>
+      <td class="r">${fnum(r.entry_price_user)} → ${fnum(r.exit_price_user)}</td>
+      <td class="r">${days == null ? "—" : days}</td>
+      <td>${esc(r.exit_note || "—")}</td>
+    </tr>`;
+  }).join("") ||
+    `<tr><td colspan="5" class="subtle" style="padding:14px">No closed trades yet.</td></tr>`;
+
+  const moodOptions = Object.entries(JOURNAL_MOOD).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join("");
+
+  return `
+  <div><h1 class="h1big">JOURNAL</h1>
+    <div class="subtle" style="margin-top:4px">Record your trading discipline — not a P/L tracker.</div></div>
+
+  <div class="panel j-form">
+    <div class="td-h">Record a trade</div>
+    <form id="j-form">
+      <div class="j-grid">
+        <label class="j-field"><span class="j-lbl">Ticker</span>
+          <input id="j-ticker" class="auth-input" placeholder="e.g. AAPL" style="text-transform:uppercase" autocomplete="off" required />
+        </label>
+        <label class="j-field"><span class="j-lbl">Entry date</span>
+          <input id="j-entry-date" type="date" class="auth-input" value="${todayISO()}" required />
+        </label>
+        <label class="j-field"><span class="j-lbl">Entry price</span>
+          <input id="j-entry-price" type="number" step="0.01" min="0.01" class="auth-input" required />
+        </label>
+      </div>
+
+      <div class="panel j-context" id="j-context">
+        <div class="td-h">Context</div>
+        <div class="subtle" id="j-context-line">Enter a ticker to load context.</div>
+        <div class="td-rows" id="j-context-rows">
+          <div class="td-r"><span class="td-k">MA20</span><span class="td-v">—</span></div>
+          <div class="td-r"><span class="td-k">MA50</span><span class="td-v">—</span></div>
+          <div class="td-r"><span class="td-k">MA200</span><span class="td-v">—</span></div>
+          <div class="td-r"><span class="td-k">Zone</span><span class="td-v">—</span></div>
+        </div>
+      </div>
+
+      <div class="j-exit">
+        <div class="td-h">Exit commitment</div>
+        <div class="j-radios" id="j-radios">
+          <label class="j-radio"><input type="radio" name="j-exit" value="MA20" /> MA20</label>
+          <label class="j-radio"><input type="radio" name="j-exit" value="MA50" /> MA50</label>
+          <label class="j-radio"><input type="radio" name="j-exit" value="MA200" /> MA200</label>
+          <label class="j-radio"><input type="radio" name="j-exit" value="MANUAL" /> Manual</label>
+          <label class="j-radio"><input type="radio" name="j-exit" value="NONE_AVAILABLE" /> None available</label>
+        </div>
+        <div id="j-manual-wrap" hidden>
+          <label class="j-field"><span class="j-lbl">Exit target price</span>
+            <input id="j-exit-target" type="number" step="0.01" min="0.01" class="auth-input" />
+          </label>
+        </div>
+      </div>
+
+      <div class="j-grid2">
+        <label class="j-field"><span class="j-lbl">Mood <span class="subtle">(optional)</span></span>
+          <select id="j-mood" class="auth-input"><option value="">—</option>${moodOptions}</select>
+        </label>
+        <label class="j-field"><span class="j-lbl">Rationale <span class="subtle">(optional)</span></span>
+          <textarea id="j-rationale" class="auth-input" rows="2"></textarea>
+        </label>
+      </div>
+
+      <div id="j-form-msg" class="subtle" role="status" style="min-height:16px;margin:6px 0"></div>
+      <button type="submit" class="acct-btn">Record</button>
+    </form>
+  </div>
+
+  <div class="section-h"><h2>Open trades</h2><span class="cnt">· ${open.length}</span></div>
+  <div class="table-wrap"><table class="dc"><thead><tr>
+    <th>Ticker</th><th>Entry date</th><th class="r">Entry price</th><th>Exit commitment</th><th>Mood</th><th class="r"></th><th class="r"></th>
+  </tr></thead><tbody>${openRows}</tbody></table></div>
+
+  <div class="section-h"><h2>Closed trades</h2><span class="cnt">· ${closed.length}</span></div>
+  <div class="table-wrap"><table class="dc"><thead><tr>
+    <th>Ticker</th><th>Entry → Exit date</th><th class="r">Entry → Exit price</th><th class="r">Holding days</th><th>Exit note</th>
+  </tr></thead><tbody>${closedRows}</tbody></table></div>
+  <div class="disclaimer">No profit/loss or return is shown here on purpose — this journal records discipline (what you committed to and whether you honored it), not outcome.</div>
+
+  <div class="cm-overlay" id="j-modal" hidden>
+    <div class="cm-box panel" role="dialog" aria-modal="true" aria-labelledby="j-modal-title">
+      <h3 id="j-modal-title" style="margin:0 0 12px">Close trade</h3>
+      <form id="j-close-form" onsubmit="return window.__journalCloseConfirm(event)">
+        <label class="j-field"><span class="j-lbl">Exit date</span>
+          <input id="j-exit-date" type="date" class="auth-input" required />
+        </label>
+        <label class="j-field"><span class="j-lbl">Exit price</span>
+          <input id="j-exit-price" type="number" step="0.01" min="0.01" class="auth-input" required />
+        </label>
+        <label class="j-field"><span class="j-lbl">Exit note <span class="subtle">(optional)</span></span>
+          <textarea id="j-exit-note" class="auth-input" rows="2"></textarea>
+        </label>
+        <div id="j-modal-msg" class="subtle" role="status" style="min-height:16px;margin:6px 0"></div>
+        <div class="cm-actions">
+          <button type="button" class="acct-btn" onclick="window.__journalCloseCancel()">Cancel</button>
+          <button type="submit" class="acct-btn">Confirm close</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+}
+
+// Live DOM wiring, mirroring wireDetail(): ticker -> context lookup + MA autofill,
+// entry price -> exit-commitment re-gating (vacuous-check), and the record form submit.
+// Attached AFTER innerHTML assignment (navigate() calls this only for route "journal").
+function wireJournal() {
+  const form = document.getElementById("j-form");
+  if (!form) return; // signed-out (renderLogin) — nothing to wire
+  const tickerEl = document.getElementById("j-ticker");
+  const dateEl = document.getElementById("j-entry-date");
+  const priceEl = document.getElementById("j-entry-price");
+  const ctxLineEl = document.getElementById("j-context-line");
+  const ctxRowsEl = document.getElementById("j-context-rows");
+  const manualWrap = document.getElementById("j-manual-wrap");
+  const msgEl = document.getElementById("j-form-msg");
+  const radios = () => [...form.querySelectorAll('input[name="j-exit"]')];
+  let ctx = null; // {trade_date, ma10, ma20, ma50, ma200, zone} or null (ticker uncovered)
+
+  function renderContextPanel() {
+    if (!ctx) {
+      ctxLineEl.textContent = tickerEl.value.trim()
+        ? "No data for this ticker — context unavailable."
+        : "Enter a ticker to load context.";
+      ctxRowsEl.innerHTML = ["MA20", "MA50", "MA200", "Zone"]
+        .map((k) => `<div class="td-r"><span class="td-k">${k}</span><span class="td-v subtle">—</span></div>`).join("");
+      return;
+    }
+    ctxLineEl.textContent = `Context from session ${ctx.trade_date} (latest available)`;
+    ctxRowsEl.innerHTML =
+      `<div class="td-r"><span class="td-k">MA20</span><span class="td-v">${fnum(ctx.ma20)}</span></div>`
+      + `<div class="td-r"><span class="td-k">MA50</span><span class="td-v">${fnum(ctx.ma50)}</span></div>`
+      + `<div class="td-r"><span class="td-k">MA200</span><span class="td-v">${fnum(ctx.ma200)}</span></div>`
+      + `<div class="td-r"><span class="td-k">Zone</span><span class="td-v">${esc(ctx.zone || "—")}</span></div>`;
+  }
+
+  // Vacuous check: "exit when close breaks below MAx" is only meaningful if the entry
+  // price is >= MAx and MAx is not null. Re-run on every ticker OR price change so a
+  // stale selected radio that just became vacuous is cleared, never left checked.
+  function reEvaluateRadios() {
+    const price = parseFloat(priceEl.value);
+    const validPrice = !isNaN(price) && price > 0;
+    radios().forEach((r) => {
+      const name = r.value;
+      const label = r.closest(".j-radio");
+      let existingReason = label.querySelector(".j-reason");
+      if (name === "MANUAL" || name === "NONE_AVAILABLE") {
+        r.disabled = false;
+        label.classList.remove("locked");
+        if (existingReason) existingReason.remove();
+        return;
+      }
+      const maVal = ctx ? ctx[name.toLowerCase()] : null;
+      let reason = null;
+      if (maVal == null) reason = `unavailable — ${name} missing`;
+      else if (!validPrice) reason = "unavailable — enter entry price first";
+      else if (price < maVal) reason = `vacuous — price already below ${name}`;
+      r.disabled = !!reason;
+      label.classList.toggle("locked", !!reason);
+      if (reason) {
+        if (!existingReason) {
+          existingReason = document.createElement("span");
+          existingReason.className = "j-reason";
+          label.appendChild(existingReason);
+        }
+        existingReason.textContent = ` (${reason})`;
+        if (r.checked) r.checked = false; // clear a selection that just became invalid
+      } else if (existingReason) {
+        existingReason.remove();
+      }
+    });
+    const manualChecked = radios().some((r) => r.value === "MANUAL" && r.checked);
+    manualWrap.hidden = !manualChecked;
+  }
+
+  // Reads the CURRENT ticker value fresh each call (never rewrites the input mid-typing —
+  // that would jump the caret; uppercasing is visual-only via CSS, .toUpperCase() only
+  // for the lookup/insert). "input" (not "change") keeps context live while typing and
+  // avoids a blur-vs-submit-click event-order race on quick ticker-then-Record flows.
+  async function refreshContext() {
+    const tk = tickerEl.value.trim().toUpperCase();
+    if (!tk) { ctx = null; renderContextPanel(); reEvaluateRadios(); return; }
+    const dm = await detailMap();
+    const d = dm[tk];
+    ctx = d ? { trade_date: d.trade_date, ma10: d.ma10, ma20: d.ma20, ma50: d.ma50, ma200: d.ma200, zone: d.zone } : null;
+    if (ctx && ctx.ma20 != null) priceEl.value = ctx.ma20;
+    renderContextPanel();
+    reEvaluateRadios();
+  }
+
+  tickerEl.addEventListener("input", refreshContext);
+  priceEl.addEventListener("input", reEvaluateRadios);
+  radios().forEach((r) => r.addEventListener("change", reEvaluateRadios));
+  renderContextPanel();
+  reEvaluateRadios();
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    (async () => {
+      msgEl.style.color = "var(--mut)"; msgEl.textContent = "";
+      const ticker = tickerEl.value.trim().toUpperCase();
+      const entryDate = dateEl.value;
+      const entryPrice = parseFloat(priceEl.value);
+      const exitRadio = radios().find((r) => r.checked);
+      if (!ticker) { msgEl.style.color = "var(--red)"; msgEl.textContent = "Enter a ticker."; return; }
+      if (!(entryPrice > 0)) { msgEl.style.color = "var(--red)"; msgEl.textContent = "Entry price must be greater than 0."; return; }
+      if (!exitRadio) { msgEl.style.color = "var(--red)"; msgEl.textContent = "Choose an exit commitment."; return; }
+      // decision_snapshot_date must satisfy the DB CHECK (snapshot_date < entry_date).
+      // Covered ticker: use the real feed session date. Uncovered ticker: fall back to
+      // the day before entry so the CHECK always holds (documented design choice — see
+      // handoff notes; there is no real snapshot to stamp for an uncovered ticker).
+      let snapshotDate;
+      if (ctx && ctx.trade_date) {
+        snapshotDate = ctx.trade_date;
+      } else {
+        const d = new Date(`${entryDate}T00:00:00Z`);
+        d.setUTCDate(d.getUTCDate() - 1);
+        snapshotDate = d.toISOString().slice(0, 10);
+      }
+      if (!(snapshotDate < entryDate)) {
+        msgEl.style.color = "var(--red)";
+        msgEl.textContent = `Entry date must be after the context session date (${snapshotDate}).`;
+        return;
+      }
+      const exitTargetEl = document.getElementById("j-exit-target");
+      const exitTarget = exitRadio.value === "MANUAL" ? parseFloat(exitTargetEl.value) : null;
+      if (exitRadio.value === "MANUAL" && !(exitTarget > 0)) {
+        msgEl.style.color = "var(--red)"; msgEl.textContent = "Enter an exit target price for Manual.";
+        return;
+      }
+      const vacuousLocked = {};
+      ["MA20", "MA50", "MA200"].forEach((name) => {
+        const r = radios().find((x) => x.value === name);
+        if (r && r.disabled) {
+          const maVal = ctx ? ctx[name.toLowerCase()] : null;
+          vacuousLocked[name] = maVal == null ? "ma_null" : "price_below";
+        }
+      });
+      const payload = {
+        ticker,
+        decision_snapshot_date: snapshotDate,
+        executed_entry_date: entryDate,
+        entry_price_user: entryPrice,
+        exit_ma: exitRadio.value,
+        exit_target: exitTarget,
+        vacuous_locked: vacuousLocked,
+        ticker_context: ctx ? { trade_date: ctx.trade_date, ma10: ctx.ma10, ma20: ctx.ma20, ma50: ctx.ma50, ma200: ctx.ma200, zone: ctx.zone } : null,
+        rationale: document.getElementById("j-rationale").value.trim() || null,
+        mood: document.getElementById("j-mood").value || null,
+        feed_ref: `ticker-detail.json@${snapshotDate}`,
+      };
+      msgEl.textContent = "Saving…";
+      const { error } = await supa().from("journal_trades").insert(payload);
+      if (error) { msgEl.style.color = "var(--red)"; msgEl.textContent = error.message; return; }
+      navigate("journal");
+    })();
+    return false;
+  });
+}
+
+let _journalCloseId = null;
+window.__journalOpenClose = function (id) {
+  _journalCloseId = id;
+  const modal = document.getElementById("j-modal");
+  if (!modal) return;
+  document.getElementById("j-exit-date").value = todayISO();
+  document.getElementById("j-exit-price").value = "";
+  document.getElementById("j-exit-note").value = "";
+  const msg = document.getElementById("j-modal-msg");
+  if (msg) { msg.style.color = ""; msg.textContent = ""; }
+  modal.hidden = false;
+};
+window.__journalCloseCancel = function () {
+  _journalCloseId = null;
+  const modal = document.getElementById("j-modal");
+  if (modal) modal.hidden = true;
+};
+window.__journalCloseConfirm = function (e) {
+  e.preventDefault();
+  (async () => {
+    const id = _journalCloseId;
+    const msg = document.getElementById("j-modal-msg");
+    if (!id) return false;
+    const exit_date = document.getElementById("j-exit-date").value;
+    const exit_price_user = parseFloat(document.getElementById("j-exit-price").value);
+    const exit_note = document.getElementById("j-exit-note").value.trim() || null;
+    if (!exit_date || !(exit_price_user > 0)) {
+      if (msg) { msg.style.color = "var(--red)"; msg.textContent = "Enter a valid exit date and price."; }
+      return;
+    }
+    if (msg) { msg.style.color = "var(--mut)"; msg.textContent = "Saving…"; }
+    const { error } = await supa().from("journal_trades")
+      .update({ status: "CLOSED", exit_date, exit_price_user, exit_note }).eq("id", id);
+    if (error) { if (msg) { msg.style.color = "var(--red)"; msg.textContent = error.message; } return; }
+    _journalCloseId = null;
+    navigate("journal");
+  })();
+  return false;
+};
+window.__journalDelete = function (id) {
+  const ok = window.confirm(
+    "Delete this journal entry? A journal you can quietly delete is a journal that lies to you.");
+  if (!ok) return;
+  (async () => {
+    await supa().from("journal_trades").delete().eq("id", id);
+    navigate("journal");
+  })();
+};
+
 // Real exit ladder (sourced from rule.exit_signal_code) -> label + accent.
 const EXIT_LADDER = {
   EXIT_0_HOLD: ["HOLD", "var(--green)", "No exit signal. Structure intact."],
@@ -1070,6 +1426,7 @@ const ROUTES = {
   valuation: { label: "Valuation", render: renderValuation },
   portfolio: { label: "Portfolio", render: () => renderManager("PORTFOLIO") },
   watchlist: { label: "Watchlist", render: () => renderManager("WATCHLIST") },
+  journal: { label: "Journal", render: () => renderJournal() },
   account: { label: "Account", render: () => renderAccount() },
   about: { label: "About", render: () => renderAbout() },
   login: { label: "Log in", render: () => renderLogin() },
@@ -1254,6 +1611,7 @@ async function navigate(route) {
   view.innerHTML = `<div class="status-line">Loading ${esc(ROUTES[r].label)}…</div>`;
   try {
     view.innerHTML = await ROUTES[r].render();
+    if (r === "journal") wireJournal();
   } catch (e) {
     view.innerHTML = `<div class="status-line" style="color:var(--red)">Failed to load data: ${esc(e.message)}</div>`;
   }
