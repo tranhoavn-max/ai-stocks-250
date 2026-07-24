@@ -1,30 +1,30 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-23T00:29:21Z",
+  "generated_at": "2026-07-24T00:06:09Z",
   "meta": {
-    "as_of_date": "2026-07-22",
+    "as_of_date": "2026-07-23",
     "coverage_status": "PASS",
-    "source_rule_run_id": "b782b4c0-e73b-4ab4-b335-d20b2ba45def",
-    "source_ingest_run_id": "634921c6-4f28-4707-848c-0c45c8635370",
-    "snapshot_generated_at": "2026-07-23T00:27:31Z",
+    "source_rule_run_id": "3849a5b2-2c1d-4842-a4dc-e66ea26b5273",
+    "source_ingest_run_id": "63bc0f6a-89cb-42f9-a4f6-733ce6fdfc50",
+    "snapshot_generated_at": "2026-07-24T00:04:19Z",
     "warnings": []
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-22",
-    "score": 58.8,
-    "tier": "normal",
+    "as_of_date": "2026-07-23",
+    "score": 61.8,
+    "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.063,
-      "qqq_close_location": -0.431,
-      "supz": -0.699,
-      "flow_z": -0.517,
-      "flow_mom": -0.0048,
-      "c1_warn_pct": 75.76
+      "c1z": 0.217,
+      "qqq_close_location": -0.234,
+      "supz": -0.204,
+      "flow_z": -0.605,
+      "flow_mom": -0.012,
+      "c1_warn_pct": 77.1
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +32,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    68.4,
     69.1,
     57.4,
     53.6,
@@ -43,7 +42,8 @@
     67.1,
     59.8,
     62.0,
-    58.8
+    58.8,
+    61.8
   ],
   "caution_sessions": 12,
   "counts": {
@@ -53,13 +53,13 @@
   "entry": [],
   "continuation": [
     {
-      "ticker": "PCG",
-      "company_name": "PG&E Corporation",
+      "ticker": "EMR",
+      "company_name": "Emerson Electric",
       "verdict": "WATCH",
       "verdict_sub": "weak",
-      "phase": "STRONG_UPTREND",
-      "layer": "datacenter_power_cooling_grid",
-      "setup_text": "vol20=1.44|tr20=1.70|cloc=1.00|zone=range_high|confirmed_above_zone",
+      "phase": "ACCUMULATION",
+      "layer": "automation_robotics_industrial_ai",
+      "setup_text": "vol20=1.67|tr20=1.92|cloc=0.87|zone=pivot_high|confirmed_above_zone",
       "setup_tokens": [
         "HOLD"
       ],
@@ -68,9 +68,9 @@
       "score_trend": null,
       "score_short": null,
       "c1": {
-        "c15_prob": 0.083996,
-        "c15_prob_raw": 0.166471,
-        "confidence": "low",
+        "c15_prob": 0.2047,
+        "c15_prob_raw": 0.24864,
+        "confidence": "medium",
         "n_features": 27
       },
       "ddr": {
@@ -78,33 +78,33 @@
         "ddr_confidence": null,
         "ddr_n_bucket": null,
         "ddr_overheat": null,
-        "dd_profile_as_of_date": "2026-07-22",
+        "dd_profile_as_of_date": "2026-07-23",
         "dd_current_pct": null,
         "dd_to_median_pct": null,
-        "dd_median_pct": 0.09157494320136678,
-        "dd_p25_pct": 0.06128094747196477,
-        "dd_p75_pct": 0.15457999221034746,
-        "dd_worst_pct": 0.20854141520861358,
-        "dd_best_pct": 0.05390534650227058,
-        "dd_sample_size": 11,
+        "dd_median_pct": 0.07251068396399518,
+        "dd_p25_pct": 0.05003985757605377,
+        "dd_p75_pct": 0.07803244858480118,
+        "dd_worst_pct": 0.10492556216877412,
+        "dd_best_pct": 0.033645682036607484,
+        "dd_sample_size": 12,
         "dd_confidence": "high",
         "dd_coverage_status": "FULL_10Y",
-        "dd_p_break_median": 0.7777777777777778,
-        "dd_n_pullbacks_median": 9,
-        "dd_n_breaks_median": 7,
+        "dd_p_break_median": 0.7222222222222222,
+        "dd_n_pullbacks_median": 18,
+        "dd_n_breaks_median": 13,
         "dd_current_cycle_peak_date": null,
         "dd_current_cycle_peak_price": null,
         "dd_day_streak": null,
         "dd_current_gain_pct": null
       },
-      "zone_label": "range_high",
+      "zone_label": "pivot_high",
       "exit_action": "No exit signal",
       "exit_signal": "EXIT_0_HOLD",
       "supply": "CONFIRM",
       "supply_action": "ALLOW/HOLD",
       "flow": "INFLOW",
       "money_flow_score": null,
-      "age_bars": 3,
+      "age_bars": 4,
       "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
       "buy_quality": "",
       "buy_signal": "",
@@ -122,7 +122,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "WDC",
+        "ticker": "LITE",
         "rs_pctl": 100,
         "top_decile": true,
         "is_entry": false,
@@ -130,7 +130,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "LITE",
+        "ticker": "WDC",
         "rs_pctl": 99,
         "top_decile": true,
         "is_entry": false,
@@ -146,7 +146,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AEHR",
+        "ticker": "CIEN",
         "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
@@ -162,16 +162,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "CIEN",
+        "ticker": "AEHR",
         "rs_pctl": 98,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
-        "ticker": "INTC",
-        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -186,8 +178,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "VIAV",
-        "rs_pctl": 96,
+        "ticker": "INTC",
+        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -195,6 +187,14 @@
       },
       {
         "ticker": "UCTT",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "VIAV",
         "rs_pctl": 96,
         "top_decile": true,
         "is_entry": false,
@@ -210,7 +210,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AMD",
+        "ticker": "DELL",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
@@ -218,7 +218,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "DELL",
+        "ticker": "AMD",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
