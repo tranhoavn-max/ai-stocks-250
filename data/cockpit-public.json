@@ -1,30 +1,32 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-24T00:06:09Z",
+  "generated_at": "2026-07-24T23:50:54Z",
   "meta": {
-    "as_of_date": "2026-07-23",
-    "coverage_status": "PASS",
-    "source_rule_run_id": "3849a5b2-2c1d-4842-a4dc-e66ea26b5273",
-    "source_ingest_run_id": "63bc0f6a-89cb-42f9-a4f6-733ce6fdfc50",
-    "snapshot_generated_at": "2026-07-24T00:04:19Z",
-    "warnings": []
+    "as_of_date": "2026-07-24",
+    "coverage_status": "WARN",
+    "source_rule_run_id": "a939d129-bd86-4beb-880b-7e8e6f4de2c6",
+    "source_ingest_run_id": "00c15ecd-796b-40a4-97e7-4fe1d816df8a",
+    "snapshot_generated_at": "2026-07-24T23:48:48Z",
+    "warnings": [
+      "PARTIAL ingest with latest EOD missing for 1 tickers"
+    ]
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-23",
-    "score": 61.8,
+    "as_of_date": "2026-07-24",
+    "score": 70.0,
     "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.217,
-      "qqq_close_location": -0.234,
-      "supz": -0.204,
-      "flow_z": -0.605,
-      "flow_mom": -0.012,
-      "c1_warn_pct": 77.1
+      "c1z": 0.451,
+      "qqq_close_location": -0.655,
+      "supz": -0.545,
+      "flow_z": -0.775,
+      "flow_mom": 0.0291,
+      "c1_warn_pct": 79.03
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +34,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    69.1,
     57.4,
     53.6,
     67.3,
@@ -43,74 +44,16 @@
     59.8,
     62.0,
     58.8,
-    61.8
+    61.8,
+    70.0
   ],
   "caution_sessions": 12,
   "counts": {
     "entry": 0,
-    "continuation": 1
+    "continuation": 0
   },
   "entry": [],
-  "continuation": [
-    {
-      "ticker": "EMR",
-      "company_name": "Emerson Electric",
-      "verdict": "WATCH",
-      "verdict_sub": "weak",
-      "phase": "ACCUMULATION",
-      "layer": "automation_robotics_industrial_ai",
-      "setup_text": "vol20=1.67|tr20=1.92|cloc=0.87|zone=pivot_high|confirmed_above_zone",
-      "setup_tokens": [
-        "HOLD"
-      ],
-      "rank": null,
-      "score": null,
-      "score_trend": null,
-      "score_short": null,
-      "c1": {
-        "c15_prob": 0.2047,
-        "c15_prob_raw": 0.24864,
-        "confidence": "medium",
-        "n_features": 27
-      },
-      "ddr": {
-        "ddr_5d_5pct": null,
-        "ddr_confidence": null,
-        "ddr_n_bucket": null,
-        "ddr_overheat": null,
-        "dd_profile_as_of_date": "2026-07-23",
-        "dd_current_pct": null,
-        "dd_to_median_pct": null,
-        "dd_median_pct": 0.07251068396399518,
-        "dd_p25_pct": 0.05003985757605377,
-        "dd_p75_pct": 0.07803244858480118,
-        "dd_worst_pct": 0.10492556216877412,
-        "dd_best_pct": 0.033645682036607484,
-        "dd_sample_size": 12,
-        "dd_confidence": "high",
-        "dd_coverage_status": "FULL_10Y",
-        "dd_p_break_median": 0.7222222222222222,
-        "dd_n_pullbacks_median": 18,
-        "dd_n_breaks_median": 13,
-        "dd_current_cycle_peak_date": null,
-        "dd_current_cycle_peak_price": null,
-        "dd_day_streak": null,
-        "dd_current_gain_pct": null
-      },
-      "zone_label": "pivot_high",
-      "exit_action": "No exit signal",
-      "exit_signal": "EXIT_0_HOLD",
-      "supply": "CONFIRM",
-      "supply_action": "ALLOW/HOLD",
-      "flow": "INFLOW",
-      "money_flow_score": null,
-      "age_bars": 4,
-      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
-      "buy_quality": "",
-      "buy_signal": "",
-      "buy_source": null
-    }
-  ],
+  "continuation": [],
   "momentum": {
     "leaders": [
       {
@@ -122,7 +65,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "LITE",
+        "ticker": "WDC",
         "rs_pctl": 100,
         "top_decile": true,
         "is_entry": false,
@@ -130,7 +73,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "WDC",
+        "ticker": "LITE",
         "rs_pctl": 99,
         "top_decile": true,
         "is_entry": false,
@@ -162,16 +105,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AEHR",
-        "rs_pctl": 98,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "ICHR",
-        "rs_pctl": 97,
+        "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -186,15 +121,15 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "UCTT",
-        "rs_pctl": 96,
+        "ticker": "VIAV",
+        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
         "snapshot_clean": false
       },
       {
-        "ticker": "VIAV",
+        "ticker": "UCTT",
         "rs_pctl": 96,
         "top_decile": true,
         "is_entry": false,
@@ -211,6 +146,14 @@
       },
       {
         "ticker": "DELL",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "AEHR",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
@@ -218,7 +161,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AMD",
+        "ticker": "MKSI",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
@@ -227,7 +170,7 @@
       }
     ],
     "coverage": [
-      249,
+      248,
       250
     ],
     "limit": 14,
