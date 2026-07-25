@@ -1,32 +1,30 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-24T23:50:54Z",
+  "generated_at": "2026-07-25T11:08:19Z",
   "meta": {
     "as_of_date": "2026-07-24",
-    "coverage_status": "WARN",
-    "source_rule_run_id": "a939d129-bd86-4beb-880b-7e8e6f4de2c6",
-    "source_ingest_run_id": "00c15ecd-796b-40a4-97e7-4fe1d816df8a",
-    "snapshot_generated_at": "2026-07-24T23:48:48Z",
-    "warnings": [
-      "PARTIAL ingest with latest EOD missing for 1 tickers"
-    ]
+    "coverage_status": "PASS",
+    "source_rule_run_id": "c348515f-a069-4c84-b1c9-0ccf48be267a",
+    "source_ingest_run_id": "2462e7e2-d21d-46f1-a7a5-90603f8880ae",
+    "snapshot_generated_at": "2026-07-25T11:06:24Z",
+    "warnings": []
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
     "as_of_date": "2026-07-24",
-    "score": 70.0,
+    "score": 70.8,
     "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.451,
+      "c1z": 0.473,
       "qqq_close_location": -0.655,
-      "supz": -0.545,
-      "flow_z": -0.775,
-      "flow_mom": 0.0291,
-      "c1_warn_pct": 79.03
+      "supz": -0.255,
+      "flow_z": -0.761,
+      "flow_mom": 0.0282,
+      "c1_warn_pct": 79.2
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -45,7 +43,7 @@
     62.0,
     58.8,
     61.8,
-    70.0
+    70.8
   ],
   "caution_sessions": 12,
   "counts": {
@@ -170,7 +168,7 @@
       }
     ],
     "coverage": [
-      248,
+      249,
       250
     ],
     "limit": 14,

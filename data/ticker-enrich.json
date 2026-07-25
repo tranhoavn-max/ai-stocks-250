@@ -1,17 +1,17 @@
 {
   "schema_version": "ticker-enrich/v1",
   "as_of_date": "2026-07-24",
-  "generated_at": "2026-07-24T23:50:56Z",
-  "coverage_status": "WARN",
-  "source_rule_run_id": "a939d129-bd86-4beb-880b-7e8e6f4de2c6",
+  "generated_at": "2026-07-25T11:08:21Z",
+  "coverage_status": "PASS",
+  "source_rule_run_id": "c348515f-a069-4c84-b1c9-0ccf48be267a",
   "count": 250,
   "tickers": {
     "NVDA": {
       "phase": "ACCUMULATION",
-      "score": 57.91,
-      "flow": "STRONG_INFLOW",
-      "flow_color": "#56b381",
-      "c1_prob": 0.266886,
+      "score": 59.31,
+      "flow": "INFLOW",
+      "flow_color": "#8b939c",
+      "c1_prob": 0.269679,
       "health": "HEALTHY",
       "health_color": "#56b381",
       "action": "Tighten stop / no add",
@@ -21,9 +21,9 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 91,
-        "score": 57.91,
-        "trend": "STABLE"
+        "rank": 85,
+        "score": 59.31,
+        "trend": "RISING"
       }
     },
     "AMD": {
@@ -114,12 +114,12 @@
       "c1_prob": 0.261783,
       "health": "WEAK",
       "health_color": "#c9a24e",
-      "action": "Exit on close confirmation",
-      "action_color": "#e05a4e",
-      "status": "AVOID (active exit)",
-      "status_color": "#e05a4e",
+      "action": "ALLOW/HOLD",
+      "action_color": "#56b381",
+      "status": "WAIT",
+      "status_color": "#8b939c",
       "eml_prob": 0.684817,
-      "eml_conflict": true,
+      "eml_conflict": false,
       "lead": {
         "rank": 158,
         "score": 44.04,
@@ -248,7 +248,7 @@
     },
     "CDNS": {
       "phase": "NEUTRAL",
-      "score": 44.34,
+      "score": 44.22,
       "flow": "STRONG_OUTFLOW",
       "flow_color": "#e05a4e",
       "c1_prob": 0.182351,
@@ -262,7 +262,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 153,
-        "score": 44.34,
+        "score": 44.22,
         "trend": "FADING"
       }
     },
@@ -348,7 +348,7 @@
     },
     "ANET": {
       "phase": "STRONG_UPTREND",
-      "score": 64.77,
+      "score": 64.69,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.220985,
@@ -361,8 +361,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 57,
-        "score": 64.77,
+        "rank": 58,
+        "score": 64.69,
         "trend": "STABLE"
       }
     },
@@ -428,7 +428,7 @@
     },
     "NXPI": {
       "phase": "DISTRIBUTION",
-      "score": 55.59,
+      "score": 55.71,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.254718,
@@ -441,8 +441,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 101,
-        "score": 55.59,
+        "rank": 99,
+        "score": 55.71,
         "trend": "FADING"
       }
     },
@@ -848,7 +848,7 @@
     },
     "DLR": {
       "phase": "ACCUMULATION",
-      "score": 59.75,
+      "score": 59.67,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.224149,
@@ -862,7 +862,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 84,
-        "score": 59.75,
+        "score": 59.67,
         "trend": "STABLE"
       }
     },
@@ -881,7 +881,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 171,
+        "rank": 172,
         "score": 41.37,
         "trend": "RISING"
       }
@@ -1001,7 +1001,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 150,
+        "rank": 149,
         "score": 45.46,
         "trend": "RISING"
       }
@@ -1528,7 +1528,7 @@
     },
     "ADI": {
       "phase": "DISTRIBUTION",
-      "score": 55.62,
+      "score": 55.54,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.232693,
@@ -1541,8 +1541,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 99,
-        "score": 55.62,
+        "rank": 101,
+        "score": 55.54,
         "trend": "FADING"
       }
     },
@@ -1661,7 +1661,7 @@
       "eml_prob": 0.681484,
       "eml_conflict": false,
       "lead": {
-        "rank": 86,
+        "rank": 87,
         "score": 59.03,
         "trend": "FADING"
       }
@@ -1681,7 +1681,7 @@
       "eml_prob": 0.670577,
       "eml_conflict": false,
       "lead": {
-        "rank": 87,
+        "rank": 88,
         "score": 58.3,
         "trend": "FADING"
       }
@@ -1698,7 +1698,7 @@
       "action_color": "#e05a4e",
       "status": "AVOID (active exit)",
       "status_color": "#e05a4e",
-      "eml_prob": 0.68191,
+      "eml_prob": 0.685801,
       "eml_conflict": true,
       "lead": {
         "rank": 161,
@@ -1868,7 +1868,7 @@
     },
     "P": {
       "phase": "NEUTRAL",
-      "score": 58.16,
+      "score": 58.08,
       "flow": "STRONG_INFLOW",
       "flow_color": "#56b381",
       "c1_prob": 0.289908,
@@ -1881,8 +1881,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 88,
-        "score": 58.16,
+        "rank": 90,
+        "score": 58.08,
         "trend": "STABLE"
       }
     },
@@ -1891,7 +1891,7 @@
       "score": 83.21,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
-      "c1_prob": 0.280919,
+      "c1_prob": 0.286374,
       "health": "HEALTHY",
       "health_color": "#56b381",
       "action": "ALLOW/HOLD",
@@ -2008,7 +2008,7 @@
     },
     "AES": {
       "phase": "ACCUMULATION",
-      "score": 52.07,
+      "score": 51.99,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.131916,
@@ -2022,7 +2022,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 120,
-        "score": 52.07,
+        "score": 51.99,
         "trend": "STABLE"
       }
     },
@@ -2041,7 +2041,7 @@
       "eml_prob": 0.68572,
       "eml_conflict": true,
       "lead": {
-        "rank": 90,
+        "rank": 91,
         "score": 57.97,
         "trend": "FADING"
       }
@@ -2061,28 +2061,28 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 172,
+        "rank": 173,
         "score": 41.35,
         "trend": "FADING"
       }
     },
     "AME": {
       "phase": "DISTRIBUTION",
-      "score": 57.24,
+      "score": 57.16,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
-      "c1_prob": 0.167524,
+      "c1_prob": 0.170003,
       "health": "WEAK",
       "health_color": "#c9a24e",
-      "action": "Tighten stop / no add",
-      "action_color": "#c9a24e",
-      "status": "NOT READY (soft-exit)",
+      "action": "ALLOW/HOLD",
+      "action_color": "#56b381",
+      "status": "WAIT",
       "status_color": "#8b939c",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 93,
-        "score": 57.24,
+        "rank": 94,
+        "score": 57.16,
         "trend": "FADING"
       }
     },
@@ -2172,12 +2172,12 @@
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.170019,
-      "health": "BROKEN",
-      "health_color": "#e05a4e",
-      "action": "Exit / preserve capital",
-      "action_color": "#e05a4e",
-      "status": "AVOID (active exit)",
-      "status_color": "#e05a4e",
+      "health": "WEAK",
+      "health_color": "#c9a24e",
+      "action": "ALLOW/HOLD",
+      "action_color": "#56b381",
+      "status": "WAIT",
+      "status_color": "#8b939c",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2288,10 +2288,10 @@
     },
     "DT": {
       "phase": "ACCUMULATION",
-      "score": 51.52,
+      "score": 51.44,
       "flow": "OUTFLOW",
       "flow_color": "#c9a24e",
-      "c1_prob": 0.26086,
+      "c1_prob": 0.269503,
       "health": "HEALTHY",
       "health_color": "#56b381",
       "action": "ALLOW/HOLD",
@@ -2302,7 +2302,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 123,
-        "score": 51.52,
+        "score": 51.44,
         "trend": "RISING"
       }
     },
@@ -2409,15 +2409,15 @@
     "ASAN": {
       "phase": "STRONG_DOWNTREND",
       "score": 32.29,
-      "flow": "OUTFLOW",
-      "flow_color": "#c9a24e",
+      "flow": "NEUTRAL",
+      "flow_color": "#8b939c",
       "c1_prob": 0.276007,
-      "health": "WEAK",
-      "health_color": "#c9a24e",
-      "action": "ALLOW/HOLD",
-      "action_color": "#56b381",
-      "status": "WAIT",
-      "status_color": "#8b939c",
+      "health": "BROKEN",
+      "health_color": "#e05a4e",
+      "action": "Exit / preserve capital",
+      "action_color": "#e05a4e",
+      "status": "AVOID (active exit)",
+      "status_color": "#e05a4e",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -2561,7 +2561,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 173,
+        "rank": 174,
         "score": 41.29,
         "trend": "RISING"
       }
@@ -2828,7 +2828,7 @@
     },
     "IR": {
       "phase": "ACCUMULATION",
-      "score": 46.49,
+      "score": 46.41,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.172691,
@@ -2841,8 +2841,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 144,
-        "score": 46.49,
+        "rank": 145,
+        "score": 46.41,
         "trend": "RISING"
       }
     },
@@ -2901,7 +2901,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 244,
+        "rank": 243,
         "score": 15.21,
         "trend": "RISING"
       }
@@ -3021,7 +3021,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 155,
+        "rank": 154,
         "score": 44.14,
         "trend": "RISING"
       }
@@ -3048,7 +3048,7 @@
     },
     "MSCI": {
       "phase": "DISTRIBUTION",
-      "score": 44.18,
+      "score": 44.1,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.19927,
@@ -3061,15 +3061,15 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 154,
-        "score": 44.18,
+        "rank": 155,
+        "score": 44.1,
         "trend": "RISING"
       }
     },
     "SPGI": {
       "phase": "DISTRIBUTION",
-      "score": 48.29,
-      "flow": "NEUTRAL",
+      "score": 48.21,
+      "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.232563,
       "health": "WEAK",
@@ -3082,7 +3082,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 137,
-        "score": 48.29,
+        "score": 48.21,
         "trend": "RISING"
       }
     },
@@ -3211,7 +3211,7 @@
       "score": 75.06,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
-      "c1_prob": 0.209592,
+      "c1_prob": 0.211959,
       "health": "HEALTHY",
       "health_color": "#56b381",
       "action": "ALLOW/HOLD",
@@ -3331,7 +3331,7 @@
       "score": 67.0,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
-      "c1_prob": 0.273816,
+      "c1_prob": 0.276654,
       "health": "HEALTHY",
       "health_color": "#56b381",
       "action": "No exit signal",
@@ -3388,7 +3388,7 @@
     },
     "PTC": {
       "phase": "STRONG_DOWNTREND",
-      "score": 28.14,
+      "score": 28.06,
       "flow": "OUTFLOW",
       "flow_color": "#c9a24e",
       "c1_prob": 0.140958,
@@ -3402,7 +3402,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 210,
-        "score": 28.14,
+        "score": 28.06,
         "trend": "RISING"
       }
     },
@@ -3548,7 +3548,7 @@
     },
     "ETSY": {
       "phase": "DISTRIBUTION",
-      "score": 69.72,
+      "score": 69.64,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.275325,
@@ -3562,13 +3562,13 @@
       "eml_conflict": false,
       "lead": {
         "rank": 43,
-        "score": 69.72,
+        "score": 69.64,
         "trend": "FADING"
       }
     },
     "ZG": {
       "phase": "STRONG_DOWNTREND",
-      "score": 15.25,
+      "score": 15.17,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.254963,
@@ -3581,8 +3581,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 243,
-        "score": 15.25,
+        "rank": 244,
+        "score": 15.17,
         "trend": "RISING"
       }
     },
@@ -3601,7 +3601,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 145,
+        "rank": 144,
         "score": 46.43,
         "trend": "RISING"
       }
@@ -3691,7 +3691,7 @@
       "score": 60.6,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
-      "c1_prob": 0.177103,
+      "c1_prob": 0.174767,
       "health": "WEAK",
       "health_color": "#c9a24e",
       "action": "ALLOW/HOLD",
@@ -3748,7 +3748,7 @@
     },
     "COST": {
       "phase": "NEUTRAL",
-      "score": 41.22,
+      "score": 41.5,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.194981,
@@ -3761,8 +3761,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 174,
-        "score": 41.22,
+        "rank": 171,
+        "score": 41.5,
         "trend": "STABLE"
       }
     },
@@ -3788,7 +3788,7 @@
     },
     "ROKU": {
       "phase": "ACCUMULATION",
-      "score": 74.01,
+      "score": 73.93,
       "flow": "STRONG_OUTFLOW",
       "flow_color": "#e05a4e",
       "c1_prob": 0.139258,
@@ -3802,7 +3802,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 29,
-        "score": 74.01,
+        "score": 73.93,
         "trend": "FADING"
       }
     },
@@ -3849,26 +3849,26 @@
     "GPN": {
       "phase": "STRONG_UPTREND",
       "score": 64.77,
-      "flow": "INFLOW",
-      "flow_color": "#8b939c",
+      "flow": "STRONG_INFLOW",
+      "flow_color": "#56b381",
       "c1_prob": 0.177086,
       "health": "HEALTHY",
       "health_color": "#56b381",
-      "action": "Tighten stop / no add",
-      "action_color": "#c9a24e",
-      "status": "NOT READY (soft-exit)",
-      "status_color": "#8b939c",
+      "action": "ALLOW/HOLD",
+      "action_color": "#56b381",
+      "status": "WARMING",
+      "status_color": "#56b381",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 58,
+        "rank": 57,
         "score": 64.77,
         "trend": "RISING"
       }
     },
     "INFY": {
       "phase": "STRONG_DOWNTREND",
-      "score": 26.55,
+      "score": 26.47,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.213709,
@@ -3882,7 +3882,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 219,
-        "score": 26.55,
+        "score": 26.47,
         "trend": "RISING"
       }
     },
@@ -3988,7 +3988,7 @@
     },
     "RBRK": {
       "phase": "ACCUMULATION",
-      "score": 60.09,
+      "score": 60.01,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.313193,
@@ -4001,8 +4001,8 @@
       "eml_prob": 0.52097,
       "eml_conflict": false,
       "lead": {
-        "rank": 82,
-        "score": 60.09,
+        "rank": 83,
+        "score": 60.01,
         "trend": "STABLE"
       }
     },
@@ -4132,12 +4132,12 @@
       "flow": "STRONG_OUTFLOW",
       "flow_color": "#e05a4e",
       "c1_prob": 0.365448,
-      "health": "WEAK",
-      "health_color": "#c9a24e",
-      "action": "ALLOW/HOLD",
-      "action_color": "#56b381",
-      "status": "WAIT",
-      "status_color": "#8b939c",
+      "health": "BROKEN",
+      "health_color": "#e05a4e",
+      "action": "Exit / preserve capital",
+      "action_color": "#e05a4e",
+      "status": "AVOID (active exit)",
+      "status_color": "#e05a4e",
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
@@ -4181,7 +4181,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 94,
+        "rank": 93,
         "score": 57.21,
         "trend": "RISING"
       }
@@ -4391,12 +4391,12 @@
       "score": 55.54,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
-      "c1_prob": 0.156692,
+      "c1_prob": 0.154219,
       "health": "WEAK",
       "health_color": "#c9a24e",
-      "action": "Tighten stop / no add",
-      "action_color": "#c9a24e",
-      "status": "NOT READY (soft-exit)",
+      "action": "ALLOW/HOLD",
+      "action_color": "#56b381",
+      "status": "WAIT",
       "status_color": "#8b939c",
       "eml_prob": 0.229911,
       "eml_conflict": false,
@@ -4408,7 +4408,7 @@
     },
     "DUK": {
       "phase": "ACCUMULATION",
-      "score": 56.79,
+      "score": 56.71,
       "flow": "STRONG_INFLOW",
       "flow_color": "#56b381",
       "c1_prob": 0.141336,
@@ -4422,7 +4422,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 96,
-        "score": 56.79,
+        "score": 56.71,
         "trend": "STABLE"
       }
     },
@@ -4431,7 +4431,7 @@
       "score": 63.35,
       "flow": "OUTFLOW",
       "flow_color": "#c9a24e",
-      "c1_prob": 0.137771,
+      "c1_prob": 0.134061,
       "health": "WEAK",
       "health_color": "#c9a24e",
       "action": "Exit on close confirmation",
@@ -4451,7 +4451,7 @@
       "score": 55.52,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
-      "c1_prob": 0.140247,
+      "c1_prob": 0.157574,
       "health": "WEAK",
       "health_color": "#c9a24e",
       "action": "Tighten stop / no add",
@@ -4488,7 +4488,7 @@
     },
     "PCG": {
       "phase": "STRONG_UPTREND",
-      "score": 62.8,
+      "score": 62.72,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.166471,
@@ -4502,7 +4502,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 68,
-        "score": 62.8,
+        "score": 62.72,
         "trend": "STABLE"
       }
     },
@@ -4511,7 +4511,7 @@
       "score": 60.48,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
-      "c1_prob": 0.147918,
+      "c1_prob": 0.147053,
       "health": "WEAK",
       "health_color": "#c9a24e",
       "action": "Tighten stop / no add",
@@ -4548,7 +4548,7 @@
     },
     "LOGI": {
       "phase": "ACCUMULATION",
-      "score": 60.87,
+      "score": 60.79,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.244658,
@@ -4562,7 +4562,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 75,
-        "score": 60.87,
+        "score": 60.79,
         "trend": "STABLE"
       }
     },
@@ -4571,7 +4571,7 @@
       "score": 66.56,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
-      "c1_prob": 0.162557,
+      "c1_prob": 0.178703,
       "health": "WEAK",
       "health_color": "#c9a24e",
       "action": "ALLOW/HOLD",
@@ -4701,7 +4701,7 @@
       "eml_prob": 0.423842,
       "eml_conflict": false,
       "lead": {
-        "rank": 83,
+        "rank": 82,
         "score": 60.05,
         "trend": "RISING"
       }
@@ -4748,7 +4748,7 @@
     },
     "CDW": {
       "phase": "DISTRIBUTION",
-      "score": 45.52,
+      "score": 45.44,
       "flow": "INFLOW",
       "flow_color": "#8b939c",
       "c1_prob": 0.14651,
@@ -4761,8 +4761,8 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 149,
-        "score": 45.52,
+        "rank": 150,
+        "score": 45.44,
         "trend": "RISING"
       }
     },
@@ -4801,7 +4801,7 @@
       "eml_prob": null,
       "eml_conflict": false,
       "lead": {
-        "rank": 85,
+        "rank": 86,
         "score": 59.29,
         "trend": "RISING"
       }
@@ -4868,7 +4868,7 @@
     },
     "EXPE": {
       "phase": "ACCUMULATION",
-      "score": 55.24,
+      "score": 55.16,
       "flow": "NEUTRAL",
       "flow_color": "#8b939c",
       "c1_prob": 0.227885,
@@ -4882,7 +4882,7 @@
       "eml_conflict": false,
       "lead": {
         "rank": 107,
-        "score": 55.24,
+        "score": 55.16,
         "trend": "RISING"
       }
     },
