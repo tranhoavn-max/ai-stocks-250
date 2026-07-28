@@ -1,30 +1,32 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-25T11:08:19Z",
+  "generated_at": "2026-07-28T00:50:43Z",
   "meta": {
-    "as_of_date": "2026-07-24",
-    "coverage_status": "PASS",
-    "source_rule_run_id": "c348515f-a069-4c84-b1c9-0ccf48be267a",
-    "source_ingest_run_id": "2462e7e2-d21d-46f1-a7a5-90603f8880ae",
-    "snapshot_generated_at": "2026-07-25T11:06:24Z",
-    "warnings": []
+    "as_of_date": "2026-07-27",
+    "coverage_status": "WARN",
+    "source_rule_run_id": "59ce5359-f944-4c39-bd77-9fb70d607f34",
+    "source_ingest_run_id": "e55bfec5-f4f7-406b-841f-d176b7364e96",
+    "snapshot_generated_at": "2026-07-28T00:48:53Z",
+    "warnings": [
+      "PARTIAL ingest with latest EOD missing for 1 tickers"
+    ]
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-24",
-    "score": 70.8,
+    "as_of_date": "2026-07-27",
+    "score": 64.0,
     "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.473,
-      "qqq_close_location": -0.655,
-      "supz": -0.255,
-      "flow_z": -0.761,
-      "flow_mom": 0.0282,
-      "c1_warn_pct": 79.2
+      "c1z": 0.329,
+      "qqq_close_location": -0.244,
+      "supz": -0.697,
+      "flow_z": -0.607,
+      "flow_mom": 0.0085,
+      "c1_warn_pct": 78.23
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +34,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    57.4,
     53.6,
     67.3,
     57.8,
@@ -43,15 +44,75 @@
     62.0,
     58.8,
     61.8,
-    70.8
+    70.8,
+    64.0
   ],
   "caution_sessions": 12,
   "counts": {
     "entry": 0,
-    "continuation": 0
+    "continuation": 1
   },
   "entry": [],
-  "continuation": [],
+  "continuation": [
+    {
+      "ticker": "RNG",
+      "company_name": "RingCentral, Inc.",
+      "verdict": "WATCH",
+      "verdict_sub": "weak",
+      "phase": "STRONG_UPTREND",
+      "layer": "weak_declined_ai_adjacent",
+      "setup_text": "vol20=2.26|tr20=2.66|cloc=0.72|zone=range_high|confirmed_above_zone",
+      "setup_tokens": [
+        "HOLD"
+      ],
+      "rank": null,
+      "score": null,
+      "score_trend": null,
+      "score_short": null,
+      "c1": {
+        "c15_prob": 0.398374,
+        "c15_prob_raw": 0.332643,
+        "confidence": "high",
+        "n_features": 27
+      },
+      "ddr": {
+        "ddr_5d_5pct": null,
+        "ddr_confidence": null,
+        "ddr_n_bucket": null,
+        "ddr_overheat": null,
+        "dd_profile_as_of_date": "2026-07-27",
+        "dd_current_pct": null,
+        "dd_to_median_pct": null,
+        "dd_median_pct": 0.13040642145880438,
+        "dd_p25_pct": 0.1130034663980522,
+        "dd_p75_pct": 0.15889214382313657,
+        "dd_worst_pct": 0.2587412896237032,
+        "dd_best_pct": 0.10149712593962099,
+        "dd_sample_size": 6,
+        "dd_confidence": "high",
+        "dd_coverage_status": "FULL_10Y",
+        "dd_p_break_median": 0.3333333333333333,
+        "dd_n_pullbacks_median": 15,
+        "dd_n_breaks_median": 5,
+        "dd_current_cycle_peak_date": null,
+        "dd_current_cycle_peak_price": null,
+        "dd_day_streak": null,
+        "dd_current_gain_pct": null
+      },
+      "zone_label": "range_high",
+      "exit_action": "No exit signal",
+      "exit_signal": "EXIT_0_HOLD",
+      "supply": "CONFIRM",
+      "supply_action": "ALLOW/HOLD",
+      "flow": "STRONG_INFLOW",
+      "money_flow_score": null,
+      "age_bars": 1,
+      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
+      "buy_quality": "",
+      "buy_signal": "",
+      "buy_source": null
+    }
+  ],
   "momentum": {
     "leaders": [
       {
@@ -103,16 +164,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "ICHR",
-        "rs_pctl": 98,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "INTC",
-        "rs_pctl": 97,
+        "rs_pctl": 98,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -127,8 +180,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "UCTT",
-        "rs_pctl": 96,
+        "ticker": "ICHR",
+        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -143,7 +196,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "DELL",
+        "ticker": "UCTT",
         "rs_pctl": 96,
         "top_decile": true,
         "is_entry": false,
@@ -152,6 +205,14 @@
       },
       {
         "ticker": "AEHR",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
+        "ticker": "DELL",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
@@ -168,7 +229,7 @@
       }
     ],
     "coverage": [
-      249,
+      248,
       250
     ],
     "limit": 14,
