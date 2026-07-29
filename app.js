@@ -362,8 +362,293 @@ function setupHtml(text) {
 }
 
 /* ---------- screens ---------- */
+/* ---------- Sector Rotation Map (public, display-only context) ----------
+   Renders from the OPTIONAL rotation-public.json feed. Everything below is
+   gated on that feed being present: when it is absent the cockpit renders
+   exactly as it did before this section existed (philosophy block keeps its
+   original slot, no rotation markup, no console noise). */
+
+const ROT_FRAMES = [
+  { key: "qqq", label: "QQQ" },
+  { key: "spy", label: "SPY" },
+  { key: "eq", label: "EQ-W" },
+];
+// Compact bubble labels — MIRROR of ROTATION_SHORT_LABELS in
+// apps/dashboard/app-rotation.js (kept in lockstep by
+// tests/test_web_rotation_short_labels_parity.py). Full names stay in tooltips.
+const ROT_SHORT_LABELS = {
+  control_growth_software: "SW-GR",
+  security_observability_data_devtools: "SECURITY",
+  DATA_PLATFORM: "DATA-PLT",
+  control_growth_consumer: "CONSUMER",
+  cloud_hyperscaler: "CLOUD",
+  automation_robotics_industrial_ai: "ROBOTICS",
+  control_growth_internet: "INTERNET",
+  ai_platform_software: "AI-PLT",
+  weak_declined_ai_adjacent: "WEAK-ADJ",
+  digital_ad_ai_applications: "DIG-AD",
+  DATA_CENTER_INFRA: "DC-INFRA",
+  datacenter_power_cooling_grid: "DC-POWER",
+  AI_APPLICATIONS: "AI-APPS",
+  ai_semiconductor: "AI-SEMI",
+  EDGE_AI: "EDGE-AI",
+  memory_storage_networking: "MEMORY",
+  SEMICONDUCTOR_CORE: "SEMI-CORE",
+  semicap_equipment: "SEMICAP",
+  AI_CONNECTIVITY: "AI-CONN",
+  AI_CHIP_DESIGN: "CHIP-DSN",
+  CLOUD_PLATFORM: "CLOUD-PLT",
+  MEMORY_STORAGE: "MEM-STOR",
+  QUANTUM_COMPUTE: "QUANTUM",
+  ASSEMBLY_TEST: "ASSY-TST",
+};
+const ROT_COLORS = { inflow: "#0ca30c", outflow: "#d03b3b", neutral: "#9b9a94" };
+const ROT_VIEW = { w: 900, h: 560, padL: 62, padR: 30, padT: 30, padB: 52 };
+const ROT_QUADRANTS = [
+  ["LEADING", "strong 63d, still pushing"],
+  ["RECOVERING", "weak 63d, turning up"],
+  ["WEAKENING", "strong 63d, rolling over"],
+  ["LAGGING", "weak 63d, still falling"],
+];
+
+let _rotation = undefined;
+let _rotFrame = "qqq";
+async function rotationFeed() {
+  if (_rotation !== undefined) return _rotation;
+  // Absent feed is the NORMAL case in this stage — never surface it as an error.
+  try { _rotation = await getJSON("rotation-public.json"); }
+  catch (_) { _rotation = null; }
+  return _rotation;
+}
+
+function rotShort(group) {
+  if (ROT_SHORT_LABELS[group]) return ROT_SHORT_LABELS[group];
+  return String(group).split(/[_\s]+/).map((w) => w.slice(0, 4)).join("-").toUpperCase().slice(0, 9);
+}
+function rotColor(inflowPct) {
+  if (inflowPct == null) return ROT_COLORS.neutral;
+  if (inflowPct >= 60) return ROT_COLORS.inflow;
+  if (inflowPct < 40) return ROT_COLORS.outflow;
+  return ROT_COLORS.neutral;
+}
+function rotNum(v, d = 1) {
+  return v == null ? "—" : `${v > 0 ? "+" : ""}${Number(v).toFixed(d)}`.replace("-", "−");
+}
+function rotQuadrant(x, y) {
+  if (x > 0 && y > 0) return "LEADING";
+  if (x <= 0 && y > 0) return "RECOVERING";
+  if (x > 0 && y <= 0) return "WEAKENING";
+  return "LAGGING";
+}
+// Plot-eligible groups with a usable RS block for this frame, richest first.
+function rotRows(rot, frame) {
+  return (rot.groups || [])
+    .map((g) => ({ g, b: (g.rs || {})[frame] || {} }))
+    .filter((r) => r.g.plot_eligible && r.b.rs63_median != null && r.b.rs20_median != null)
+    .map((r) => ({
+      name: r.g.group,
+      short: rotShort(r.g.group),
+      n: r.g.n,
+      inflow: r.g.inflow_pct,
+      x: r.b.rs63_median,
+      y: r.b.rs20_median,
+      top5: r.b.top5 || [],
+      trail: ((r.g.trail || {})[frame] || []),
+      quad: rotQuadrant(r.b.rs63_median, r.b.rs20_median),
+    }))
+    .sort((a, b) => b.y - a.y || a.name.localeCompare(b.name));
+}
+
+function rotStripLine(rows) {
+  const lead = rows.filter((r) => r.quad === "LEADING").slice(0, 3);
+  // "Top 3 weakening" = the three rolling over hardest, so worst rs20 first.
+  const weak = rows.filter((r) => r.quad === "WEAKENING").sort((a, b) => a.y - b.y).slice(0, 3);
+  const fmt = (list) => list.length
+    ? list.map((r) => `<b>${esc(r.short)}</b> ${esc(rotNum(r.y))}`).join(" · ")
+    : "<span class=\"subtle\">none</span>";
+  return `<span class="rot-lead">Leading: ${fmt(lead)}</span>`
+    + `<span class="rot-weak">Weakening: ${fmt(weak)}</span>`;
+}
+
+function rotPondHtml(rot) {
+  const sp = (rot.spread || {}).qqq_minus_spy;
+  if (!sp) return "";
+  const tone = sp.r20 == null ? "" : (sp.r20 < 0 ? " rot-pond-neg" : " rot-pond-pos");
+  const parts = [["5d", sp.r5], ["20d", sp.r20], ["63d", sp.r63]]
+    .map(([k, v]) => `${k} ${rotNum(v)}`).join(" · ");
+  return `<span class="rot-pond${tone}" title="QQQ return minus SPY return over 5/20/63 sessions, in percentage points.">`
+    + `QQQ−SPY ${esc(parts)} pp</span>`;
+}
+
+/* --- Desktop bubble map (hidden under 820px; mobile gets quadrant cards) --- */
+function rotScales(points) {
+  const span = (vals) => {
+    const extent = Math.max(...vals.map((v) => Math.abs(v)), 1) * 1.12;
+    return [-extent, extent];
+  };
+  const [x0, x1] = span(points.map((p) => p[0]));
+  const [y0, y1] = span(points.map((p) => p[1]));
+  const { w, h, padL, padR, padT, padB } = ROT_VIEW;
+  return {
+    x: (v) => padL + ((v - x0) / (x1 - x0)) * (w - padL - padR),
+    y: (v) => h - padB - ((v - y0) / (y1 - y0)) * (h - padT - padB),
+  };
+}
+function rotPlaceLabels(bubbles) {
+  const placed = [];
+  const maxX = ROT_VIEW.w - ROT_VIEW.padR;
+  for (const b of bubbles) {
+    const width = b.short.length * 5.6;
+    const flip = b.cx + b.r + 5 + width > maxX;
+    const baseX = flip ? b.cx - b.r - 5 : b.cx + b.r + 5;
+    const x0 = flip ? baseX - width : baseX;
+    let y = b.cy + 4, moved = false;
+    for (let step = 0; step < 14; step += 1) {
+      const box = { x0, x1: x0 + width, y0: y - 9, y1: y + 4 };
+      if (!placed.some((p) => !(box.x1 < p.x0 || box.x0 > p.x1 || box.y1 < p.y0 || box.y0 > p.y1))) break;
+      y += 14; moved = true;
+    }
+    placed.push({ x0, x1: x0 + width, y0: y - 9, y1: y + 4 });
+    b.labelX = baseX; b.labelY = y;
+    b.anchor = flip ? "end" : "start";
+    b.leaderX = flip ? b.cx - b.r : b.cx + b.r;
+    b.leader = moved;
+  }
+  return bubbles;
+}
+function rotMapHtml(rows, frameLabel) {
+  const pts = rows.map((r) => [r.x, r.y]);
+  for (const r of rows) for (const p of r.trail) pts.push(p);
+  const sc = rotScales(pts);
+  const maxN = Math.max(...rows.map((r) => r.n || 1));
+  const { w, h, padL, padR, padT, padB } = ROT_VIEW;
+  const bubbles = rotPlaceLabels(rows.map((r, i) => ({
+    ...r, i,
+    cx: sc.x(r.x), cy: sc.y(r.y),
+    r: 5 + (Math.sqrt(Math.max(r.n || 1, 1)) / Math.sqrt(Math.max(maxN, 1))) * 11,
+    color: rotColor(r.inflow),
+  })));
+  const zx = sc.x(0), zy = sc.y(0);
+  const corner = (t, x, y, a) => `<text class="rot-corner" x="${x}" y="${y}" text-anchor="${a}">${t}</text>`;
+  const trails = bubbles.map((b) => b.trail.length < 2 ? ""
+    : `<polyline class="rot-trail" points="${b.trail.map((p) => `${sc.x(p[0]).toFixed(1)},${sc.y(p[1]).toFixed(1)}`).join(" ")}" />`).join("");
+  const circles = bubbles.map((b) => `<circle class="rot-bub" data-rot-i="${b.i}" cx="${b.cx.toFixed(1)}" cy="${b.cy.toFixed(1)}" r="${b.r.toFixed(1)}" fill="${b.color}" fill-opacity="0.28" stroke="${b.color}" stroke-width="1.6"><title>${esc(b.name)}</title></circle>`).join("");
+  const labels = bubbles.map((b) => (b.leader
+    ? `<line class="rot-leader" x1="${b.leaderX.toFixed(1)}" y1="${b.cy.toFixed(1)}" x2="${b.labelX.toFixed(1)}" y2="${(b.labelY - 3).toFixed(1)}" />` : "")
+    + `<text class="rot-label" x="${b.labelX.toFixed(1)}" y="${b.labelY.toFixed(1)}" text-anchor="${b.anchor}">${esc(b.short)}</text>`).join("");
+  return `<div class="rot-mapwrap">
+    <svg class="rot-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Sector rotation quadrant map: median RS63 versus RS20 by group, versus ${esc(frameLabel)}">
+      <line class="rot-axis" x1="${padL}" y1="${zy.toFixed(1)}" x2="${w - padR}" y2="${zy.toFixed(1)}" />
+      <line class="rot-axis" x1="${zx.toFixed(1)}" y1="${padT}" x2="${zx.toFixed(1)}" y2="${h - padB}" />
+      ${corner("LEADING", w - padR - 4, padT + 12, "end")}
+      ${corner("RECOVERING", padL + 4, padT + 12, "start")}
+      ${corner("WEAKENING", w - padR - 4, h - padB - 6, "end")}
+      ${corner("LAGGING", padL + 4, h - padB - 6, "start")}
+      ${trails}${circles}${labels}
+      <text class="rot-axtitle" x="${(w / 2).toFixed(0)}" y="${h - 16}" text-anchor="middle">RS63 median vs ${esc(frameLabel)} (pp)</text>
+      <text class="rot-axtitle" x="18" y="${(h / 2).toFixed(0)}" text-anchor="middle" transform="rotate(-90 18 ${(h / 2).toFixed(0)})">RS20 median (pp)</text>
+    </svg>
+    <div id="rot-tip" class="rot-tip" hidden></div>
+  </div>`;
+}
+
+/* --- Mobile: 4 quadrant cards, tap a group to reveal its top 5 (no hover) --- */
+function rotQuadCardsHtml(rows, frameLabel) {
+  return `<div class="rot-quads">` + ROT_QUADRANTS.map(([quad, hint]) => {
+    const list = rows.filter((r) => r.quad === quad);
+    const body = list.length ? list.map((r) => `
+      <details class="rot-qgroup">
+        <summary>
+          <span class="rot-dot" style="background:${rotColor(r.inflow)}" aria-hidden="true"></span>
+          <span class="rot-qname">${esc(r.short)}</span>
+          <span class="rot-qrs">${esc(rotNum(r.y))}</span>
+        </summary>
+        <div class="rot-qfull">${esc(r.name)} · n=${r.n} · inflow ${r.inflow == null ? "—" : `${r.inflow}%`}</div>
+        <div class="rot-qtop">${(r.top5 || []).map((t) =>
+          `<span class="rot-qtk">${tickerLink(t.ticker)}<i>${esc(rotNum(t.rs20))}</i></span>`).join("")
+          || `<span class="subtle">No members listed.</span>`}</div>
+      </details>`).join("")
+      : `<div class="subtle rot-qempty">No group here.</div>`;
+    return `<section class="rot-qcard rot-q-${quad.toLowerCase()}">
+      <h3>${quad} <span class="rot-qhint">${esc(hint)}</span></h3>${body}</section>`;
+  }).join("") + `</div>
+  <p class="rot-foot subtle">RS20 vs ${esc(frameLabel)}, percentage points · bubble colour = money-flow inflow share · display-only context, not a buy/sell signal.</p>`;
+}
+
+function rotBodyHtml(rot, frame) {
+  const frameLabel = (ROT_FRAMES.find((f) => f.key === frame) || ROT_FRAMES[0]).label;
+  const rows = rotRows(rot, frame);
+  if (!rows.length) {
+    return `<p class="subtle" style="padding:10px 0">No group met the plot-eligibility floor (n ≥ 5) in the ${esc(frameLabel)} frame.</p>`;
+  }
+  return rotMapHtml(rows, frameLabel) + rotQuadCardsHtml(rows, frameLabel);
+}
+
+function rotationSectionHtml(rot) {
+  const rows = rotRows(rot, _rotFrame);
+  const sessions = rot.sessions || 1;
+  const buttons = ROT_FRAMES.map((f) => {
+    const on = f.key === _rotFrame;
+    return `<button class="rot-fbtn${on ? " active" : ""}" type="button" data-rot-frame="${f.key}" aria-pressed="${on ? "true" : "false"}" onclick="window.__rotFrame('${f.key}')">${esc(f.label)}</button>`;
+  }).join("");
+  return `
+  <details class="rot-sec">
+    <summary class="rot-strip">
+      <span class="rot-eyebrow">Rotation</span>
+      ${rotPondHtml(rot)}
+      <span class="rot-stripline">${rotStripLine(rows)}</span>
+      <span class="rot-more" aria-hidden="true">map ▾</span>
+    </summary>
+    <div class="rot-open">
+      <div class="rot-bar">
+        <div class="rot-frames" role="group" aria-label="Rotation benchmark frame">${buttons}</div>
+        <span class="subtle rot-meta">${esc(rot.as_of || "—")} · ${rows.length} groups (n ≥ 5) · ${sessions > 1 ? `trails over ${sessions} sessions` : "single session, no trails"}</span>
+      </div>
+      <div id="rot-body">${rotBodyHtml(rot, _rotFrame)}</div>
+    </div>
+  </details>`;
+}
+
+window.__rotFrame = function (frame) {
+  if (!ROT_FRAMES.some((f) => f.key === frame) || !_rotation) return;
+  _rotFrame = frame;
+  const host = document.getElementById("rot-body");
+  if (host) host.innerHTML = rotBodyHtml(_rotation, frame);
+  document.querySelectorAll("[data-rot-frame]").forEach((b) => {
+    const on = b.dataset.rotFrame === frame;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+};
+
+// Desktop-only hover tooltip. Delegated so it survives frame re-renders, and a
+// no-op whenever the rotation map is not on screen.
+function wireRotationTooltip() {
+  const view = document.getElementById("view");
+  if (!view) return;
+  view.addEventListener("mousemove", (e) => {
+    const tip = document.getElementById("rot-tip");
+    if (!tip) return;
+    const bub = e.target.closest(".rot-bub");
+    if (!bub || !_rotation) { tip.hidden = true; return; }
+    const row = rotRows(_rotation, _rotFrame)[Number(bub.dataset.rotI)];
+    if (!row) { tip.hidden = true; return; }
+    tip.innerHTML = `<div class="rot-tip-t">${esc(row.name)}</div>`
+      + `<div class="rot-tip-l">RS63 ${esc(rotNum(row.x))} · RS20 ${esc(rotNum(row.y))} · inflow ${row.inflow == null ? "—" : `${row.inflow}%`} · n=${row.n}</div>`
+      + `<div class="rot-tip-s">Top 5 by RS20</div>`
+      + ((row.top5 || []).map((t) => `<div class="rot-tip-r"><span>${esc(t.ticker)}</span><span>${esc(rotNum(t.rs20))}</span></div>`).join("")
+        || `<div class="subtle">—</div>`);
+    tip.hidden = false;
+    const wrap = tip.parentElement.getBoundingClientRect();
+    tip.style.left = `${Math.min(Math.max(e.clientX - wrap.left + 14, 4), Math.max(wrap.width - 220, 4))}px`;
+    tip.style.top = `${Math.max(e.clientY - wrap.top - 10, 4)}px`;
+  });
+}
+
 async function renderCockpit() {
-  const [d, em] = await Promise.all([getJSON("cockpit-public.json"), enrichMap()]);
+  const [d, em, rot] = await Promise.all([
+    getJSON("cockpit-public.json"), enrichMap(), rotationFeed(),
+  ]);
   const mc = d.market_caution || {};
   const comp = mc.components || {};
   const gate = d.market_gate_on;
@@ -438,6 +723,28 @@ async function renderCockpit() {
     ? `Elevated near-term risk-off probability — score ≥ ${elT}, below the ≥ ${hiT} alert.`
     : "Market caution level unavailable.";
 
+  // Layout swap, gated entirely on the optional rotation feed. WITHOUT it the
+  // philosophy block keeps its original slot (right under the caution banner)
+  // and no rotation markup is emitted at all — the pre-rotation cockpit,
+  // unchanged. WITH it, rotation takes that slot and philosophy moves down to
+  // just above the desk footer, content untouched.
+  // NOTE: starts flush with `<div` and ends flush with `</div>` so that, in the
+  // feed-absent path, the interpolation reproduces the previous markup byte for
+  // byte (verified in-browser by diffing #view innerHTML with/without the feed).
+  const philoBlock = `<div class="philo">
+    <div style="flex:0 0 auto">${goBoardSVG()}</div>
+    <div style="flex:1 1 280px;min-width:240px">
+      <h2>GO BOARD PHILOSOPHY</h2>
+      <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
+      <ul>
+        <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
+        <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
+        <li><span style="color:var(--brand)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
+        <li><span style="color:#E05A4E">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
+      </ul>
+    </div>
+  </div>`;
+
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
     <h1 class="h1big">Decision Desk</h1>
@@ -462,19 +769,7 @@ async function renderCockpit() {
     <div class="cau-gauge">${cautionGauge(mc.score, tierHex)}</div>
   </div>
 
-  <div class="philo">
-    <div style="flex:0 0 auto">${goBoardSVG()}</div>
-    <div style="flex:1 1 280px;min-width:240px">
-      <h2>GO BOARD PHILOSOPHY</h2>
-      <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
-      <ul>
-        <li><span style="color:var(--amber)">▸ Move slowly.</span> Every move is deliberate — keep <em>sente</em> (the initiative); don't chase price.</li>
-        <li><span style="color:var(--green)">▸ Risk first.</span> Count your <em>liberties</em> (liquidity &amp; stops) before you count territory (profit).</li>
-        <li><span style="color:var(--brand)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
-        <li><span style="color:#E05A4E">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
-      </ul>
-    </div>
-  </div>
+  ${rot ? rotationSectionHtml(rot) : philoBlock}
 
   <div class="section-h" style="gap:12px">
     <h2>① New Triggers</h2>
@@ -498,7 +793,7 @@ async function renderCockpit() {
     </div>
   </div>
 
-  <div class="desk-footer">
+  ${rot ? philoBlock + "\n\n  " : ""}<div class="desk-footer">
     <span class="desk-quote">"Festina lente — make haste slowly."</span>
     <span class="desk-disclaimer">Display-only signals · NOT investment advice · EOD data, no intraday refresh</span>
   </div>`;
@@ -1672,6 +1967,8 @@ async function wire() {
     const tk = (el.dataset.tk || el.textContent || "").trim().toUpperCase();
     if (tk) location.hash = "t/" + encodeURIComponent(tk);
   });
+  // No-op unless the (optional) rotation map is rendered.
+  wireRotationTooltip();
   // During recovery, supabase-js clearing the token fragment fires a hashchange —
   // keep the user on the reset form instead of bouncing them to the cockpit.
   window.addEventListener("hashchange", () => {
