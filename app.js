@@ -657,6 +657,9 @@ const RISING_CAP = 10;
 function risingFromRotation(rot) {
   const best = new Map();
   for (const g of (rot && rot.groups) || []) {
+    // Same statistical floor as the map (n >= 5): a group too small to plot
+    // is too small to nominate risers (Codex review 2026-07-29).
+    if (!g.plot_eligible) continue;
     const block = (g.rs || {}).qqq;
     // Upper half of the map only: the group itself must be rising over 20d.
     if (!block || !(block.rs20_median > 0)) continue;

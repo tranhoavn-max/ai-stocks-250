@@ -1,7 +1,7 @@
 {
   "schema_version": "web-bundle.v2",
   "as_of_date": "2026-07-28",
-  "generated_at": "2026-07-29T06:44:43Z",
+  "generated_at": "2026-07-29T11:32:59Z",
   "status": "SUCCESS",
   "source": {
     "app": "ai-stock-agent-service",
@@ -22,7 +22,7 @@
       "as_of_date": "2026-07-28",
       "source_rule_run_id": "5f04e582-4dd5-45da-a325-62798d1535d5",
       "sessions": 2,
-      "group_count": 24
+      "group_count": 13
     },
     "valuation": {
       "data_path": "data/valuation-latest.json",
