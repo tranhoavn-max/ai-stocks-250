@@ -645,6 +645,50 @@ function wireRotationTooltip() {
   });
 }
 
+/* ---------- 🌱 Rising (20d) lane ----------
+   Derived CLIENT-SIDE from the already-published rotation feed — no new fields,
+   no feed change. Frame is FIXED to qqq on purpose: this is a slow, weekly list,
+   so it must NOT follow the rotation map's frame toggle. */
+
+const RISING_FLOOR_PP = 5.0;   // below this a name is not "rising", it is noise
+const RISING_CAP = 10;
+
+/** Pure: rotation feed -> the Rising (20d) rows. Exported shape: [{ticker, rs20}]. */
+function risingFromRotation(rot) {
+  const best = new Map();
+  for (const g of (rot && rot.groups) || []) {
+    const block = (g.rs || {}).qqq;
+    // Upper half of the map only: the group itself must be rising over 20d.
+    if (!block || !(block.rs20_median > 0)) continue;
+    for (const row of block.top5 || []) {
+      const ticker = String((row && row.ticker) || "").trim().toUpperCase();
+      const rs20 = row && row.rs20;
+      if (!ticker || rs20 == null || !(rs20 >= RISING_FLOOR_PP)) continue;
+      // A ticker can sit in several groups — keep its strongest reading.
+      if (!best.has(ticker) || rs20 > best.get(ticker)) best.set(ticker, rs20);
+    }
+  }
+  return [...best.entries()]
+    .map(([ticker, rs20]) => ({ ticker, rs20 }))
+    .sort((a, b) => b.rs20 - a.rs20 || a.ticker.localeCompare(b.ticker))
+    .slice(0, RISING_CAP);
+}
+
+const risingPP = (v) => `${v > 0 ? "+" : ""}${Math.round(v)}`;
+
+function risingChipsHtml(rows, alsoMomentum) {
+  if (!rows.length) return `<span class="subtle">No rising names today.</span>`;
+  return rows.map((r) => {
+    const both = alsoMomentum.has(r.ticker);
+    const title = both ? "Also in Momentum Watch (1 Year)" : "Rising over the last 20 sessions";
+    return `<a class="mw rise${both ? " is-both" : ""}" href="#t/${encodeURIComponent(r.ticker)}" data-tk="${esc(r.ticker)}" title="${esc(title)}" aria-label="View ${esc(r.ticker)} ticker detail${both ? ", also in Momentum Watch (1 Year)" : ""}">`
+      + `<span class="mw-dot" style="background:var(--green)" aria-hidden="true"></span>`
+      + `<strong class="mw-tk">${esc(r.ticker)}</strong>`
+      + `<span class="rise-pp">${esc(risingPP(r.rs20))}</span>`
+      + `</a>`;
+  }).join("");
+}
+
 async function renderCockpit() {
   const [d, em, rot] = await Promise.all([
     getJSON("cockpit-public.json"), enrichMap(), rotationFeed(),
@@ -679,7 +723,13 @@ async function renderCockpit() {
     <td>${phaseBadge(r.phase)}</td></tr>`).join("") ||
     `<tr><td colspan="7" class="subtle" style="padding:14px">No on-deck names.</td></tr>`;
 
+  // Rising rows first: the Momentum Watch chips below need the intersection to
+  // draw the cross-lane gold border on their side too.
+  const risingRows = rot ? risingFromRotation(rot) : [];
+  const risingSet = new Set(risingRows.map((r) => r.ticker));
+
   const mom = d.momentum;
+  const momentumSet = new Set((mom ? mom.leaders : []).map((m) => String(m.ticker || "").toUpperCase()));
   const momChips = mom ? mom.leaders.map((m) => {
     const flags = (m.risk_flags && m.risk_flags.length) ? m.risk_flags : [];
     const isEntry = !!m.is_entry, hasRisk = flags.length > 0;
@@ -688,10 +738,13 @@ async function renderCockpit() {
     const dotColor = isEntry ? "var(--green)" : hasRisk ? "var(--amber)" : "var(--mut)";
     const cls = isEntry ? " is-entry" : hasRisk ? " has-risk" : "";
     const rs = m.rs_pctl == null ? null : Math.max(0, Math.min(100, Math.round(+m.rs_pctl)));
-    const title = hasRisk ? "Risk: " + flags.map((f) => f.label).join(", ")
+    const baseTitle = hasRisk ? "Risk: " + flags.map((f) => f.label).join(", ")
       : isEntry ? "Entry trigger today"
       : (m.snapshot_clean ? "Clean snapshot" : "Unconfirmed snapshot");
-    return `<a class="mw${cls}" href="#t/${encodeURIComponent(m.ticker)}" data-tk="${esc(m.ticker)}" title="${esc(title)}" aria-label="View ${esc(m.ticker)} ticker detail${hasRisk ? ", risk flagged" : isEntry ? ", entry trigger" : ""}">`
+    // Cross-lane: same name in the Rising (20d) lane -> gold border on both chips.
+    const alsoRising = risingSet.has(String(m.ticker || "").toUpperCase());
+    const title = alsoRising ? `${baseTitle} · Also rising (20d)` : baseTitle;
+    return `<a class="mw${cls}${alsoRising ? " is-both" : ""}" href="#t/${encodeURIComponent(m.ticker)}" data-tk="${esc(m.ticker)}" title="${esc(title)}" aria-label="View ${esc(m.ticker)} ticker detail${hasRisk ? ", risk flagged" : isEntry ? ", entry trigger" : ""}${alsoRising ? ", also rising (20d)" : ""}">`
       + `<span class="mw-dot" style="background:${dotColor}" aria-hidden="true"></span>`
       + `<strong class="mw-tk">${esc(m.ticker)}</strong>`
       + `<span class="mw-rs">${rs == null ? "RS unavailable" : `<i>RS</i>${rs}`}</span>`
@@ -728,6 +781,12 @@ async function renderCockpit() {
   // and no rotation markup is emitted at all — the pre-rotation cockpit,
   // unchanged. WITH it, rotation takes that slot and philosophy moves down to
   // just above the desk footer, content untouched.
+  // Rising lane markup — emitted only when the rotation feed is present, so the
+  // feed-absent column stays exactly the Momentum-Watch-only layout it is today.
+  const risingLane = `<div class="section-h"><h2>🌱 Rising (20d)</h2><span class="cnt">· from rotation leaders</span></div>
+      <p class="rise-sub subtle">fast-turning list — re-ranks weekly</p>
+      <div class="mom rise-mom">${risingChipsHtml(risingRows, momentumSet)}</div>`;
+
   // NOTE: starts flush with `<div` and ends flush with `</div>` so that, in the
   // feed-absent path, the interpolation reproduces the previous markup byte for
   // byte (verified in-browser by diffing #view innerHTML with/without the feed).
@@ -788,7 +847,7 @@ async function renderCockpit() {
       </tr></thead><tbody>${ondeckRows}</tbody></table></div>
     </div>
     <div>
-      <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
+      ${rot ? risingLane + "\n      " : ""}<div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
       <div class="mom">${momChips}</div>
     </div>
   </div>
