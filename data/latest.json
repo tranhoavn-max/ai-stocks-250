@@ -1,11 +1,11 @@
 {
   "schema_version": "web-bundle.v2",
   "as_of_date": "2026-07-31",
-  "generated_at": "2026-08-01T00:36:46Z",
+  "generated_at": "2026-08-01T01:03:04Z",
   "status": "PARTIAL",
   "source": {
     "app": "ai-stock-agent-service",
-    "source_rule_run_id": "0540c21f-ddc1-4e6b-b3a2-0dc0bd97f100"
+    "source_rule_run_id": "d142fd1f-cfd6-492c-ac3c-cb309be623d7"
   },
   "screens": {
     "cockpit": {
@@ -20,7 +20,7 @@
     "rotation": {
       "data_path": "data/rotation-public.json",
       "as_of_date": "2026-07-31",
-      "source_rule_run_id": "0540c21f-ddc1-4e6b-b3a2-0dc0bd97f100",
+      "source_rule_run_id": "d142fd1f-cfd6-492c-ac3c-cb309be623d7",
       "sessions": 5,
       "group_count": 13
     },
@@ -34,7 +34,7 @@
     "ticker_detail": {
       "data_path": "data/ticker-detail.json",
       "as_of_date": "2026-07-31",
-      "source_rule_run_id": "0540c21f-ddc1-4e6b-b3a2-0dc0bd97f100",
+      "source_rule_run_id": "d142fd1f-cfd6-492c-ac3c-cb309be623d7",
       "count": 250
     }
   },

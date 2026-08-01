@@ -1,12 +1,12 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-08-01T00:36:43Z",
+  "generated_at": "2026-08-01T01:03:01Z",
   "meta": {
     "as_of_date": "2026-07-31",
     "coverage_status": "WARN",
-    "source_rule_run_id": "0540c21f-ddc1-4e6b-b3a2-0dc0bd97f100",
-    "source_ingest_run_id": "14a31cef-9795-41ee-af91-2bf22a162f47",
-    "snapshot_generated_at": "2026-08-01T00:34:35Z",
+    "source_rule_run_id": "d142fd1f-cfd6-492c-ac3c-cb309be623d7",
+    "source_ingest_run_id": "a02d574a-35b3-48c8-9ab2-58acd4062c67",
+    "snapshot_generated_at": "2026-08-01T01:01:10Z",
     "warnings": [
       "PARTIAL ingest with latest EOD missing for 1 tickers"
     ]
