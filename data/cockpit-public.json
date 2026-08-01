@@ -1,30 +1,32 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-07-31T00:04:33Z",
+  "generated_at": "2026-08-01T00:36:43Z",
   "meta": {
-    "as_of_date": "2026-07-30",
-    "coverage_status": "PASS",
-    "source_rule_run_id": "7e49ee45-183f-40e9-96e0-5f5e040d5e79",
-    "source_ingest_run_id": "4e520565-f33b-40dc-918f-8f942ca38810",
-    "snapshot_generated_at": "2026-07-31T00:02:30Z",
-    "warnings": []
+    "as_of_date": "2026-07-31",
+    "coverage_status": "WARN",
+    "source_rule_run_id": "0540c21f-ddc1-4e6b-b3a2-0dc0bd97f100",
+    "source_ingest_run_id": "14a31cef-9795-41ee-af91-2bf22a162f47",
+    "snapshot_generated_at": "2026-08-01T00:34:35Z",
+    "warnings": [
+      "PARTIAL ingest with latest EOD missing for 1 tickers"
+    ]
   },
   "market_gate_on": false,
   "market_caution": {
     "schema_version": "market-caution/v3",
-    "as_of_date": "2026-07-30",
-    "score": 58.5,
-    "tier": "normal",
+    "as_of_date": "2026-07-31",
+    "score": 60.7,
+    "tier": "elevated",
     "fires": false,
     "fire_threshold": 80,
     "elevated_threshold": 60,
     "components": {
-      "c1z": 0.21,
-      "qqq_close_location": 0.734,
-      "supz": 2.139,
-      "flow_z": -0.212,
-      "flow_mom": -0.0275,
-      "c1_warn_pct": 77.27
+      "c1z": 0.37,
+      "qqq_close_location": 0.01,
+      "supz": 0.497,
+      "flow_z": -0.04,
+      "flow_mom": -0.0466,
+      "c1_warn_pct": 78.38
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
     "scope": "display-only caution — objective is caution->risk_off (NOT deep-drawdown); does NOT gate entry/verdict/BUY/EXIT",
@@ -32,7 +34,6 @@
     "model_fit_as_of": "2026-06-09"
   },
   "caution_history": [
-    65.4,
     74.1,
     67.1,
     59.8,
@@ -43,137 +44,20 @@
     64.0,
     61.6,
     75.3,
-    58.5
+    58.5,
+    60.7
   ],
   "caution_sessions": 12,
   "counts": {
     "entry": 0,
-    "continuation": 2
+    "continuation": 0
   },
   "entry": [],
-  "continuation": [
-    {
-      "ticker": "CLS",
-      "company_name": "Celestica Inc.",
-      "verdict": "WATCH",
-      "verdict_sub": "phase↑",
-      "phase": "ACCUMULATION",
-      "layer": "datacenter_power_cooling_grid",
-      "setup_text": "Phase: DISTRIBUTION → ACCUMULATION",
-      "setup_tokens": [
-        "DIST→ACC",
-        "HOLD"
-      ],
-      "rank": 107,
-      "score": 54.42,
-      "score_trend": null,
-      "score_short": null,
-      "c1": {
-        "c15_prob": 0.398374,
-        "c15_prob_raw": 0.37543,
-        "confidence": "high",
-        "n_features": 27
-      },
-      "ddr": {
-        "ddr_5d_5pct": null,
-        "ddr_confidence": null,
-        "ddr_n_bucket": null,
-        "ddr_overheat": null,
-        "dd_profile_as_of_date": "2026-07-30",
-        "dd_current_pct": null,
-        "dd_to_median_pct": null,
-        "dd_median_pct": 0.09518869312201594,
-        "dd_p25_pct": 0.0695999737063836,
-        "dd_p75_pct": 0.1467576154019625,
-        "dd_worst_pct": 0.24918212485995253,
-        "dd_best_pct": 0.03766020277195232,
-        "dd_sample_size": 12,
-        "dd_confidence": "high",
-        "dd_coverage_status": "FULL_10Y",
-        "dd_p_break_median": 0.5238095238095238,
-        "dd_n_pullbacks_median": 21,
-        "dd_n_breaks_median": 11,
-        "dd_current_cycle_peak_date": null,
-        "dd_current_cycle_peak_price": null,
-        "dd_day_streak": null,
-        "dd_current_gain_pct": null
-      },
-      "zone_label": null,
-      "exit_action": "No exit signal",
-      "exit_signal": "EXIT_0_HOLD",
-      "supply": "NONE",
-      "supply_action": "ALLOW/HOLD",
-      "flow": "STRONG_INFLOW",
-      "money_flow_score": null,
-      "age_bars": null,
-      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
-      "buy_quality": "",
-      "buy_signal": "",
-      "buy_source": null
-    },
-    {
-      "ticker": "SNOW",
-      "company_name": "Snowflake",
-      "verdict": "WATCH",
-      "verdict_sub": "weak",
-      "phase": "STRONG_UPTREND",
-      "layer": "security_observability_data_devtools",
-      "setup_text": "vol20=1.36|tr20=1.14|cloc=0.99|zone=range_high|confirmed_above_zone",
-      "setup_tokens": [
-        "HOLD"
-      ],
-      "rank": null,
-      "score": null,
-      "score_trend": null,
-      "score_short": null,
-      "c1": {
-        "c15_prob": 0.398374,
-        "c15_prob_raw": 0.325948,
-        "confidence": "high",
-        "n_features": 27
-      },
-      "ddr": {
-        "ddr_5d_5pct": 0.56,
-        "ddr_confidence": "medium",
-        "ddr_n_bucket": 25,
-        "ddr_overheat": 0.7488584474885844,
-        "dd_profile_as_of_date": "2026-07-30",
-        "dd_current_pct": 0.0,
-        "dd_to_median_pct": -0.17126463308493406,
-        "dd_median_pct": 0.17126463308493406,
-        "dd_p25_pct": 0.1426114955677672,
-        "dd_p75_pct": 0.20555639005857465,
-        "dd_worst_pct": 0.24021344307434814,
-        "dd_best_pct": 0.13105579016141686,
-        "dd_sample_size": 8,
-        "dd_confidence": "high",
-        "dd_coverage_status": "PARTIAL_LISTING_HISTORY",
-        "dd_p_break_median": 0.6666666666666666,
-        "dd_n_pullbacks_median": 6,
-        "dd_n_breaks_median": 4,
-        "dd_current_cycle_peak_date": "2026-07-30",
-        "dd_current_cycle_peak_price": 298.1000061035156,
-        "dd_day_streak": 44,
-        "dd_current_gain_pct": 0.24623749961007796
-      },
-      "zone_label": "range_high",
-      "exit_action": "No exit signal",
-      "exit_signal": "EXIT_0_HOLD",
-      "supply": "CONFIRM",
-      "supply_action": "ALLOW/HOLD",
-      "flow": "STRONG_INFLOW",
-      "money_flow_score": null,
-      "age_bars": 1,
-      "why_waiting": "No qualifying BUY setup or fresh phase-up transition",
-      "buy_quality": "",
-      "buy_signal": "",
-      "buy_source": null
-    }
-  ],
+  "continuation": [],
   "momentum": {
     "leaders": [
       {
-        "ticker": "MU",
+        "ticker": "WDC",
         "rs_pctl": 100,
         "top_decile": true,
         "is_entry": false,
@@ -181,7 +65,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "WDC",
+        "ticker": "MU",
         "rs_pctl": 100,
         "top_decile": true,
         "is_entry": false,
@@ -205,6 +89,14 @@
         "snapshot_clean": false
       },
       {
+        "ticker": "AEHR",
+        "rs_pctl": 98,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
         "ticker": "INTC",
         "rs_pctl": 98,
         "top_decile": true,
@@ -221,14 +113,6 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "AEHR",
-        "rs_pctl": 98,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "CIEN",
         "rs_pctl": 97,
         "top_decile": true,
@@ -237,16 +121,8 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "TER",
-        "rs_pctl": 97,
-        "top_decile": true,
-        "is_entry": false,
-        "risk_flags": [],
-        "snapshot_clean": false
-      },
-      {
         "ticker": "ICHR",
-        "rs_pctl": 96,
+        "rs_pctl": 97,
         "top_decile": true,
         "is_entry": false,
         "risk_flags": [],
@@ -269,6 +145,14 @@
         "snapshot_clean": false
       },
       {
+        "ticker": "TER",
+        "rs_pctl": 96,
+        "top_decile": true,
+        "is_entry": false,
+        "risk_flags": [],
+        "snapshot_clean": false
+      },
+      {
         "ticker": "FSLY",
         "rs_pctl": 95,
         "top_decile": true,
@@ -277,7 +161,7 @@
         "snapshot_clean": false
       },
       {
-        "ticker": "DELL",
+        "ticker": "FORM",
         "rs_pctl": 95,
         "top_decile": true,
         "is_entry": false,
@@ -286,7 +170,7 @@
       }
     ],
     "coverage": [
-      249,
+      248,
       250
     ],
     "limit": 14,
