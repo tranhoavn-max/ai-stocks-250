@@ -1,7 +1,7 @@
 {
   "schema_version": "rotation-public/v1",
   "as_of": "2026-08-06",
-  "source_rule_run_id": "b6492150-0afe-4106-8600-99c324dafe43",
+  "source_rule_run_id": "0e382f4f-c741-45fb-8217-afc40b41d1ae",
   "benchmarks": [
     "qqq",
     "spy",
@@ -1028,13 +1028,13 @@
     },
     {
       "group": "control_growth_internet",
-      "n": 22,
+      "n": 23,
       "plot_eligible": true,
-      "inflow_pct": 59,
+      "inflow_pct": 57,
       "rs": {
         "qqq": {
-          "rs63_median": 1.3,
-          "rs20_median": 2.6,
+          "rs63_median": -0.7,
+          "rs20_median": 2.4,
           "top5": [
             {
               "ticker": "WIX",
@@ -1059,8 +1059,8 @@
           ]
         },
         "spy": {
-          "rs63_median": -0.9,
-          "rs20_median": -0.8,
+          "rs63_median": -2.9,
+          "rs20_median": -1.0,
           "top5": [
             {
               "ticker": "WIX",
@@ -1085,8 +1085,8 @@
           ]
         },
         "eq": {
-          "rs63_median": 2.3,
-          "rs20_median": 1.0,
+          "rs63_median": 0.4,
+          "rs20_median": 0.8,
           "top5": [
             {
               "ticker": "WIX",
@@ -1146,8 +1146,8 @@
             5.1
           ],
           [
-            1.3,
-            2.6
+            -0.7,
+            2.4
           ]
         ],
         "spy": [
@@ -1184,8 +1184,8 @@
             2.6
           ],
           [
-            -0.9,
-            -0.8
+            -2.9,
+            -1.0
           ]
         ],
         "eq": [
@@ -1222,21 +1222,21 @@
             1.6
           ],
           [
-            2.3,
-            1.0
+            0.4,
+            0.8
           ]
         ]
       }
     },
     {
       "group": "control_growth_software",
-      "n": 34,
+      "n": 35,
       "plot_eligible": true,
-      "inflow_pct": 79,
+      "inflow_pct": 77,
       "rs": {
         "qqq": {
-          "rs63_median": 14.4,
-          "rs20_median": 12.1,
+          "rs63_median": 15.6,
+          "rs20_median": 12.2,
           "top5": [
             {
               "ticker": "PAYC",
@@ -1261,8 +1261,8 @@
           ]
         },
         "spy": {
-          "rs63_median": 12.2,
-          "rs20_median": 8.6,
+          "rs63_median": 13.4,
+          "rs20_median": 8.8,
           "top5": [
             {
               "ticker": "PAYC",
@@ -1287,8 +1287,8 @@
           ]
         },
         "eq": {
-          "rs63_median": 15.5,
-          "rs20_median": 10.4,
+          "rs63_median": 16.6,
+          "rs20_median": 10.6,
           "top5": [
             {
               "ticker": "PAYC",
@@ -1348,8 +1348,8 @@
             12.6
           ],
           [
-            14.4,
-            12.1
+            15.6,
+            12.2
           ]
         ],
         "spy": [
@@ -1386,8 +1386,8 @@
             10.2
           ],
           [
-            12.2,
-            8.6
+            13.4,
+            8.8
           ]
         ],
         "eq": [
@@ -1424,8 +1424,8 @@
             9.1
           ],
           [
-            15.5,
-            10.4
+            16.6,
+            10.6
           ]
         ]
       }
