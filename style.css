@@ -570,7 +570,13 @@ select.auth-input { appearance: none; }
 .rot-axtitle { font: 400 10px var(--mono); fill: var(--mut); }
 .rot-label { font: 400 10px var(--mono); fill: var(--txt); }
 .rot-leader { stroke: var(--line); stroke-width: 1; }
-.rot-trail { fill: none; stroke: var(--mut); stroke-width: 1; opacity: .4; }
+.rot-arrow { stroke-width: 1.7; stroke-linecap: round; opacity: .9; }
+.rot-trail-seg { fill: none; stroke: var(--mut); stroke-width: 1.2; }
+.rot-trail-dot { fill: var(--mut); }
+.rot-trail-back { font: 400 9.5px var(--mono); fill: var(--mut); }
+.rot-legend { font: 400 10.5px/1.5 var(--mono); margin: 8px 0 0; }
+.rot-lg-up { color: var(--green); }
+.rot-lg-dn { color: var(--red); }
 .rot-tip { position: absolute; z-index: 20; min-width: 190px; max-width: 240px; padding: 8px 10px; pointer-events: none; background: var(--head); border: 1px solid var(--line); border-radius: 6px; font: 400 11px/1.5 var(--mono); color: var(--txt); box-shadow: var(--shadow); }
 .rot-tip-t { color: var(--brand); }
 .rot-tip-l { color: var(--mut); margin-bottom: 6px; }
@@ -587,6 +593,9 @@ select.auth-input { appearance: none; }
 .rot-dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; opacity: .85; }
 .rot-qname { color: var(--txt); font-weight: 600; }
 .rot-qrs { margin-left: auto; color: var(--mut); }
+.rot-qd { font: 600 11px/1 var(--mono); min-width: 34px; text-align: right; }
+.rot-qd-up { color: var(--green); }
+.rot-qd-dn { color: var(--red); }
 .rot-qfull { font: 400 10.5px/1.5 var(--mono); color: var(--mut); padding: 0 2px 6px 20px; }
 .rot-qtop { display: flex; flex-wrap: wrap; gap: 6px 10px; padding: 0 2px 10px 20px; }
 .rot-qtk { display: inline-flex; align-items: baseline; gap: 5px; font: 400 11px/1 var(--mono); }

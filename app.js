@@ -404,6 +404,14 @@ const ROT_SHORT_LABELS = {
 };
 const ROT_COLORS = { inflow: "#0ca30c", outflow: "#d03b3b", neutral: "#9b9a94" };
 const ROT_VIEW = { w: 900, h: 560, padL: 62, padR: 30, padT: 30, padB: 52 };
+// Motion layer — MIRROR of the internal map (apps/dashboard/app-rotation.js).
+// The map is quiet by default: ONE delta arrow per group (previous session →
+// today) and nothing else; a group's multi-session trail appears only on hover.
+// gap = clearance between arrowhead tip and bubble outline; minLen = below this
+// the remaining shaft is visual noise rather than a readable arrow.
+const ROT_HOVER_TRAIL_MAX = 6;
+const ROT_ARROW = { gap: 3, minLen: 1.5, up: "#0ca30c", down: "#d03b3b" };
+const ROT_TRAIL_FADE = { min: 0.15, max: 1.0 };
 const ROT_QUADRANTS = [
   ["LEADING", "strong 63d, still pushing"],
   ["RECOVERING", "weak 63d, turning up"],
@@ -413,6 +421,10 @@ const ROT_QUADRANTS = [
 
 let _rotation = undefined;
 let _rotFrame = "qqq";
+// Pixel geometry of the currently rendered bubbles + which group's trail (if
+// any) is mounted. Both are reset by every rotMapHtml() render.
+let _rotBubbles = [];
+let _rotTrailI = -1;
 async function rotationFeed() {
   if (_rotation !== undefined) return _rotation;
   // Absent feed is the NORMAL case in this stage — never surface it as an error.
@@ -457,6 +469,51 @@ function rotRows(rot, frame) {
       quad: rotQuadrant(r.b.rs63_median, r.b.rs20_median),
     }))
     .sort((a, b) => b.y - a.y || a.name.localeCompare(b.name));
+}
+
+/* --- Motion: pure helpers (executed by tests/test_web_rotation_motion.py) --- */
+
+/** Pure: a group's published `trail` ([[rs63, rs20], ...], oldest → newest) ->
+ *  the previous session's point plus today's RS20 change, in DATA space. Null
+ *  when there is no usable previous point, so no arrow is drawn for that group.
+ *  Nothing new is read from the feed: this is the already-published trail. */
+function rotDelta(trail) {
+  const t = Array.isArray(trail) ? trail : [];
+  if (t.length < 2) return null;
+  const prev = t[t.length - 2], last = t[t.length - 1];
+  if (!Array.isArray(prev) || !Array.isArray(last)) return null;
+  if (prev[0] == null || prev[1] == null || last[1] == null) return null;
+  return { prev: { x: prev[0], y: prev[1] }, dRs20: last[1] - prev[1] };
+}
+
+/** Pure (pixel space): straight segment from the previous session's position to
+ *  today's, truncated `radius + gap` short of the centre so the arrowhead stops
+ *  at the bubble edge instead of piercing it. Null when the remaining shaft
+ *  would be too short to read as an arrow (no sub-bubble stubs). */
+function rotArrowGeo(x0, y0, x1, y1, radius, gap = ROT_ARROW.gap) {
+  const dx = x1 - x0, dy = y1 - y0;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  const stop = Math.max(Number(radius) || 0, 0) + gap;
+  if (!Number.isFinite(len) || len <= stop + ROT_ARROW.minLen) return null;
+  const t = (len - stop) / len;
+  return { x1: x0, y1: y0, x2: x0 + dx * t, y2: y0 + dy * t, length: len - stop };
+}
+
+/** Pure (pixel space): ONE group's last `maxPoints` sessions as dots+segments,
+ *  opacity ramping ROT_TRAIL_FADE.min (oldest) → .max (newest). `oldest.back`
+ *  is how many sessions back that point is — the public feed carries no dates,
+ *  so the stamp counts sessions instead of showing MM-DD. */
+function rotHoverTrail(points, maxPoints = ROT_HOVER_TRAIL_MAX) {
+  const pts = (points || []).slice(-Math.max(2, maxPoints));
+  if (pts.length < 2) return { dots: [], segments: [], oldest: null };
+  const { min, max } = ROT_TRAIL_FADE;
+  const step = (max - min) / (pts.length - 1);
+  const dots = pts.map((p, i) => ({ x: p.x, y: p.y, opacity: min + step * i, back: pts.length - 1 - i }));
+  const segments = [];
+  for (let i = 1; i < dots.length; i += 1) {
+    segments.push({ x1: dots[i - 1].x, y1: dots[i - 1].y, x2: dots[i].x, y2: dots[i].y, opacity: dots[i].opacity });
+  }
+  return { dots, segments, oldest: dots[0] };
 }
 
 function rotStripLine(rows) {
@@ -516,22 +573,62 @@ function rotPlaceLabels(bubbles) {
   }
   return bubbles;
 }
+/** SVG for ONE group's hover trail. The newest point is skipped because the
+ *  bubble already marks it; the oldest carries a "how far back" stamp. */
+function rotTrailMarkup(points) {
+  const t = rotHoverTrail(points);
+  if (!t.segments.length) return "";
+  const n = (v) => Number(v).toFixed(1);
+  const o = (v) => Number(v).toFixed(2);
+  const segs = t.segments.map((s) =>
+    `<line class="rot-trail-seg" x1="${n(s.x1)}" y1="${n(s.y1)}" x2="${n(s.x2)}" y2="${n(s.y2)}" opacity="${o(s.opacity)}" />`).join("");
+  const dots = t.dots.slice(0, -1).map((d) =>
+    `<circle class="rot-trail-dot" cx="${n(d.x)}" cy="${n(d.y)}" r="2.6" opacity="${o(d.opacity)}" />`).join("");
+  const stamp = t.oldest
+    ? `<text class="rot-trail-back" x="${n(t.oldest.x + 6)}" y="${n(t.oldest.y - 6)}">−${t.oldest.back} sess</text>`
+    : "";
+  return segs + dots + stamp;
+}
+
 function rotMapHtml(rows, frameLabel) {
   const pts = rows.map((r) => [r.x, r.y]);
-  for (const r of rows) for (const p of r.trail) pts.push(p);
+  // Only the points that CAN be drawn (today's bubbles plus any hover trail)
+  // shape the domain, so a revealed trail never falls outside the plot area.
+  for (const r of rows) for (const p of r.trail.slice(-ROT_HOVER_TRAIL_MAX)) pts.push(p);
   const sc = rotScales(pts);
   const maxN = Math.max(...rows.map((r) => r.n || 1));
   const { w, h, padL, padR, padT, padB } = ROT_VIEW;
-  const bubbles = rotPlaceLabels(rows.map((r, i) => ({
-    ...r, i,
-    cx: sc.x(r.x), cy: sc.y(r.y),
-    r: 5 + (Math.sqrt(Math.max(r.n || 1, 1)) / Math.sqrt(Math.max(maxN, 1))) * 11,
-    color: rotColor(r.inflow),
-  })));
+  const bubbles = rotPlaceLabels(rows.map((r, i) => {
+    const d = rotDelta(r.trail);
+    return {
+      ...r, i,
+      cx: sc.x(r.x), cy: sc.y(r.y),
+      r: 5 + (Math.sqrt(Math.max(r.n || 1, 1)) / Math.sqrt(Math.max(maxN, 1))) * 11,
+      color: rotColor(r.inflow),
+      prev: d ? { x: sc.x(d.prev.x), y: sc.y(d.prev.y) } : null,
+      // Direction is the rs20 change in the SELECTED frame, not the geometry.
+      dRs20: d ? d.dRs20 : null,
+      tpts: r.trail.slice(-ROT_HOVER_TRAIL_MAX).map((p) => ({ x: sc.x(p[0]), y: sc.y(p[1]) })),
+    };
+  }));
+  // Kept for the hover handler, which needs the pixel geometry after render.
+  _rotBubbles = bubbles;
+  _rotTrailI = -1;
   const zx = sc.x(0), zy = sc.y(0);
   const corner = (t, x, y, a) => `<text class="rot-corner" x="${x}" y="${y}" text-anchor="${a}">${t}</text>`;
-  const trails = bubbles.map((b) => b.trail.length < 2 ? ""
-    : `<polyline class="rot-trail" points="${b.trail.map((p) => `${sc.x(p[0]).toFixed(1)},${sc.y(p[1]).toFixed(1)}`).join(" ")}" />`).join("");
+  // One delta arrow per group, UNDER the bubbles. No previous point, or an
+  // unchanged rs20, or a move smaller than the bubble = nothing drawn.
+  const arrows = bubbles.map((b) => {
+    if (!b.prev || b.dRs20 == null || Math.abs(b.dRs20) < 1e-9) return "";
+    const geo = rotArrowGeo(b.prev.x, b.prev.y, b.cx, b.cy, b.r);
+    if (!geo) return "";
+    const up = b.dRs20 > 0;
+    return `<line class="rot-arrow" x1="${geo.x1.toFixed(1)}" y1="${geo.y1.toFixed(1)}" x2="${geo.x2.toFixed(1)}" y2="${geo.y2.toFixed(1)}" stroke="${up ? ROT_ARROW.up : ROT_ARROW.down}" marker-end="url(#rot-ah-${up ? "up" : "dn"})" data-rot-arrow="${esc(b.name)}" />`;
+  }).join("");
+  const arrowheads = `<defs>`
+    + `<marker id="rot-ah-up" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.5 L0,7 z" fill="${ROT_ARROW.up}" /></marker>`
+    + `<marker id="rot-ah-dn" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L7,3.5 L0,7 z" fill="${ROT_ARROW.down}" /></marker>`
+    + `</defs>`;
   const circles = bubbles.map((b) => `<circle class="rot-bub" data-rot-i="${b.i}" cx="${b.cx.toFixed(1)}" cy="${b.cy.toFixed(1)}" r="${b.r.toFixed(1)}" fill="${b.color}" fill-opacity="0.28" stroke="${b.color}" stroke-width="1.6"><title>${esc(b.name)}</title></circle>`).join("");
   const labels = bubbles.map((b) => (b.leader
     ? `<line class="rot-leader" x1="${b.leaderX.toFixed(1)}" y1="${b.cy.toFixed(1)}" x2="${b.labelX.toFixed(1)}" y2="${(b.labelY - 3).toFixed(1)}" />` : "")
@@ -544,11 +641,12 @@ function rotMapHtml(rows, frameLabel) {
       ${corner("RECOVERING", padL + 4, padT + 12, "start")}
       ${corner("WEAKENING", w - padR - 4, h - padB - 6, "end")}
       ${corner("LAGGING", padL + 4, h - padB - 6, "start")}
-      ${trails}${circles}${labels}
+      ${arrowheads}${arrows}<g id="rot-hover-trail"></g>${circles}${labels}
       <text class="rot-axtitle" x="${(w / 2).toFixed(0)}" y="${h - 16}" text-anchor="middle">RS63 median vs ${esc(frameLabel)} (pp)</text>
       <text class="rot-axtitle" x="18" y="${(h / 2).toFixed(0)}" text-anchor="middle" transform="rotate(-90 18 ${(h / 2).toFixed(0)})">RS20 median (pp)</text>
     </svg>
     <div id="rot-tip" class="rot-tip" hidden></div>
+    <p class="rot-legend subtle">arrow = RS20 move since previous session (<span class="rot-lg-up">green up</span> / <span class="rot-lg-dn">red down</span>) · hover a bubble for its ${ROT_HOVER_TRAIL_MAX}-session trail · bubble colour = money-flow inflow share, size ∝ √members</p>
   </div>`;
 }
 
@@ -556,23 +654,29 @@ function rotMapHtml(rows, frameLabel) {
 function rotQuadCardsHtml(rows, frameLabel) {
   return `<div class="rot-quads">` + ROT_QUADRANTS.map(([quad, hint]) => {
     const list = rows.filter((r) => r.quad === quad);
-    const body = list.length ? list.map((r) => `
+    const body = list.length ? list.map((r) => {
+      // Mobile gets no arrows/trails; the same delta rides along as a badge.
+      const d = rotDelta(r.trail);
+      const badge = d == null ? ""
+        : `<span class="rot-qd rot-qd-${d.dRs20 >= 0 ? "up" : "dn"}" title="RS20 move since the previous session">${esc(rotNum(d.dRs20))}</span>`;
+      return `
       <details class="rot-qgroup">
         <summary>
           <span class="rot-dot" style="background:${rotColor(r.inflow)}" aria-hidden="true"></span>
           <span class="rot-qname">${esc(r.short)}</span>
-          <span class="rot-qrs">${esc(rotNum(r.y))}</span>
+          <span class="rot-qrs">${esc(rotNum(r.y))}</span>${badge}
         </summary>
         <div class="rot-qfull">${esc(r.name)} · n=${r.n} · inflow ${r.inflow == null ? "—" : `${r.inflow}%`}</div>
         <div class="rot-qtop">${(r.top5 || []).map((t) =>
           `<span class="rot-qtk">${tickerLink(t.ticker)}<i>${esc(rotNum(t.rs20))}</i></span>`).join("")
           || `<span class="subtle">No members listed.</span>`}</div>
-      </details>`).join("")
+      </details>`;
+    }).join("")
       : `<div class="subtle rot-qempty">No group here.</div>`;
     return `<section class="rot-qcard rot-q-${quad.toLowerCase()}">
       <h3>${quad} <span class="rot-qhint">${esc(hint)}</span></h3>${body}</section>`;
   }).join("") + `</div>
-  <p class="rot-foot subtle">RS20 vs ${esc(frameLabel)}, percentage points · bubble colour = money-flow inflow share · display-only context, not a buy/sell signal.</p>`;
+  <p class="rot-foot subtle">RS20 vs ${esc(frameLabel)}, percentage points · bubble colour = money-flow inflow share · the signed badge is the RS20 move since the previous session · display-only context, not a buy/sell signal.</p>`;
 }
 
 function rotBodyHtml(rot, frame) {
@@ -602,7 +706,7 @@ function rotationSectionHtml(rot) {
     <div class="rot-open">
       <div class="rot-bar">
         <div class="rot-frames" role="group" aria-label="Rotation benchmark frame">${buttons}</div>
-        <span class="subtle rot-meta">${esc(rot.as_of || "—")} · ${rows.length} groups (n ≥ 5) · ${sessions > 1 ? `trails over ${sessions} sessions` : "single session, no trails"}</span>
+        <span class="subtle rot-meta">${esc(rot.as_of || "—")} · ${rows.length} groups (n ≥ 5) · ${sessions > 1 ? "arrow = RS20 move since prev session" : "single session, no prior position"}</span>
       </div>
       <div id="rot-body">${rotBodyHtml(rot, _rotFrame)}</div>
     </div>
@@ -621,18 +725,35 @@ window.__rotFrame = function (frame) {
   });
 };
 
-// Desktop-only hover tooltip. Delegated so it survives frame re-renders, and a
-// no-op whenever the rotation map is not on screen.
+// Desktop-only hover tooltip + hover trail. Delegated so both survive frame
+// re-renders, and a no-op whenever the rotation map is not on screen.
+// Only ONE group's trail is ever mounted, and only while it is hovered.
+function rotClearTrail() {
+  if (_rotTrailI === -1) return;
+  const layer = document.getElementById("rot-hover-trail");
+  if (layer) layer.innerHTML = "";
+  _rotTrailI = -1;
+}
+
 function wireRotationTooltip() {
   const view = document.getElementById("view");
   if (!view) return;
+  view.addEventListener("mouseleave", rotClearTrail);
   view.addEventListener("mousemove", (e) => {
     const tip = document.getElementById("rot-tip");
     if (!tip) return;
     const bub = e.target.closest(".rot-bub");
-    if (!bub || !_rotation) { tip.hidden = true; return; }
+    if (!bub || !_rotation) { tip.hidden = true; rotClearTrail(); return; }
     const row = rotRows(_rotation, _rotFrame)[Number(bub.dataset.rotI)];
-    if (!row) { tip.hidden = true; return; }
+    if (!row) { tip.hidden = true; rotClearTrail(); return; }
+    const i = Number(bub.dataset.rotI);
+    if (i !== _rotTrailI) {
+      const layer = document.getElementById("rot-hover-trail");
+      if (layer) {
+        layer.innerHTML = rotTrailMarkup((_rotBubbles[i] || {}).tpts || []);
+        _rotTrailI = i;
+      }
+    }
     tip.innerHTML = `<div class="rot-tip-t">${esc(row.name)}</div>`
       + `<div class="rot-tip-l">RS63 ${esc(rotNum(row.x))} · RS20 ${esc(rotNum(row.y))} · inflow ${row.inflow == null ? "—" : `${row.inflow}%`} · n=${row.n}</div>`
       + `<div class="rot-tip-s">Top 5 by RS20</div>`
