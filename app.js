@@ -128,41 +128,9 @@ function chipVal(key, v) {
   return key === "c1_warn_pct" ? (+v).toFixed(2) : `${v >= 0 ? "+" : ""}${(+v).toFixed(2)}`;
 }
 
-// Risk-zone caution sparkline: NORMAL/ELEVATED/HIGH bands shade the chart so the
-// line's vertical position reads as a risk zone. Stretched SVG fills the width;
-// the end-dot + threshold labels are HTML overlays (round, never distorted).
-function sparkline(vals, elevated = 60, fire = 80) {
-  if (!vals || vals.length < 2) return "";
-  const W = 300, H = 56, PAD = 5, n = vals.length;
-  const lo = Math.min(...vals, elevated), hi = Math.max(...vals, fire);
-  const padv = ((hi - lo) || 1) * 0.10, dlo = lo - padv, drng = (hi + padv) - dlo;
-  const Y = (v) => H - PAD - ((v - dlo) / drng) * (H - 2 * PAD);
-  const clampY = (v) => Math.max(0, Math.min(H, Y(v)));
-  const X = (i) => 3 + (i / (n - 1)) * (W - 6);
-  const xy = vals.map((v, i) => [X(i), Y(v)]);
-  const line = xy.map((q) => `${q[0].toFixed(1)},${q[1].toFixed(1)}`).join(" ");
-  const last = xy[n - 1];
-  const area = `M${xy[0][0].toFixed(1)},${H - 1}`
-    + xy.map((q) => `L${q[0].toFixed(1)},${q[1].toFixed(1)}`).join("")
-    + `L${last[0].toFixed(1)},${H - 1}Z`;
-  const yF = clampY(fire), yE = clampY(elevated);
-  const bands =
-    `<rect x="0" y="0" width="${W}" height="${yF.toFixed(1)}" fill="var(--red)" fill-opacity=".08"></rect>`
-    + `<rect x="0" y="${yF.toFixed(1)}" width="${W}" height="${Math.max(0, yE - yF).toFixed(1)}" fill="var(--amber)" fill-opacity=".06"></rect>`
-    + `<rect x="0" y="${yE.toFixed(1)}" width="${W}" height="${Math.max(0, H - yE).toFixed(1)}" fill="var(--green)" fill-opacity=".05"></rect>`;
-  const svg = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="display:block" aria-hidden="true">
-    <defs><linearGradient id="cauSpark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ff9e1b" stop-opacity=".24"/><stop offset="1" stop-color="#ff9e1b" stop-opacity="0"/></linearGradient></defs>
-    ${bands}
-    <line x1="0" x2="${W}" y1="${yF.toFixed(1)}" y2="${yF.toFixed(1)}" stroke="var(--red)" stroke-opacity=".45" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
-    <line x1="0" x2="${W}" y1="${yE.toFixed(1)}" y2="${yE.toFixed(1)}" stroke="var(--amber)" stroke-opacity=".42" stroke-width=".6" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
-    <path d="${area}" fill="url(#cauSpark)" stroke="none"></path>
-    <polyline points="${line}" fill="none" stroke="var(--amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline></svg>`;
-  const lx = (last[0] / W) * 100, ly = (last[1] / H) * 100;
-  const dot = `<span class="spark-dot" style="left:${lx.toFixed(1)}%;top:${ly.toFixed(1)}%"></span>`;
-  const lbl = (y, t, cls) => `<span class="spark-lbl ${cls}" style="top:${((y / H) * 100).toFixed(1)}%">${t}</span>`;
-  return svg + dot + lbl(yF, "80", "hi") + lbl(yE, "60", "el");
-}
+// (The risk-zone caution sparkline that used to live here was removed 2026-08-08: the radial
+// gauge replaced it on 2026-07-20 and nothing has called it since. `caution_history` is still
+// in the feed and mobile still renders it — this deletion is web-only.)
 
 // Radial caution gauge (Bivium 1a look). Geometry mirrors the design-system CautionGauge
 // (250° sweep from -215°). The arc is coloured by the product's real tier (hex passed in),
@@ -888,16 +856,19 @@ async function renderCockpit() {
   const tierHex = tierU === "HIGH" ? "#E05A4E" : tierU === "NORMAL" ? "#56B381" : "#F5C842";
   const tierBg = tierU === "HIGH" ? "rgba(255,77,77,.12)" : tierU === "NORMAL" ? "rgba(38,208,124,.12)" : "rgba(255,158,27,.12)";
   // Honest caution banner copy — derived only from the real caution rule/thresholds
-  // (score = modeled P(risk_off within ~20 sessions); "fires" at the HIGH threshold). No
-  // fabricated regime label and no new trading directive: the scope field states caution is
-  // display-only and does NOT gate entry/verdict/BUY/EXIT, so the banner says exactly that.
+  // (score = modeled P(risk_off within ~20 sessions); "fires" at the HIGH threshold). The
+  // per-tier restatement of the thresholds was dropped as redundant: the tier word, the gauge
+  // and the `ELEVATED ≥ x · HIGH ≥ y` scale line below already say it. What must NOT be dropped
+  // is the scope claim — caution is display-only and does NOT gate entry/verdict/BUY/EXIT —
+  // because an ELEVATED tier otherwise reads as an instruction to stop trading.
+  // The scale line below carries the thresholds ONLY — no "N sessions" caption. Feed field
+  // `caution_sessions` is the sparkline WINDOW length (freeze_cockpit_public.py truncates the
+  // history to the last 12), hence a constant 12, not an observation about the market. Printed
+  // beside the tier word it misread as "ELEVATED for 12 sessions", which is false — the 12-point
+  // series straddles the 60 mark. Mobile captions it legitimately: it renders the sparkline.
   const elT = mc.elevated_threshold ?? 60, hiT = mc.fire_threshold ?? 80;
-  const cautionLede = tierU === "HIGH"
-    ? `High near-term risk-off probability — score at or above the ≥ ${hiT} alert threshold.`
-    : tierU === "NORMAL"
-    ? `Low near-term risk-off probability — score below the ${elT} elevated mark.`
-    : tierU === "ELEVATED"
-    ? `Elevated near-term risk-off probability — score ≥ ${elT}, below the ≥ ${hiT} alert.`
+  const cautionLede = tierU === "HIGH" || tierU === "NORMAL" || tierU === "ELEVATED"
+    ? ""
     : "Market caution level unavailable.";
 
   // Layout swap, gated entirely on the optional rotation feed. WITHOUT it the
@@ -945,9 +916,9 @@ async function renderCockpit() {
         <span class="cau-eyebrow">Market Caution</span>
         <span class="cau-tier" style="color:${tierC}">${esc(mc.tier || "—")}</span>
       </div>
-      <p class="cau-lede">${esc(cautionLede)} <span class="cau-note">Display-only — does not gate entries, verdicts, or exits.</span></p>
+      <p class="cau-lede">${cautionLede ? `${esc(cautionLede)} ` : ""}<span class="cau-note">Display-only — does not gate entries, verdicts, or exits.</span></p>
       <div class="chips">${chips}</div>
-      <div class="cau-scale">ELEVATED ≥ ${elT} · HIGH ≥ ${hiT}${d.caution_sessions ? ` · ${d.caution_sessions} sessions` : ""}</div>
+      <div class="cau-scale">ELEVATED ≥ ${elT} · HIGH ≥ ${hiT}</div>
     </div>
     <div class="cau-gauge">${cautionGauge(mc.score, tierHex)}</div>
   </div>
@@ -958,7 +929,13 @@ async function renderCockpit() {
     <h2>① New Triggers</h2>
     <span class="gate-btn pill" role="status" style="border-color:${gateColor}"><b class="gate-static" style="color:${gateColor};font-weight:500">${gate ? "●" : "⚠"} GATE: ${gateText}</b></span>
   </div>
-  <div id="gate-banner" class="banner-amber" style="${gate ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
+  <!-- Gate-off banner: shown ONLY when the gate is off AND there are actually ENTRY rows under
+       it. Its claim is about those rows ("rows below are context, not buy orders"), so above an
+       empty "No ENTRY trigger today." table it warns about nothing — that was 28 of the last 30
+       gate-off days. On the 2 days that did carry a gate-off ENTRY row it is the only thing
+       saying the row is not an order, so it must not be deleted outright. The always-visible
+       "GATE: OFF" pill still reports gate state on every day. -->
+  <div id="gate-banner" class="banner-amber" style="${gate || !d.counts.entry ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
     <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>

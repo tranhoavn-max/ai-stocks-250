@@ -174,14 +174,7 @@ header.shell {
 .cau-tier { font-family: var(--serif); font-size: 26px; font-weight: 600; letter-spacing: .03em; line-height: 1; text-transform: uppercase; }
 .cau-lede { margin: 0; color: var(--txt); font-size: 12.5px; line-height: 1.5; max-width: 60ch; }
 .cau-note { color: var(--mut); }
-.cau-num { display: flex; align-items: baseline; gap: 10px; margin-top: 6px; }
-.cau-score { font-family: var(--mono); font-size: 42px; color: var(--amber); font-weight: 600; line-height: 1; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
 .cau-scale { color: var(--mut); font-family: var(--mono); font-size: 10px; letter-spacing: .04em; margin-top: 7px; }
-.cau-spark { position: relative; width: 100%; max-width: 520px; }
-.spark-dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); border: 1px solid var(--panel); transform: translate(-50%,-50%); pointer-events: none; }
-.spark-lbl { position: absolute; left: 1px; transform: translateY(-50%); font-family: var(--mono); font-size: 9.5px; font-weight: 500; letter-spacing: .04em; padding: 0 4px; border-radius: 3px; background: var(--panel); pointer-events: none; }
-.spark-lbl.hi { color: var(--red); }
-.spark-lbl.el { color: var(--amber); }
 .gate-btn { background: var(--panel); font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: .04em; padding: 4px 10px; border-radius: 9999px; }
 .desk-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 
@@ -513,7 +506,6 @@ select.auth-input { appearance: none; }
   main { padding: 14px 10px 48px; gap: 14px; }
   .cau { padding: 14px; gap: 16px; }
   .cau-right { min-width: 0; }
-  .cau-score { font-size: 38px; }
   .desk-meta { justify-content: flex-start; }
   .legend { grid-template-columns: 1fr; }
   .legend-right { width: 100%; justify-content: space-between; }
