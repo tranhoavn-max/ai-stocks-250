@@ -846,8 +846,11 @@ async function renderCockpit() {
       + `</a>`;
   }).join("") : `<span class="subtle">Momentum data unavailable.</span>`;
 
-  const gateColor = gate ? "var(--green)" : "var(--amber)";
-  const gateText = gate ? "ON" : "OFF";
+  // Gate is the engine's own market_risk_on (report decision 2026-08-10). null = the feed carries
+  // no gate field; render it as unavailable, never as OFF.
+  const gateKnown = typeof gate === "boolean";
+  const gateColor = !gateKnown ? "var(--mut)" : gate ? "var(--green)" : "var(--amber)";
+  const gateText = !gateKnown ? "—" : gate ? "ON" : "OFF";
   const coverage = d.meta?.coverage_status || "—";
   const warnings = Array.isArray(d.meta?.warnings) ? d.meta.warnings : [];
   const warningDisclosure = warnings.length ? `<details class="coverage-warnings"><summary>⚠ ${warnings.length} coverage warning${warnings.length === 1 ? "" : "s"}</summary><ul>${warnings.map((w) => `<li>${esc(w)}</li>`).join("")}</ul></details>` : "";
@@ -927,15 +930,16 @@ async function renderCockpit() {
 
   <div class="section-h" style="gap:12px">
     <h2>① New Triggers</h2>
-    <span class="gate-btn pill" role="status" style="border-color:${gateColor}"><b class="gate-static" style="color:${gateColor};font-weight:500">${gate ? "●" : "⚠"} GATE: ${gateText}</b></span>
+    <span class="gate-btn pill" role="status" style="border-color:${gateColor}"><b class="gate-static" style="color:${gateColor};font-weight:500">${!gateKnown ? "○" : gate ? "●" : "⚠"} GATE: ${gateText}</b></span>
   </div>
   <!-- Gate-off banner: shown ONLY when the gate is off AND there are actually ENTRY rows under
        it. Its claim is about those rows ("rows below are context, not buy orders"), so above an
-       empty "No ENTRY trigger today." table it warns about nothing — that was 28 of the last 30
-       gate-off days. On the 2 days that did carry a gate-off ENTRY row it is the only thing
-       saying the row is not an order, so it must not be deleted outright. The always-visible
-       "GATE: OFF" pill still reports gate state on every day. -->
-  <div id="gate-banner" class="banner-amber" style="${gate || !d.counts.entry ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
+       empty "No ENTRY trigger today." table it warns about nothing — only 2 of the 32 published
+       snapshots carried a gate-off ENTRY row. On those 2 it is the only thing saying the row is
+       not an order, so it must not be deleted outright. The always-visible pill still reports
+       gate state on every day. An unknown gate (null) suppresses the banner too: it asserts
+       "risk-off", which is a claim we cannot make without the field. -->
+  <div id="gate-banner" class="banner-amber" style="${!gateKnown || gate || !d.counts.entry ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
   <div class="table-wrap"><table class="dc"><thead><tr>
     <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
   </tr></thead><tbody>${triggerRows}</tbody></table></div>
