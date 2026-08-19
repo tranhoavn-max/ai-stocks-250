@@ -770,7 +770,7 @@ const risingPP = (v) => `${v > 0 ? "+" : ""}${Math.round(v)}`;
 
 function risingChipsHtml(rows, alsoMomentum) {
   if (!rows.length) return `<span class="subtle">No rising names today.</span>`;
-  return rows.map((r) => {
+  const chips = rows.map((r) => {
     const both = alsoMomentum.has(r.ticker);
     const title = both ? "Also in Momentum Watch (1 Year)" : "Rising over the last 20 sessions";
     return `<a class="mw rise${both ? " is-both" : ""}" href="#t/${encodeURIComponent(r.ticker)}" data-tk="${esc(r.ticker)}" title="${esc(title)}" aria-label="View ${esc(r.ticker)} ticker detail${both ? ", also in Momentum Watch (1 Year)" : ""}">`
@@ -778,7 +778,33 @@ function risingChipsHtml(rows, alsoMomentum) {
       + `<strong class="mw-tk">${esc(r.ticker)}</strong>`
       + `<span class="rise-pp">${esc(risingPP(r.rs20))}</span>`
       + `</a>`;
-  }).join("");
+  });
+  return compactLaneHtml(chips, "rising names");
+}
+
+const LANE_VISIBLE_COUNT = 6;
+
+function compactLaneHtml(chips, label) {
+  const visible = chips.slice(0, LANE_VISIBLE_COUNT).join("");
+  const overflow = chips.slice(LANE_VISIBLE_COUNT);
+  const more = overflow.length
+    ? `<details class="lane-more"><summary>Show ${overflow.length} more ${esc(label)}</summary><div class="mom lane-more-grid">${overflow.join("")}</div></details>`
+    : "";
+  return `<div class="mom">${visible}</div>${more}`;
+}
+
+function ondeckSetupHtml(row) {
+  const setup = String(row.setup_text || "").trim();
+  const waiting = String(row.why_waiting || "").trim();
+  let evidence = setup;
+  if (waiting && setup.toLowerCase().startsWith(waiting.toLowerCase())) {
+    evidence = setup.slice(waiting.length).replace(/^[\s·—-]+/, "").trim();
+  }
+  return `<div class="ondeck-setup">`
+    + (evidence ? setupHtml(evidence) : "")
+    + `<div class="ondeck-reason"><span>Why waiting</span>${esc(waiting || "—")}</div>`
+    + `<div class="ondeck-mobile-meta"><span>${leadCell(row)}</span><span>${phaseBadge(row.phase)}</span></div>`
+    + `</div>`;
 }
 
 async function renderCockpit() {
@@ -792,7 +818,8 @@ async function renderCockpit() {
   const chips = CAUTION_KEYS.filter(([k]) => comp[k] != null).map(([k, lbl]) =>
     `<span class="chip">${esc(lbl)} <strong style="color:${chipColor(k, comp[k])}">${chipVal(k, comp[k])}</strong></span>`).join("");
 
-  const triggerRows = (d.entry || []).map((r, i) => {
+  const entryRows = d.entry || [];
+  const triggerRows = entryRows.map((r, i) => {
     const e = em[r.ticker] || {};
     return `<tr>
     <td class="r subtle">${i + 1}</td>
@@ -802,18 +829,21 @@ async function renderCockpit() {
     <td style="color:${mfColor(e.flow)};font-size:11px">${esc(shortFlow(e.flow) || "—")}</td>
     <td class="subtle">${leadCell(r)}</td>
     <td>${phaseBadge(r.phase)}</td></tr>`;
-  }).join("") ||
-    `<tr><td colspan="7" class="subtle" style="padding:14px">No ENTRY trigger today.</td></tr>`;
+  }).join("");
+  const triggerPanel = entryRows.length
+    ? `<div class="table-wrap"><table class="dc"><thead><tr>
+        <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
+      </tr></thead><tbody>${triggerRows}</tbody></table></div>`
+    : `<div class="empty-signal" role="status"><span class="empty-signal-dot" aria-hidden="true"></span><div><strong>No ENTRY trigger today.</strong><span>The daily scan completed; no ticker met the ENTRY conditions.</span></div></div>`;
 
   const ondeckRows = (d.continuation || []).map((r, i) => `<tr>
     <td class="r subtle">${i + 1}</td>
     <td>${tickerLink(r.ticker)}</td>
-    <td>${setupHtml(r.setup_text)}</td>
+    <td>${ondeckSetupHtml(r)}</td>
     <td>${c1Cell(r.c1)}</td>
-    <td style="color:var(--amber)">${esc(r.why_waiting || "—")}</td>
     <td class="subtle">${leadCell(r)}</td>
     <td>${phaseBadge(r.phase)}</td></tr>`).join("") ||
-    `<tr><td colspan="7" class="subtle" style="padding:14px">No on-deck names.</td></tr>`;
+    `<tr><td colspan="6" class="subtle" style="padding:14px">No on-deck names.</td></tr>`;
 
   // Rising rows first: the Momentum Watch chips below need the intersection to
   // draw the cross-lane gold border on their side too.
@@ -822,7 +852,7 @@ async function renderCockpit() {
 
   const mom = d.momentum;
   const momentumSet = new Set((mom ? mom.leaders : []).map((m) => String(m.ticker || "").toUpperCase()));
-  const momChips = mom ? mom.leaders.map((m) => {
+  const momChipRows = mom ? mom.leaders.map((m) => {
     const flags = (m.risk_flags && m.risk_flags.length) ? m.risk_flags : [];
     const isEntry = !!m.is_entry, hasRisk = flags.length > 0;
     // Mockup 1a palette: leaders stay neutral; only ENTRY (green) or risk-flagged (amber)
@@ -844,7 +874,10 @@ async function renderCockpit() {
       + (isEntry ? `<span class="mw-entry">ENTRY</span>` : "")
       + (hasRisk ? `<span class="mw-risk">RISK</span>` : "")
       + `</a>`;
-  }).join("") : `<span class="subtle">Momentum data unavailable.</span>`;
+  }) : [];
+  const momChips = mom
+    ? compactLaneHtml(momChipRows, "momentum names")
+    : `<span class="subtle">Momentum data unavailable.</span>`;
 
   // Gate is the engine's own market_risk_on (report decision 2026-08-10). null = the feed carries
   // no gate field; render it as unavailable, never as OFF.
@@ -874,23 +907,19 @@ async function renderCockpit() {
     ? ""
     : "Market caution level unavailable.";
 
-  // Layout swap, gated entirely on the optional rotation feed. WITHOUT it the
-  // philosophy block keeps its original slot (right under the caution banner)
-  // and no rotation markup is emitted at all — the pre-rotation cockpit,
-  // unchanged. WITH it, rotation takes that slot and philosophy moves down to
-  // just above the desk footer, content untouched.
-  // Rising lane markup — emitted only when the rotation feed is present, so the
-  // feed-absent column stays exactly the Momentum-Watch-only layout it is today.
+  // Layout swap remains gated entirely on the optional rotation feed. Without
+  // it no rotation or Rising markup is emitted and philosophy keeps its earlier
+  // slot. With it, rotation takes that slot and the compact philosophy disclosure
+  // moves down above the desk footer.
   const risingLane = `<div class="section-h"><h2>🌱 Rising (20d)</h2><span class="cnt">· from rotation leaders</span></div>
       <p class="rise-sub subtle">fast-turning list — re-ranks weekly</p>
-      <div class="mom rise-mom">${risingChipsHtml(risingRows, momentumSet)}</div>`;
+      <div class="rise-mom">${risingChipsHtml(risingRows, momentumSet)}</div>`;
 
-  // NOTE: starts flush with `<div` and ends flush with `</div>` so that, in the
-  // feed-absent path, the interpolation reproduces the previous markup byte for
-  // byte (verified in-browser by diffing #view innerHTML with/without the feed).
-  const philoBlock = `<div class="philo">
-    <div style="flex:0 0 auto">${goBoardSVG()}</div>
-    <div style="flex:1 1 280px;min-width:240px">
+  const philoBlock = `<details class="philo philo-compact">
+    <summary><span>GO BOARD PHILOSOPHY</span><small>Principles behind the Decision Desk</small></summary>
+    <div class="philo-body">
+      <div style="flex:0 0 auto">${goBoardSVG()}</div>
+      <div style="flex:1 1 280px;min-width:240px">
       <h2>GO BOARD PHILOSOPHY</h2>
       <p class="philo-sub">Thinking from the Go board, applied to trading discipline.</p>
       <ul>
@@ -899,8 +928,9 @@ async function renderCockpit() {
         <li><span style="color:var(--brand)">▸ Play the whole board.</span> Read the entire market — don't cling to one corner.</li>
         <li><span style="color:#E05A4E">▸ Sacrifice small.</span> Give up one stone (<em>sacrifice</em>) to save the whole group — that's your stop-loss.</li>
       </ul>
+      </div>
     </div>
-  </div>`;
+  </details>`;
 
   return `
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px">
@@ -933,28 +963,26 @@ async function renderCockpit() {
     <span class="gate-btn pill" role="status" style="border-color:${gateColor}"><b class="gate-static" style="color:${gateColor};font-weight:500">${!gateKnown ? "○" : gate ? "●" : "⚠"} GATE: ${gateText}</b></span>
   </div>
   <!-- Gate-off banner: shown ONLY when the gate is off AND there are actually ENTRY rows under
-       it. Its claim is about those rows ("rows below are context, not buy orders"), so above an
-       empty "No ENTRY trigger today." table it warns about nothing — only 2 of the 32 published
+       it. Its claim is about those rows ("rows below are context, not buy orders"), so beside an
+       empty "No ENTRY trigger today." state it warns about nothing — only 2 of the 32 published
        snapshots carried a gate-off ENTRY row. On those 2 it is the only thing saying the row is
        not an order, so it must not be deleted outright. The always-visible pill still reports
        gate state on every day. An unknown gate (null) suppresses the banner too: it asserts
        "risk-off", which is a claim we cannot make without the field. -->
   <div id="gate-banner" class="banner-amber" style="${!gateKnown || gate || !d.counts.entry ? "display:none" : ""}">⚠ MARKET GATE: OFF (risk-off) — rows below are context (gate-off / early), not buy orders.</div>
-  <div class="table-wrap"><table class="dc"><thead><tr>
-    <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Money Flow</th><th>Lead</th><th>Phase</th>
-  </tr></thead><tbody>${triggerRows}</tbody></table></div>
+  ${triggerPanel}
 
-  <div class="two-col">
-    <div>
-      <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
-      <div class="table-wrap"><table class="dc"><thead><tr>
-        <th class="r">#</th><th>Ticker</th><th>Setup</th><th>RISK</th><th>Blocker</th><th>Lead</th><th>Phase</th>
-      </tr></thead><tbody>${ondeckRows}</tbody></table></div>
-    </div>
-    <div>
-      ${rot ? risingLane + "\n      " : ""}<div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
-      <div class="mom">${momChips}</div>
-    </div>
+  <div class="section-h"><h2>② On-Deck — entering soon</h2><span class="cnt">· ${d.counts.continuation}</span></div>
+  <div class="table-wrap ondeck-wrap"><table class="dc ondeck-table"><thead><tr>
+    <th class="r">#</th><th>Ticker</th><th>Setup &amp; why waiting</th><th>RISK</th><th>Lead</th><th>Phase</th>
+  </tr></thead><tbody>${ondeckRows}</tbody></table></div>
+
+  <div class="signal-lanes">
+    ${rot ? `<section class="signal-lane">${risingLane}</section>` : ""}
+    <section class="signal-lane">
+      <div class="section-h"><h2>🔥 Momentum Watch (1 Year)</h2></div>
+      ${momChips}
+    </section>
   </div>
 
   ${rot ? philoBlock + "\n\n  " : ""}<div class="desk-footer">
