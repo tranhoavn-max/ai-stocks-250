@@ -1,7 +1,7 @@
 {
   "schema_version": "rotation-public/v1",
-  "as_of": "2026-08-24",
-  "source_rule_run_id": "dd1e32e5-4c16-4684-955f-6660706b5192",
+  "as_of": "2026-08-25",
+  "source_rule_run_id": "0828271b-557a-4e23-8ab7-731e63c45d31",
   "benchmarks": [
     "qqq",
     "spy",
@@ -9,9 +9,9 @@
   ],
   "spread": {
     "qqq_minus_spy": {
-      "r5": -2.0,
-      "r20": 0.2,
-      "r63": -4.1
+      "r5": -0.7,
+      "r20": 1.8,
+      "r63": -4.9
     }
   },
   "sessions": 10,
@@ -23,90 +23,86 @@
       "inflow_pct": 87,
       "rs": {
         "qqq": {
-          "rs63_median": 31.8,
-          "rs20_median": 17.8,
+          "rs63_median": 39.2,
+          "rs20_median": 11.5,
           "top5": [
             {
               "ticker": "TEM",
-              "rs20": 50.7
+              "rs20": 55.0
             },
             {
               "ticker": "PATH",
-              "rs20": 39.1
+              "rs20": 31.5
             },
             {
-              "ticker": "GWRE",
-              "rs20": 25.0
-            },
-            {
-              "ticker": "FIVN",
-              "rs20": 24.7
+              "ticker": "SDGR",
+              "rs20": 25.5
             },
             {
               "ticker": "GTLB",
-              "rs20": 24.3
+              "rs20": 21.2
+            },
+            {
+              "ticker": "IONQ",
+              "rs20": 18.9
             }
           ]
         },
         "spy": {
-          "rs63_median": 27.7,
-          "rs20_median": 18.0,
+          "rs63_median": 34.3,
+          "rs20_median": 13.3,
           "top5": [
             {
               "ticker": "TEM",
-              "rs20": 50.9
+              "rs20": 56.8
             },
             {
               "ticker": "PATH",
-              "rs20": 39.3
+              "rs20": 33.3
             },
             {
-              "ticker": "GWRE",
-              "rs20": 25.2
-            },
-            {
-              "ticker": "FIVN",
-              "rs20": 25.0
+              "ticker": "SDGR",
+              "rs20": 27.4
             },
             {
               "ticker": "GTLB",
-              "rs20": 24.5
+              "rs20": 23.0
+            },
+            {
+              "ticker": "IONQ",
+              "rs20": 20.7
             }
           ]
         },
         "eq": {
-          "rs63_median": 28.6,
-          "rs20_median": 15.7,
+          "rs63_median": 34.9,
+          "rs20_median": 10.2,
           "top5": [
             {
               "ticker": "TEM",
-              "rs20": 48.6
+              "rs20": 53.7
             },
             {
               "ticker": "PATH",
-              "rs20": 37.0
+              "rs20": 30.2
             },
             {
-              "ticker": "GWRE",
-              "rs20": 22.9
-            },
-            {
-              "ticker": "FIVN",
-              "rs20": 22.6
+              "ticker": "SDGR",
+              "rs20": 24.2
             },
             {
               "ticker": "GTLB",
-              "rs20": 22.2
+              "rs20": 19.9
+            },
+            {
+              "ticker": "IONQ",
+              "rs20": 17.6
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            22.6,
-            10.7
-          ],
           [
             24.0,
             13.7
@@ -142,13 +138,13 @@
           [
             31.8,
             17.8
+          ],
+          [
+            39.2,
+            11.5
           ]
         ],
         "spy": [
-          [
-            18.9,
-            8.1
-          ],
           [
             21.5,
             12.2
@@ -184,13 +180,13 @@
           [
             27.7,
             18.0
+          ],
+          [
+            34.3,
+            13.3
           ]
         ],
         "eq": [
-          [
-            18.8,
-            5.9
-          ],
           [
             19.0,
             9.2
@@ -226,6 +222,10 @@
           [
             28.6,
             15.7
+          ],
+          [
+            34.9,
+            10.2
           ]
         ]
       }
@@ -234,93 +234,89 @@
       "group": "ai_semiconductor",
       "n": 29,
       "plot_eligible": true,
-      "inflow_pct": 14,
+      "inflow_pct": 21,
       "rs": {
         "qqq": {
-          "rs63_median": -16.7,
-          "rs20_median": -8.8,
+          "rs63_median": -18.7,
+          "rs20_median": -3.8,
           "top5": [
             {
               "ticker": "MRVL",
-              "rs20": 17.7
-            },
-            {
-              "ticker": "ANET",
-              "rs20": 6.6
+              "rs20": 32.6
             },
             {
               "ticker": "POET",
-              "rs20": 5.8
-            },
-            {
-              "ticker": "MBLY",
-              "rs20": 4.3
+              "rs20": 14.3
             },
             {
               "ticker": "CRDO",
-              "rs20": 3.4
+              "rs20": 12.6
+            },
+            {
+              "ticker": "ANET",
+              "rs20": 7.3
+            },
+            {
+              "ticker": "NVDA",
+              "rs20": 2.9
             }
           ]
         },
         "spy": {
-          "rs63_median": -20.8,
-          "rs20_median": -8.5,
+          "rs63_median": -23.5,
+          "rs20_median": -2.0,
           "top5": [
             {
               "ticker": "MRVL",
-              "rs20": 17.9
-            },
-            {
-              "ticker": "ANET",
-              "rs20": 6.9
+              "rs20": 34.4
             },
             {
               "ticker": "POET",
-              "rs20": 6.0
-            },
-            {
-              "ticker": "MBLY",
-              "rs20": 4.6
+              "rs20": 16.1
             },
             {
               "ticker": "CRDO",
-              "rs20": 3.7
+              "rs20": 14.4
+            },
+            {
+              "ticker": "ANET",
+              "rs20": 9.1
+            },
+            {
+              "ticker": "NVDA",
+              "rs20": 4.8
             }
           ]
         },
         "eq": {
-          "rs63_median": -19.9,
-          "rs20_median": -10.8,
+          "rs63_median": -23.0,
+          "rs20_median": -5.1,
           "top5": [
             {
               "ticker": "MRVL",
-              "rs20": 15.6
-            },
-            {
-              "ticker": "ANET",
-              "rs20": 4.6
+              "rs20": 31.3
             },
             {
               "ticker": "POET",
-              "rs20": 3.7
-            },
-            {
-              "ticker": "MBLY",
-              "rs20": 2.3
+              "rs20": 13.0
             },
             {
               "ticker": "CRDO",
-              "rs20": 1.3
+              "rs20": 11.3
+            },
+            {
+              "ticker": "ANET",
+              "rs20": 6.0
+            },
+            {
+              "ticker": "NVDA",
+              "rs20": 1.6
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            -5.9,
-            -4.2
-          ],
           [
             -8.3,
             -2.8
@@ -356,13 +352,13 @@
           [
             -16.7,
             -8.8
+          ],
+          [
+            -18.7,
+            -3.8
           ]
         ],
         "spy": [
-          [
-            -9.6,
-            -6.8
-          ],
           [
             -10.7,
             -4.3
@@ -398,13 +394,13 @@
           [
             -20.8,
             -8.5
+          ],
+          [
+            -23.5,
+            -2.0
           ]
         ],
         "eq": [
-          [
-            -9.7,
-            -9.0
-          ],
           [
             -13.2,
             -7.3
@@ -440,6 +436,10 @@
           [
             -19.9,
             -10.8
+          ],
+          [
+            -23.0,
+            -5.1
           ]
         ]
       }
@@ -448,93 +448,89 @@
       "group": "automation_robotics_industrial_ai",
       "n": 17,
       "plot_eligible": true,
-      "inflow_pct": 41,
+      "inflow_pct": 29,
       "rs": {
         "qqq": {
-          "rs63_median": -1.5,
-          "rs20_median": 2.2,
+          "rs63_median": -3.0,
+          "rs20_median": -2.4,
           "top5": [
             {
-              "ticker": "ACN",
-              "rs20": 17.5
-            },
-            {
-              "ticker": "LDOS",
-              "rs20": 16.9
-            },
-            {
               "ticker": "AZTA",
-              "rs20": 15.9
-            },
-            {
-              "ticker": "AXON",
-              "rs20": 10.2
+              "rs20": 9.6
             },
             {
               "ticker": "TSLA",
-              "rs20": 9.3
+              "rs20": 8.7
+            },
+            {
+              "ticker": "LDOS",
+              "rs20": 8.5
+            },
+            {
+              "ticker": "ACN",
+              "rs20": 8.3
+            },
+            {
+              "ticker": "AXON",
+              "rs20": 6.8
             }
           ]
         },
         "spy": {
-          "rs63_median": -5.6,
-          "rs20_median": 2.5,
+          "rs63_median": -7.9,
+          "rs20_median": -0.6,
           "top5": [
             {
-              "ticker": "ACN",
-              "rs20": 17.8
-            },
-            {
-              "ticker": "LDOS",
-              "rs20": 17.1
-            },
-            {
               "ticker": "AZTA",
-              "rs20": 16.2
-            },
-            {
-              "ticker": "AXON",
-              "rs20": 10.4
+              "rs20": 11.4
             },
             {
               "ticker": "TSLA",
-              "rs20": 9.5
+              "rs20": 10.5
+            },
+            {
+              "ticker": "LDOS",
+              "rs20": 10.3
+            },
+            {
+              "ticker": "ACN",
+              "rs20": 10.1
+            },
+            {
+              "ticker": "AXON",
+              "rs20": 8.6
             }
           ]
         },
         "eq": {
-          "rs63_median": -4.7,
-          "rs20_median": 0.2,
+          "rs63_median": -7.4,
+          "rs20_median": -3.7,
           "top5": [
             {
-              "ticker": "ACN",
-              "rs20": 15.5
-            },
-            {
-              "ticker": "LDOS",
-              "rs20": 14.8
-            },
-            {
               "ticker": "AZTA",
-              "rs20": 13.9
-            },
-            {
-              "ticker": "AXON",
-              "rs20": 8.1
+              "rs20": 8.3
             },
             {
               "ticker": "TSLA",
+              "rs20": 7.4
+            },
+            {
+              "ticker": "LDOS",
               "rs20": 7.2
+            },
+            {
+              "ticker": "ACN",
+              "rs20": 7.0
+            },
+            {
+              "ticker": "AXON",
+              "rs20": 5.5
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            4.8,
-            10.2
-          ],
           [
             4.9,
             10.0
@@ -570,13 +566,13 @@
           [
             -1.5,
             2.2
+          ],
+          [
+            -3.0,
+            -2.4
           ]
         ],
         "spy": [
-          [
-            1.1,
-            7.5
-          ],
           [
             2.5,
             8.5
@@ -612,13 +608,13 @@
           [
             -5.6,
             2.5
+          ],
+          [
+            -7.9,
+            -0.6
           ]
         ],
         "eq": [
-          [
-            1.0,
-            5.4
-          ],
           [
             -0.0,
             5.5
@@ -654,6 +650,10 @@
           [
             -4.7,
             0.2
+          ],
+          [
+            -7.4,
+            -3.7
           ]
         ]
       }
@@ -665,90 +665,86 @@
       "inflow_pct": 89,
       "rs": {
         "qqq": {
-          "rs63_median": 14.3,
-          "rs20_median": 15.3,
+          "rs63_median": 16.5,
+          "rs20_median": 8.1,
           "top5": [
             {
-              "ticker": "SAP",
-              "rs20": 24.3
+              "ticker": "MSFT",
+              "rs20": 20.0
             },
+            {
+              "ticker": "SAP",
+              "rs20": 15.9
+            },
+            {
+              "ticker": "ORCL",
+              "rs20": 15.5
+            },
+            {
+              "ticker": "INTU",
+              "rs20": 9.0
+            },
+            {
+              "ticker": "CRM",
+              "rs20": 8.1
+            }
+          ]
+        },
+        "spy": {
+          "rs63_median": 11.6,
+          "rs20_median": 9.9,
+          "top5": [
             {
               "ticker": "MSFT",
               "rs20": 21.9
             },
             {
-              "ticker": "INTU",
-              "rs20": 18.2
-            },
-            {
-              "ticker": "CRM",
-              "rs20": 16.9
-            },
-            {
-              "ticker": "ORCL",
-              "rs20": 15.3
-            }
-          ]
-        },
-        "spy": {
-          "rs63_median": 10.2,
-          "rs20_median": 15.5,
-          "top5": [
-            {
               "ticker": "SAP",
-              "rs20": 24.6
-            },
-            {
-              "ticker": "MSFT",
-              "rs20": 22.2
-            },
-            {
-              "ticker": "INTU",
-              "rs20": 18.4
-            },
-            {
-              "ticker": "CRM",
-              "rs20": 17.1
+              "rs20": 17.7
             },
             {
               "ticker": "ORCL",
-              "rs20": 15.5
+              "rs20": 17.3
+            },
+            {
+              "ticker": "INTU",
+              "rs20": 10.8
+            },
+            {
+              "ticker": "CRM",
+              "rs20": 9.9
             }
           ]
         },
         "eq": {
-          "rs63_median": 11.1,
-          "rs20_median": 13.2,
+          "rs63_median": 12.1,
+          "rs20_median": 6.8,
           "top5": [
             {
-              "ticker": "SAP",
-              "rs20": 22.2
-            },
-            {
               "ticker": "MSFT",
-              "rs20": 19.9
+              "rs20": 18.7
             },
             {
-              "ticker": "INTU",
-              "rs20": 16.1
-            },
-            {
-              "ticker": "CRM",
-              "rs20": 14.8
+              "ticker": "SAP",
+              "rs20": 14.6
             },
             {
               "ticker": "ORCL",
-              "rs20": 13.2
+              "rs20": 14.2
+            },
+            {
+              "ticker": "INTU",
+              "rs20": 7.7
+            },
+            {
+              "ticker": "CRM",
+              "rs20": 6.8
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            6.3,
-            18.0
-          ],
           [
             5.0,
             14.9
@@ -784,13 +780,13 @@
           [
             14.3,
             15.3
+          ],
+          [
+            16.5,
+            8.1
           ]
         ],
         "spy": [
-          [
-            2.6,
-            15.4
-          ],
           [
             2.5,
             13.3
@@ -826,13 +822,13 @@
           [
             10.2,
             15.5
+          ],
+          [
+            11.6,
+            9.9
           ]
         ],
         "eq": [
-          [
-            2.5,
-            13.2
-          ],
           [
             0.0,
             10.4
@@ -868,6 +864,10 @@
           [
             11.1,
             13.2
+          ],
+          [
+            12.1,
+            6.8
           ]
         ]
       }
@@ -876,93 +876,89 @@
       "group": "control_growth_consumer",
       "n": 17,
       "plot_eligible": true,
-      "inflow_pct": 47,
+      "inflow_pct": 59,
       "rs": {
         "qqq": {
-          "rs63_median": 6.8,
-          "rs20_median": 2.1,
+          "rs63_median": 6.5,
+          "rs20_median": -0.6,
           "top5": [
             {
               "ticker": "MSTR",
-              "rs20": 20.8
+              "rs20": 26.7
             },
             {
-              "ticker": "CHWY",
-              "rs20": 8.8
+              "ticker": "DIOD",
+              "rs20": 10.6
             },
             {
-              "ticker": "GPN",
-              "rs20": 8.6
+              "ticker": "COIN",
+              "rs20": 6.3
             },
             {
               "ticker": "ROKU",
-              "rs20": 7.1
+              "rs20": 5.8
             },
             {
-              "ticker": "MA",
-              "rs20": 5.2
+              "ticker": "CHWY",
+              "rs20": 2.5
             }
           ]
         },
         "spy": {
-          "rs63_median": 2.7,
-          "rs20_median": 2.4,
+          "rs63_median": 1.7,
+          "rs20_median": 1.2,
           "top5": [
             {
               "ticker": "MSTR",
-              "rs20": 21.0
+              "rs20": 28.5
             },
             {
-              "ticker": "CHWY",
-              "rs20": 9.1
+              "ticker": "DIOD",
+              "rs20": 12.4
             },
             {
-              "ticker": "GPN",
-              "rs20": 8.9
+              "ticker": "COIN",
+              "rs20": 8.1
             },
             {
               "ticker": "ROKU",
-              "rs20": 7.4
+              "rs20": 7.6
             },
             {
-              "ticker": "MA",
-              "rs20": 5.4
+              "ticker": "CHWY",
+              "rs20": 4.3
             }
           ]
         },
         "eq": {
-          "rs63_median": 3.6,
-          "rs20_median": 0.1,
+          "rs63_median": 2.2,
+          "rs20_median": -1.9,
           "top5": [
             {
               "ticker": "MSTR",
-              "rs20": 18.7
+              "rs20": 25.4
             },
             {
-              "ticker": "CHWY",
-              "rs20": 6.8
+              "ticker": "DIOD",
+              "rs20": 9.3
             },
             {
-              "ticker": "GPN",
-              "rs20": 6.6
+              "ticker": "COIN",
+              "rs20": 5.0
             },
             {
               "ticker": "ROKU",
-              "rs20": 5.1
+              "rs20": 4.5
             },
             {
-              "ticker": "MA",
-              "rs20": 3.1
+              "ticker": "CHWY",
+              "rs20": 1.2
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            -0.9,
-            4.5
-          ],
           [
             1.0,
             2.9
@@ -998,13 +994,13 @@
           [
             6.8,
             2.1
+          ],
+          [
+            6.5,
+            -0.6
           ]
         ],
         "spy": [
-          [
-            -4.6,
-            1.9
-          ],
           [
             -1.4,
             1.4
@@ -1040,13 +1036,13 @@
           [
             2.7,
             2.4
+          ],
+          [
+            1.7,
+            1.2
           ]
         ],
         "eq": [
-          [
-            -4.7,
-            -0.3
-          ],
           [
             -3.9,
             -1.5
@@ -1082,101 +1078,101 @@
           [
             3.6,
             0.1
+          ],
+          [
+            2.2,
+            -1.9
           ]
         ]
       }
     },
     {
       "group": "control_growth_internet",
-      "n": 23,
+      "n": 22,
       "plot_eligible": true,
-      "inflow_pct": 52,
+      "inflow_pct": 64,
       "rs": {
         "qqq": {
-          "rs63_median": 18.5,
-          "rs20_median": 4.5,
+          "rs63_median": 21.0,
+          "rs20_median": 2.8,
           "top5": [
             {
               "ticker": "WIX",
-              "rs20": 46.3
+              "rs20": 41.8
             },
             {
               "ticker": "ABNB",
-              "rs20": 26.0
+              "rs20": 19.2
             },
             {
               "ticker": "DASH",
-              "rs20": 20.7
+              "rs20": 14.2
             },
             {
-              "ticker": "EXPE",
-              "rs20": 18.3
+              "ticker": "SHOP",
+              "rs20": 12.9
             },
             {
-              "ticker": "ZG",
-              "rs20": 15.1
+              "ticker": "SE",
+              "rs20": 9.5
             }
           ]
         },
         "spy": {
-          "rs63_median": 14.4,
-          "rs20_median": 4.8,
+          "rs63_median": 16.1,
+          "rs20_median": 4.7,
           "top5": [
             {
               "ticker": "WIX",
-              "rs20": 46.5
+              "rs20": 43.6
             },
             {
               "ticker": "ABNB",
-              "rs20": 26.2
+              "rs20": 21.0
             },
             {
               "ticker": "DASH",
-              "rs20": 20.9
+              "rs20": 16.0
             },
             {
-              "ticker": "EXPE",
-              "rs20": 18.5
+              "ticker": "SHOP",
+              "rs20": 14.7
             },
             {
-              "ticker": "ZG",
-              "rs20": 15.3
+              "ticker": "SE",
+              "rs20": 11.3
             }
           ]
         },
         "eq": {
-          "rs63_median": 15.3,
-          "rs20_median": 2.4,
+          "rs63_median": 16.7,
+          "rs20_median": 1.6,
           "top5": [
             {
               "ticker": "WIX",
-              "rs20": 44.2
+              "rs20": 40.5
             },
             {
               "ticker": "ABNB",
-              "rs20": 23.9
+              "rs20": 17.9
             },
             {
               "ticker": "DASH",
-              "rs20": 18.6
+              "rs20": 12.9
             },
             {
-              "ticker": "EXPE",
-              "rs20": 16.2
+              "ticker": "SHOP",
+              "rs20": 11.6
             },
             {
-              "ticker": "ZG",
-              "rs20": 13.0
+              "ticker": "SE",
+              "rs20": 8.2
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            12.5,
-            3.7
-          ],
           [
             10.4,
             -0.2
@@ -1212,13 +1208,13 @@
           [
             18.5,
             4.5
+          ],
+          [
+            21.0,
+            2.8
           ]
         ],
         "spy": [
-          [
-            8.9,
-            1.0
-          ],
           [
             7.9,
             -1.7
@@ -1254,13 +1250,13 @@
           [
             14.4,
             4.8
+          ],
+          [
+            16.1,
+            4.7
           ]
         ],
         "eq": [
-          [
-            8.7,
-            -1.1
-          ],
           [
             5.4,
             -4.7
@@ -1296,6 +1292,10 @@
           [
             15.3,
             2.4
+          ],
+          [
+            16.7,
+            1.6
           ]
         ]
       }
@@ -1307,90 +1307,86 @@
       "inflow_pct": 74,
       "rs": {
         "qqq": {
-          "rs63_median": 20.7,
-          "rs20_median": 10.9,
+          "rs63_median": 25.0,
+          "rs20_median": 2.9,
           "top5": [
             {
               "ticker": "PAYC",
-              "rs20": 48.2
+              "rs20": 38.3
             },
             {
               "ticker": "U",
-              "rs20": 48.1
-            },
-            {
-              "ticker": "WDAY",
-              "rs20": 31.4
+              "rs20": 36.1
             },
             {
               "ticker": "MANH",
-              "rs20": 30.3
+              "rs20": 21.5
+            },
+            {
+              "ticker": "CTSH",
+              "rs20": 20.9
             },
             {
               "ticker": "APPF",
-              "rs20": 29.9
+              "rs20": 19.9
             }
           ]
         },
         "spy": {
-          "rs63_median": 16.6,
-          "rs20_median": 11.2,
+          "rs63_median": 20.1,
+          "rs20_median": 4.8,
           "top5": [
             {
               "ticker": "PAYC",
-              "rs20": 48.5
+              "rs20": 40.1
             },
             {
               "ticker": "U",
-              "rs20": 48.3
-            },
-            {
-              "ticker": "WDAY",
-              "rs20": 31.7
+              "rs20": 38.0
             },
             {
               "ticker": "MANH",
-              "rs20": 30.5
+              "rs20": 23.3
+            },
+            {
+              "ticker": "CTSH",
+              "rs20": 22.7
             },
             {
               "ticker": "APPF",
-              "rs20": 30.1
+              "rs20": 21.7
             }
           ]
         },
         "eq": {
-          "rs63_median": 17.5,
-          "rs20_median": 8.8,
+          "rs63_median": 20.7,
+          "rs20_median": 1.7,
           "top5": [
             {
               "ticker": "PAYC",
-              "rs20": 46.2
+              "rs20": 37.0
             },
             {
               "ticker": "U",
-              "rs20": 46.0
-            },
-            {
-              "ticker": "WDAY",
-              "rs20": 29.4
+              "rs20": 34.8
             },
             {
               "ticker": "MANH",
-              "rs20": 28.2
+              "rs20": 20.2
+            },
+            {
+              "ticker": "CTSH",
+              "rs20": 19.6
             },
             {
               "ticker": "APPF",
-              "rs20": 27.8
+              "rs20": 18.6
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            21.6,
-            16.4
-          ],
           [
             22.8,
             11.2
@@ -1426,13 +1422,13 @@
           [
             20.7,
             10.9
+          ],
+          [
+            25.0,
+            2.9
           ]
         ],
         "spy": [
-          [
-            18.0,
-            13.8
-          ],
           [
             20.3,
             9.7
@@ -1468,13 +1464,13 @@
           [
             16.6,
             11.2
+          ],
+          [
+            20.1,
+            4.8
           ]
         ],
         "eq": [
-          [
-            17.8,
-            11.7
-          ],
           [
             17.8,
             6.8
@@ -1510,6 +1506,10 @@
           [
             17.5,
             8.8
+          ],
+          [
+            20.7,
+            1.7
           ]
         ]
       }
@@ -1518,93 +1518,89 @@
       "group": "datacenter_power_cooling_grid",
       "n": 28,
       "plot_eligible": true,
-      "inflow_pct": 0,
+      "inflow_pct": 14,
       "rs": {
         "qqq": {
-          "rs63_median": -2.7,
-          "rs20_median": -8.1,
+          "rs63_median": -1.5,
+          "rs20_median": -8.0,
           "top5": [
             {
               "ticker": "SMCI",
-              "rs20": 14.4
+              "rs20": 30.0
             },
             {
               "ticker": "HPE",
-              "rs20": 5.3
+              "rs20": 12.0
             },
             {
-              "ticker": "PCG",
-              "rs20": -0.7
-            },
-            {
-              "ticker": "ETN",
-              "rs20": -0.8
+              "ticker": "DELL",
+              "rs20": 9.9
             },
             {
               "ticker": "APLD",
-              "rs20": -1.6
+              "rs20": 3.2
+            },
+            {
+              "ticker": "CEG",
+              "rs20": 2.1
             }
           ]
         },
         "spy": {
-          "rs63_median": -6.8,
-          "rs20_median": -7.8,
+          "rs63_median": -6.4,
+          "rs20_median": -6.2,
           "top5": [
             {
               "ticker": "SMCI",
-              "rs20": 14.7
+              "rs20": 31.8
             },
             {
               "ticker": "HPE",
-              "rs20": 5.5
+              "rs20": 13.8
             },
             {
-              "ticker": "PCG",
-              "rs20": -0.4
-            },
-            {
-              "ticker": "ETN",
-              "rs20": -0.5
+              "ticker": "DELL",
+              "rs20": 11.8
             },
             {
               "ticker": "APLD",
-              "rs20": -1.3
+              "rs20": 5.0
+            },
+            {
+              "ticker": "CEG",
+              "rs20": 3.9
             }
           ]
         },
         "eq": {
-          "rs63_median": -5.9,
-          "rs20_median": -10.1,
+          "rs63_median": -5.8,
+          "rs20_median": -9.3,
           "top5": [
             {
               "ticker": "SMCI",
-              "rs20": 12.4
+              "rs20": 28.7
             },
             {
               "ticker": "HPE",
-              "rs20": 3.2
+              "rs20": 10.7
             },
             {
-              "ticker": "PCG",
-              "rs20": -2.7
-            },
-            {
-              "ticker": "ETN",
-              "rs20": -2.8
+              "ticker": "DELL",
+              "rs20": 8.6
             },
             {
               "ticker": "APLD",
-              "rs20": -3.7
+              "rs20": 1.9
+            },
+            {
+              "ticker": "CEG",
+              "rs20": 0.8
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            -5.5,
-            -2.8
-          ],
           [
             -2.9,
             -0.9
@@ -1640,13 +1636,13 @@
           [
             -2.7,
             -8.1
+          ],
+          [
+            -1.5,
+            -8.0
           ]
         ],
         "spy": [
-          [
-            -9.1,
-            -5.5
-          ],
           [
             -5.4,
             -2.4
@@ -1682,13 +1678,13 @@
           [
             -6.8,
             -7.8
+          ],
+          [
+            -6.4,
+            -6.2
           ]
         ],
         "eq": [
-          [
-            -9.3,
-            -7.6
-          ],
           [
             -7.9,
             -5.4
@@ -1724,6 +1720,10 @@
           [
             -5.9,
             -10.1
+          ],
+          [
+            -5.8,
+            -9.3
           ]
         ]
       }
@@ -1732,93 +1732,89 @@
       "group": "digital_ad_ai_applications",
       "n": 13,
       "plot_eligible": true,
-      "inflow_pct": 46,
+      "inflow_pct": 62,
       "rs": {
         "qqq": {
-          "rs63_median": 23.1,
-          "rs20_median": 7.0,
+          "rs63_median": 25.0,
+          "rs20_median": 4.7,
           "top5": [
             {
               "ticker": "ZETA",
-              "rs20": 33.7
-            },
-            {
-              "ticker": "MGNI",
-              "rs20": 19.9
+              "rs20": 22.1
             },
             {
               "ticker": "SNAP",
-              "rs20": 18.8
+              "rs20": 18.9
+            },
+            {
+              "ticker": "MGNI",
+              "rs20": 16.1
             },
             {
               "ticker": "DV",
-              "rs20": 17.9
+              "rs20": 13.2
             },
             {
               "ticker": "DOCS",
-              "rs20": 17.0
+              "rs20": 10.2
             }
           ]
         },
         "spy": {
-          "rs63_median": 19.0,
-          "rs20_median": 7.3,
+          "rs63_median": 20.1,
+          "rs20_median": 6.5,
           "top5": [
             {
               "ticker": "ZETA",
-              "rs20": 34.0
-            },
-            {
-              "ticker": "MGNI",
-              "rs20": 20.1
+              "rs20": 24.0
             },
             {
               "ticker": "SNAP",
-              "rs20": 19.0
+              "rs20": 20.7
+            },
+            {
+              "ticker": "MGNI",
+              "rs20": 17.9
             },
             {
               "ticker": "DV",
-              "rs20": 18.2
+              "rs20": 15.0
             },
             {
               "ticker": "DOCS",
-              "rs20": 17.2
+              "rs20": 12.0
             }
           ]
         },
         "eq": {
-          "rs63_median": 19.9,
-          "rs20_median": 4.9,
+          "rs63_median": 20.6,
+          "rs20_median": 3.4,
           "top5": [
             {
               "ticker": "ZETA",
-              "rs20": 31.7
-            },
-            {
-              "ticker": "MGNI",
-              "rs20": 17.8
+              "rs20": 20.9
             },
             {
               "ticker": "SNAP",
-              "rs20": 16.7
+              "rs20": 17.6
+            },
+            {
+              "ticker": "MGNI",
+              "rs20": 14.8
             },
             {
               "ticker": "DV",
-              "rs20": 15.8
+              "rs20": 11.9
             },
             {
               "ticker": "DOCS",
-              "rs20": 14.9
+              "rs20": 8.9
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            3.3,
-            5.7
-          ],
           [
             2.1,
             1.8
@@ -1854,13 +1850,13 @@
           [
             23.1,
             7.0
+          ],
+          [
+            25.0,
+            4.7
           ]
         ],
         "spy": [
-          [
-            -0.3,
-            3.0
-          ],
           [
             -0.4,
             0.3
@@ -1896,13 +1892,13 @@
           [
             19.0,
             7.3
+          ],
+          [
+            20.1,
+            6.5
           ]
         ],
         "eq": [
-          [
-            -0.4,
-            0.9
-          ],
           [
             -2.9,
             -2.7
@@ -1938,6 +1934,10 @@
           [
             19.9,
             4.9
+          ],
+          [
+            20.6,
+            3.4
           ]
         ]
       }
@@ -1946,93 +1946,89 @@
       "group": "memory_storage_networking",
       "n": 16,
       "plot_eligible": true,
-      "inflow_pct": 0,
+      "inflow_pct": 12,
       "rs": {
         "qqq": {
-          "rs63_median": -8.4,
-          "rs20_median": -5.8,
+          "rs63_median": -10.1,
+          "rs20_median": 2.8,
           "top5": [
             {
               "ticker": "P",
-              "rs20": 31.8
+              "rs20": 35.6
             },
             {
               "ticker": "LITE",
-              "rs20": 13.1
-            },
-            {
-              "ticker": "NTAP",
-              "rs20": 6.5
+              "rs20": 30.6
             },
             {
               "ticker": "COHR",
-              "rs20": -2.0
+              "rs20": 13.2
             },
             {
               "ticker": "GLW",
-              "rs20": -2.0
+              "rs20": 11.6
+            },
+            {
+              "ticker": "MU",
+              "rs20": 8.5
             }
           ]
         },
         "spy": {
-          "rs63_median": -12.5,
-          "rs20_median": -5.5,
+          "rs63_median": -15.0,
+          "rs20_median": 4.6,
           "top5": [
             {
               "ticker": "P",
-              "rs20": 32.0
+              "rs20": 37.5
             },
             {
               "ticker": "LITE",
-              "rs20": 13.3
-            },
-            {
-              "ticker": "NTAP",
-              "rs20": 6.7
+              "rs20": 32.5
             },
             {
               "ticker": "COHR",
-              "rs20": -1.8
+              "rs20": 15.0
             },
             {
               "ticker": "GLW",
-              "rs20": -1.8
+              "rs20": 13.4
+            },
+            {
+              "ticker": "MU",
+              "rs20": 10.3
             }
           ]
         },
         "eq": {
-          "rs63_median": -11.6,
-          "rs20_median": -7.9,
+          "rs63_median": -14.4,
+          "rs20_median": 1.5,
           "top5": [
             {
               "ticker": "P",
-              "rs20": 29.7
+              "rs20": 34.3
             },
             {
               "ticker": "LITE",
-              "rs20": 11.0
-            },
-            {
-              "ticker": "NTAP",
-              "rs20": 4.4
+              "rs20": 29.3
             },
             {
               "ticker": "COHR",
-              "rs20": -4.1
+              "rs20": 11.9
             },
             {
               "ticker": "GLW",
-              "rs20": -4.1
+              "rs20": 10.3
+            },
+            {
+              "ticker": "MU",
+              "rs20": 7.2
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            -10.8,
-            -7.2
-          ],
           [
             -7.1,
             1.2
@@ -2068,13 +2064,13 @@
           [
             -8.4,
             -5.8
+          ],
+          [
+            -10.1,
+            2.8
           ]
         ],
         "spy": [
-          [
-            -14.5,
-            -9.9
-          ],
           [
             -9.6,
             -0.3
@@ -2110,13 +2106,13 @@
           [
             -12.5,
             -5.5
+          ],
+          [
+            -15.0,
+            4.6
           ]
         ],
         "eq": [
-          [
-            -14.6,
-            -12.0
-          ],
           [
             -12.1,
             -3.3
@@ -2152,6 +2148,10 @@
           [
             -11.6,
             -7.9
+          ],
+          [
+            -14.4,
+            1.5
           ]
         ]
       }
@@ -2160,93 +2160,89 @@
       "group": "security_observability_data_devtools",
       "n": 21,
       "plot_eligible": true,
-      "inflow_pct": 62,
+      "inflow_pct": 57,
       "rs": {
         "qqq": {
-          "rs63_median": 30.0,
-          "rs20_median": 7.0,
+          "rs63_median": 29.6,
+          "rs20_median": 1.3,
           "top5": [
             {
               "ticker": "TEAM",
-              "rs20": 75.2
-            },
-            {
-              "ticker": "ESTC",
-              "rs20": 32.4
+              "rs20": 61.3
             },
             {
               "ticker": "PLTR",
-              "rs20": 30.2
+              "rs20": 34.6
             },
             {
-              "ticker": "QLYS",
-              "rs20": 28.9
+              "ticker": "MDB",
+              "rs20": 25.1
             },
             {
               "ticker": "RBRK",
-              "rs20": 27.5
+              "rs20": 24.5
+            },
+            {
+              "ticker": "QLYS",
+              "rs20": 24.4
             }
           ]
         },
         "spy": {
-          "rs63_median": 25.8,
-          "rs20_median": 7.3,
+          "rs63_median": 24.7,
+          "rs20_median": 3.2,
           "top5": [
             {
               "ticker": "TEAM",
-              "rs20": 75.4
-            },
-            {
-              "ticker": "ESTC",
-              "rs20": 32.6
+              "rs20": 63.1
             },
             {
               "ticker": "PLTR",
-              "rs20": 30.4
+              "rs20": 36.4
             },
             {
-              "ticker": "QLYS",
-              "rs20": 29.1
+              "ticker": "MDB",
+              "rs20": 27.0
             },
             {
               "ticker": "RBRK",
-              "rs20": 27.7
+              "rs20": 26.3
+            },
+            {
+              "ticker": "QLYS",
+              "rs20": 26.2
             }
           ]
         },
         "eq": {
-          "rs63_median": 26.8,
-          "rs20_median": 5.0,
+          "rs63_median": 25.2,
+          "rs20_median": 0.0,
           "top5": [
             {
               "ticker": "TEAM",
-              "rs20": 73.1
-            },
-            {
-              "ticker": "ESTC",
-              "rs20": 30.3
+              "rs20": 60.0
             },
             {
               "ticker": "PLTR",
-              "rs20": 28.1
+              "rs20": 33.3
             },
             {
-              "ticker": "QLYS",
-              "rs20": 26.8
+              "ticker": "MDB",
+              "rs20": 23.9
             },
             {
               "ticker": "RBRK",
-              "rs20": 25.4
+              "rs20": 23.2
+            },
+            {
+              "ticker": "QLYS",
+              "rs20": 23.1
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            49.6,
-            8.9
-          ],
           [
             48.2,
             10.6
@@ -2282,13 +2278,13 @@
           [
             30.0,
             7.0
+          ],
+          [
+            29.6,
+            1.3
           ]
         ],
         "spy": [
-          [
-            45.9,
-            6.3
-          ],
           [
             45.7,
             9.1
@@ -2324,13 +2320,13 @@
           [
             25.8,
             7.3
+          ],
+          [
+            24.7,
+            3.2
           ]
         ],
         "eq": [
-          [
-            45.8,
-            4.1
-          ],
           [
             43.2,
             6.2
@@ -2366,6 +2362,10 @@
           [
             26.8,
             5.0
+          ],
+          [
+            25.2,
+            0.0
           ]
         ]
       }
@@ -2374,93 +2374,89 @@
       "group": "semicap_equipment",
       "n": 17,
       "plot_eligible": true,
-      "inflow_pct": 24,
+      "inflow_pct": 18,
       "rs": {
         "qqq": {
-          "rs63_median": -2.3,
-          "rs20_median": -7.2,
+          "rs63_median": -10.5,
+          "rs20_median": 1.4,
           "top5": [
             {
               "ticker": "AEHR",
-              "rs20": 20.9
-            },
-            {
-              "ticker": "ENTG",
-              "rs20": 5.9
+              "rs20": 31.3
             },
             {
               "ticker": "FORM",
-              "rs20": 5.7
-            },
-            {
-              "ticker": "TER",
-              "rs20": 5.5
+              "rs20": 16.9
             },
             {
               "ticker": "ONTO",
-              "rs20": 4.3
+              "rs20": 15.3
+            },
+            {
+              "ticker": "COHU",
+              "rs20": 14.0
+            },
+            {
+              "ticker": "ENTG",
+              "rs20": 12.4
             }
           ]
         },
         "spy": {
-          "rs63_median": -6.4,
-          "rs20_median": -6.9,
+          "rs63_median": -15.3,
+          "rs20_median": 3.2,
           "top5": [
             {
               "ticker": "AEHR",
-              "rs20": 21.2
-            },
-            {
-              "ticker": "ENTG",
-              "rs20": 6.2
+              "rs20": 33.2
             },
             {
               "ticker": "FORM",
-              "rs20": 5.9
-            },
-            {
-              "ticker": "TER",
-              "rs20": 5.7
+              "rs20": 18.7
             },
             {
               "ticker": "ONTO",
-              "rs20": 4.5
+              "rs20": 17.2
+            },
+            {
+              "ticker": "COHU",
+              "rs20": 15.8
+            },
+            {
+              "ticker": "ENTG",
+              "rs20": 14.2
             }
           ]
         },
         "eq": {
-          "rs63_median": -5.5,
-          "rs20_median": -9.2,
+          "rs63_median": -14.8,
+          "rs20_median": 0.1,
           "top5": [
             {
               "ticker": "AEHR",
-              "rs20": 18.8
-            },
-            {
-              "ticker": "ENTG",
-              "rs20": 3.9
+              "rs20": 30.1
             },
             {
               "ticker": "FORM",
-              "rs20": 3.6
-            },
-            {
-              "ticker": "TER",
-              "rs20": 3.4
+              "rs20": 15.6
             },
             {
               "ticker": "ONTO",
-              "rs20": 2.2
+              "rs20": 14.1
+            },
+            {
+              "ticker": "COHU",
+              "rs20": 12.7
+            },
+            {
+              "ticker": "ENTG",
+              "rs20": 11.1
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            -0.0,
-            -5.1
-          ],
           [
             8.5,
             -2.8
@@ -2496,13 +2492,13 @@
           [
             -2.3,
             -7.2
+          ],
+          [
+            -10.5,
+            1.4
           ]
         ],
         "spy": [
-          [
-            -3.7,
-            -7.8
-          ],
           [
             6.0,
             -4.3
@@ -2538,13 +2534,13 @@
           [
             -6.4,
             -6.9
+          ],
+          [
+            -15.3,
+            3.2
           ]
         ],
         "eq": [
-          [
-            -3.8,
-            -9.9
-          ],
           [
             3.5,
             -7.3
@@ -2580,6 +2576,10 @@
           [
             -5.5,
             -9.2
+          ],
+          [
+            -14.8,
+            0.1
           ]
         ]
       }
@@ -2588,93 +2588,89 @@
       "group": "weak_declined_ai_adjacent",
       "n": 10,
       "plot_eligible": true,
-      "inflow_pct": 50,
+      "inflow_pct": 40,
       "rs": {
         "qqq": {
-          "rs63_median": -7.9,
-          "rs20_median": -0.2,
+          "rs63_median": -7.5,
+          "rs20_median": 1.1,
           "top5": [
             {
-              "ticker": "RNG",
-              "rs20": 21.6
+              "ticker": "WOLF",
+              "rs20": 10.4
             },
             {
-              "ticker": "AI",
-              "rs20": 11.1
+              "ticker": "RNG",
+              "rs20": 10.3
             },
             {
               "ticker": "SOUN",
-              "rs20": 5.7
+              "rs20": 7.8
             },
             {
               "ticker": "BBAI",
-              "rs20": 4.9
+              "rs20": 6.7
             },
             {
-              "ticker": "WOLF",
-              "rs20": 0.5
+              "ticker": "AI",
+              "rs20": 4.8
             }
           ]
         },
         "spy": {
-          "rs63_median": -12.0,
-          "rs20_median": 0.0,
+          "rs63_median": -12.3,
+          "rs20_median": 2.9,
           "top5": [
             {
-              "ticker": "RNG",
-              "rs20": 21.9
+              "ticker": "WOLF",
+              "rs20": 12.2
             },
             {
-              "ticker": "AI",
-              "rs20": 11.3
+              "ticker": "RNG",
+              "rs20": 12.1
             },
             {
               "ticker": "SOUN",
-              "rs20": 5.9
+              "rs20": 9.6
             },
             {
               "ticker": "BBAI",
-              "rs20": 5.2
+              "rs20": 8.6
             },
             {
-              "ticker": "WOLF",
-              "rs20": 0.7
+              "ticker": "AI",
+              "rs20": 6.6
             }
           ]
         },
         "eq": {
-          "rs63_median": -11.1,
-          "rs20_median": -2.3,
+          "rs63_median": -11.8,
+          "rs20_median": -0.2,
           "top5": [
             {
-              "ticker": "RNG",
-              "rs20": 19.6
+              "ticker": "WOLF",
+              "rs20": 9.1
             },
             {
-              "ticker": "AI",
+              "ticker": "RNG",
               "rs20": 9.0
             },
             {
               "ticker": "SOUN",
-              "rs20": 3.6
+              "rs20": 6.5
             },
             {
               "ticker": "BBAI",
-              "rs20": 2.9
+              "rs20": 5.5
             },
             {
-              "ticker": "WOLF",
-              "rs20": -1.6
+              "ticker": "AI",
+              "rs20": 3.5
             }
           ]
         }
       },
       "trail": {
         "qqq": [
-          [
-            -2.5,
-            -0.7
-          ],
           [
             -2.6,
             -3.7
@@ -2710,13 +2706,13 @@
           [
             -7.9,
             -0.2
+          ],
+          [
+            -7.5,
+            1.1
           ]
         ],
         "spy": [
-          [
-            -6.1,
-            -3.3
-          ],
           [
             -5.1,
             -5.3
@@ -2752,13 +2748,13 @@
           [
             -12.0,
             0.0
+          ],
+          [
+            -12.3,
+            2.9
           ]
         ],
         "eq": [
-          [
-            -6.3,
-            -5.4
-          ],
           [
             -7.6,
             -8.2
@@ -2794,6 +2790,10 @@
           [
             -11.1,
             -2.3
+          ],
+          [
+            -11.8,
+            -0.2
           ]
         ]
       }
