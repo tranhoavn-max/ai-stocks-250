@@ -1,9 +1,9 @@
 {
   "schema_version": "ticker-enrich/v1",
   "as_of_date": "2026-09-04",
-  "generated_at": "2026-09-05T03:42:58Z",
+  "generated_at": "2026-09-08T03:41:07Z",
   "coverage_status": "PASS",
-  "source_rule_run_id": "f7dffc60-fd6c-4b0a-bb5f-d3e0107739fa",
+  "source_rule_run_id": "ab37a66d-e421-4bf9-921f-d0755bdbfe5b",
   "count": 250,
   "tickers": {
     "NVDA": {

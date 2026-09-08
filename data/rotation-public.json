@@ -1,7 +1,7 @@
 {
   "schema_version": "rotation-public/v1",
   "as_of": "2026-09-04",
-  "source_rule_run_id": "f7dffc60-fd6c-4b0a-bb5f-d3e0107739fa",
+  "source_rule_run_id": "ab37a66d-e421-4bf9-921f-d0755bdbfe5b",
   "benchmarks": [
     "qqq",
     "spy",

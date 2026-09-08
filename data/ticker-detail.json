@@ -1,8 +1,8 @@
 {
  "schema_version": "ticker-detail/v1",
  "as_of_date": "2026-09-04",
- "generated_at": "2026-09-05T03:42:58Z",
- "source_rule_run_id": "f7dffc60-fd6c-4b0a-bb5f-d3e0107739fa",
+ "generated_at": "2026-09-08T03:41:07Z",
+ "source_rule_run_id": "ab37a66d-e421-4bf9-921f-d0755bdbfe5b",
  "count": 250,
  "tickers": {
   "AAPL": {
@@ -2522,9 +2522,9 @@
    "exit_signal_code": "EXIT_3_HARD_EXIT",
    "exit_risk_score": 100.0,
    "exit_action": "Exit / preserve capital",
-   "money_flow_score": -0.2034,
+   "money_flow_score": -0.2035,
    "money_flow_percentile": 7.6,
-   "flow_5d": -0.0787,
+   "flow_5d": -0.079,
    "score_short": 20.0,
    "ddr_5d5pct": null,
    "ddr_confidence": null,
