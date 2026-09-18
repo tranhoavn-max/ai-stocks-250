@@ -1,16 +1,16 @@
 {
   "schema_version": "web-bundle.v2",
-  "as_of_date": "2026-09-16",
-  "generated_at": "2026-09-17T03:43:28Z",
+  "as_of_date": "2026-09-17",
+  "generated_at": "2026-09-18T03:43:32Z",
   "status": "SUCCESS",
   "source": {
     "app": "ai-stock-agent-service",
-    "source_rule_run_id": "35ef2722-1341-47b6-8b8c-ad951f6568be"
+    "source_rule_run_id": "ec00bf68-49ac-4dce-957b-b9d86f177f88"
   },
   "screens": {
     "cockpit": {
       "data_path": "data/cockpit-public.json",
-      "as_of_date": "2026-09-16",
+      "as_of_date": "2026-09-17",
       "coverage_status": "PASS",
       "counts": {
         "entry": 0,
@@ -19,22 +19,22 @@
     },
     "rotation": {
       "data_path": "data/rotation-public.json",
-      "as_of_date": "2026-09-16",
-      "source_rule_run_id": "35ef2722-1341-47b6-8b8c-ad951f6568be",
+      "as_of_date": "2026-09-17",
+      "source_rule_run_id": "ec00bf68-49ac-4dce-957b-b9d86f177f88",
       "sessions": 10,
       "group_count": 13
     },
     "valuation": {
       "data_path": "data/valuation-latest.json",
-      "as_of_date": "2026-09-16",
+      "as_of_date": "2026-09-17",
       "coverage_status": "FRESH",
       "freshness_age_days": 1,
       "ticker_count": 250
     },
     "ticker_detail": {
       "data_path": "data/ticker-detail.json",
-      "as_of_date": "2026-09-16",
-      "source_rule_run_id": "35ef2722-1341-47b6-8b8c-ad951f6568be",
+      "as_of_date": "2026-09-17",
+      "source_rule_run_id": "ec00bf68-49ac-4dce-957b-b9d86f177f88",
       "count": 250
     }
   },
