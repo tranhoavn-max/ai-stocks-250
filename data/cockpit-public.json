@@ -1,15 +1,13 @@
 {
   "schema_version": "cockpit-public/v1",
-  "generated_at": "2026-09-22T03:40:41Z",
+  "generated_at": "2026-09-23T03:48:23Z",
   "meta": {
     "as_of_date": "2026-09-21",
-    "coverage_status": "WARN",
-    "source_rule_run_id": "e3dd675a-850a-40da-a4e9-bd8f70f8898a",
-    "source_ingest_run_id": "bc00f13c-52d0-4a8f-82ec-349bbd1c666b",
-    "snapshot_generated_at": "2026-09-22T03:36:32Z",
-    "warnings": [
-      "PARTIAL ingest with latest EOD missing for 1 tickers"
-    ]
+    "coverage_status": "PASS",
+    "source_rule_run_id": "0971f190-37fa-4bae-9453-989b04a5bd25",
+    "source_ingest_run_id": "cead6b05-3188-4f84-9526-d36590c5a907",
+    "snapshot_generated_at": "2026-09-23T03:43:41Z",
+    "warnings": []
   },
   "market_gate_on": true,
   "market_caution": {
@@ -24,8 +22,8 @@
       "c1z": -1.497,
       "qqq_close_location": 0.773,
       "supz": -1.666,
-      "flow_z": -0.763,
-      "flow_mom": -0.0389,
+      "flow_z": -0.767,
+      "flow_mom": -0.0387,
       "c1_warn_pct": 67.21
     },
     "rule": "composite SCORE = 100*P(risk_off<=20d) from logistic(c1z,neg_cloc,supz,neg_flowz,flow_mom); fires when score>=80",
@@ -384,11 +382,11 @@
         "ddr_overheat": 0.37117346938775514,
         "dd_profile_as_of_date": "2026-09-21",
         "dd_current_pct": 0.03325811276649412,
-        "dd_to_median_pct": -0.06712326389770962,
-        "dd_median_pct": 0.10038137666420374,
+        "dd_to_median_pct": -0.06712335600087854,
+        "dd_median_pct": 0.10038146876737265,
         "dd_p25_pct": 0.09385935626745856,
         "dd_p75_pct": 0.12390964300051195,
-        "dd_worst_pct": 0.12751144306849027,
+        "dd_worst_pct": 0.12751151694478383,
         "dd_best_pct": 0.08152476512584245,
         "dd_sample_size": 7,
         "dd_confidence": "high",
@@ -447,7 +445,7 @@
         "dd_to_median_pct": null,
         "dd_median_pct": 0.07884901594963267,
         "dd_p25_pct": 0.06819465614573703,
-        "dd_p75_pct": 0.10540503094014698,
+        "dd_p75_pct": 0.10540498417908342,
         "dd_worst_pct": 0.14858530041152648,
         "dd_best_pct": 0.05480073807039351,
         "dd_sample_size": 12,
@@ -651,7 +649,7 @@
       }
     ],
     "coverage": [
-      248,
+      249,
       250
     ],
     "limit": 14,
